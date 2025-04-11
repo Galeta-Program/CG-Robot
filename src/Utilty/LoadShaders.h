@@ -67,7 +67,7 @@ static const GLchar*
 
 //----------------------------------------------------------------------------
 
-GLuint
+static GLuint
 	LoadShaders( ShaderInfo* shaders )
 {
 	if ( shaders == NULL ) { return 0; }

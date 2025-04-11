@@ -4,7 +4,6 @@
 #include <cstring>
 #include <iostream>
 #include <fstream>
-using namespace std;
 
 #include <glm/glm.hpp>
 
@@ -27,7 +26,7 @@ bool LoadOBJ(
 	std::vector<vec2> & out_uvs,
 	std::vector<vec3> & out_normals,
 	std::vector<unsigned int> &out_materialIndices,
-	std::vector<string> &out_mtls
+	std::vector<std::string> &out_mtls
 )
 {
 	printf("Loading OBJ file %s...\n", path);
@@ -36,7 +35,7 @@ bool LoadOBJ(
 	std::vector<vec3> temp_vertices; 
 	std::vector<vec2> temp_uvs;
 	std::vector<vec3> temp_normals;
-	std::vector<string> temp_mtls;
+	std::vector<std::string> temp_mtls;
 
 	FILE * file = fopen(path, "r");
 	if( file == NULL ){

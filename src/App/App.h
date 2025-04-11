@@ -27,6 +27,8 @@ namespace CG
         void Update(double dt);
         void Render();
 
+        void GLInit();
+
     private:
         GLFWwindow* mainWindow;
 

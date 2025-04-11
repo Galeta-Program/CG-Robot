@@ -57,6 +57,8 @@ namespace CG
 			return false;
 		}
 
+		GLInit();
+
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -179,5 +181,12 @@ namespace CG
 		glViewport(0, 0, display_w, display_h);
 
 		mainScene->Render();
+	}
+	void App::GLInit()
+	{
+		glEnable(GL_DEPTH_TEST);
+		glCullFace(GL_BACK);
+		glEnable(GL_CULL_FACE);
+		glClearColor(0.0, 0.0, 0.0, 1); //black screen
 	}
 }

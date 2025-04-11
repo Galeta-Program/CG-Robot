@@ -150,6 +150,12 @@
     <ClCompile Include="..\include\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\include\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\src\App\App.cpp" />
+    <ClCompile Include="..\src\Graphic\ShaderProgram\ShaderProgram.cpp" />
+    <ClCompile Include="..\src\Graphic\Texture.cpp" />
+    <ClCompile Include="..\src\Graphic\UBO.cpp" />
+    <ClCompile Include="..\src\Graphic\VAO.cpp" />
+    <ClCompile Include="..\src\Model\Model.cpp" />
+    <ClCompile Include="..\src\Model\Part.cpp" />
     <ClCompile Include="..\src\Scene\Camera.cpp" />
     <ClCompile Include="..\src\Scene\MainScene.cpp" />
     <ClCompile Include="..\src\Utilty\OBJLoader.cpp" />
@@ -164,6 +170,13 @@
     <ClInclude Include="..\include\imgui\imgui.h" />
     <ClInclude Include="..\include\imgui\imgui_internal.h" />
     <ClInclude Include="..\src\App\App.h" />
+    <ClInclude Include="..\src\Graphic\ShaderProgram\ShaderProgram.h" />
+    <ClInclude Include="..\src\Graphic\Texture.h" />
+    <ClInclude Include="..\src\Graphic\UBO.h" />
+    <ClInclude Include="..\src\Graphic\VAO.h" />
+    <ClInclude Include="..\src\Graphic\VBO.h" />
+    <ClInclude Include="..\src\Model\Model.h" />
+    <ClInclude Include="..\src\Model\Part.h" />
     <ClInclude Include="..\src\Scene\Camera.h" />
     <ClInclude Include="..\src\Scene\MainScene.h" />
     <ClInclude Include="..\src\stb_image.h" />

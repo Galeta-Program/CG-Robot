@@ -11,6 +11,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Camera.h"
+#include "../Graphic/ShaderProgram/shaderProgram.h"
+#include "../Model/Model.h"
+#include "../Graphic/UBO.h"
 
 constexpr auto PARTSNUM = 15;
 
@@ -38,8 +41,6 @@ namespace CG
 		auto LoadScene() -> bool;
 
 		void LoadModel();
-		void Load2Buffer(const char* obj, int i);
-		GLuint LoadTexture(std::string filename);
 
 		void UpdateAction(double dt);
 		void UpdateModel();
@@ -47,16 +48,10 @@ namespace CG
 	private:
 		Camera camera;
 
-		GLuint VAO;
-		GLuint VBO;
-		GLuint uVBO;
-		GLuint nVBO;
-		GLuint mVBO;
-		GLuint UBO;
-		std::array<GLuint, PARTSNUM> VBOs;
-		std::array<GLuint, PARTSNUM> uVBOs;
-		std::array<GLuint, PARTSNUM> nVBOs;
-		GLuint program;
+		Model robot;
+		UBO matVPUbo;
+
+		ShaderProgram program;
 
 		int action = 0; // idle
 		GLenum mode = 0; // fill
@@ -71,21 +66,12 @@ namespace CG
 		GLint MatricesIdx;
 		GLuint ModelID;
 
-		int vertices_size[PARTSNUM];
-		int uvs_size[PARTSNUM];
-		int normals_size[PARTSNUM];
 		int materialCount[PARTSNUM];
 
 		GLuint M_KaID;
 		GLuint M_KdID;
 		GLuint M_KsID;
 		GLuint TextureID;
-
-		std::vector<std::string> mtls[PARTSNUM];//use material
-		std::vector<unsigned int> faces[PARTSNUM];//face count
-		std::map<std::string, glm::vec3> KDs;//mtl-name&Kd
-		std::map<std::string, glm::vec3> KSs;//mtl-name&Ks
-		GLuint Texture;
 
 		glm::mat4 Model;
 		glm::mat4 Models[PARTSNUM];
