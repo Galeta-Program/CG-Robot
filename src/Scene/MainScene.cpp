@@ -7,8 +7,9 @@
 
 namespace CG
 {
-	MainScene::MainScene()
+	MainScene::MainScene(Camera& _camera)
 	{
+		camera = &_camera;
 	}
 
 	MainScene::~MainScene()
@@ -22,7 +23,7 @@ namespace CG
 
 	void MainScene::Update(double dt)
 	{
-		UpdateAction(dt);
+		//UpdateAction(dt);
 	}
 
 	void MainScene::Render()
@@ -34,66 +35,15 @@ namespace CG
 
 		//update data to UBO for MVP
 		matVPUbo.bind();
-		matVPUbo.fillInData(0, sizeof(glm::mat4), camera.GetViewMatrix());
-		matVPUbo.fillInData(sizeof(glm::mat4), sizeof(glm::mat4), camera.GetProjectionMatrix());
+		matVPUbo.fillInData(0, sizeof(glm::mat4), camera->GetViewMatrix());
+		matVPUbo.fillInData(sizeof(glm::mat4), sizeof(glm::mat4), camera->GetProjectionMatrix());
 		matVPUbo.unbind();
 
 		robot.render(program.getId());
 
 		GLCall(glFlush());
 	}
-
-	void MainScene::OnResize(int width, int height)
-	{
-		std::cout << "MainScene Resize: " << width << " " << height << std::endl;
-	}
-
-	void MainScene::OnKeyboard(int key, int action)
-	{
-		std::cout << "MainScene OnKeyboard: " << key << " " << action << std::endl;
-
-		if (action == GLFW_RELEASE || action == GLFW_REPEAT)
-		{
-			switch (key)
-			{
-			case GLFW_KEY_1:
-				angle += 5;
-				if (angle >= 360) angle = 0;
-				printf("beta:%f\n", angle);
-				break;
-			case GLFW_KEY_2:
-				angle -= 5;
-				if (angle <= 0) angle = 360;
-				printf("beta:%f\n", angle);
-				break;
-			case GLFW_KEY_W:
-				eyedistance -= 0.5;
-				break;
-			case GLFW_KEY_S:
-				eyedistance += 0.5;
-				break;
-			case GLFW_KEY_A:
-				eyeAngley -= 10;
-				break;
-			case GLFW_KEY_D:
-				eyeAngley += 10;
-				break;
-			case GLFW_KEY_R:
-				angles[1] -= 5;
-				if (angles[1] == -360) angles[1] = 0;
-				movey = 0;
-				movex = 0;
-				break;
-			case GLFW_KEY_T:
-				angles[2] -= 5;
-				if (angles[2] == -360) angles[2] = 0;
-				movey = 0;
-				movex = 0;
-				break;
-			}
-		}
-	}
-
+	
 	void MainScene::ResetAction()
 	{
 		this->action = 0; // idle
@@ -122,14 +72,6 @@ namespace CG
 
 	auto MainScene::LoadScene() -> bool
 	{
-		// set camara
-		float eyeRadiany = glm::radians(eyeAngley);
-		camera.LookAt(
-			glm::vec3(eyedistance * sin(eyeRadiany), 2, eyedistance * cos(eyeRadiany)), // Camera is at (0,0,20), in World Space
-			glm::vec3(0, 0, 0), // and looks at the origin
-			glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
-		);
-
 		ShaderInfo shaders[] = {
 			{ GL_VERTEX_SHADER, "../res/shaders/DSPhong_Material.vp" }, //vertex shader
 			{ GL_FRAGMENT_SHADER, "../res/shaders/DSPhong_Material.fp" }, //fragment shader
@@ -150,9 +92,6 @@ namespace CG
 		if (TextureID == -1) std::cout << "Error! Couldn't find this uniform in shader" << std::endl;
 		else std::cout << "This uniform is successfully found in shader" << std::endl;
 		*/
-
-		// Camera matrix
-		camera.LookAt(glm::vec3(0, -10, 60), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 
 		LoadModel();
 
@@ -232,19 +171,21 @@ namespace CG
 		robot.stand();
 	}
 
-
+	/*
 	void MainScene::UpdateAction(double dt)
 	{
 		static double _frame = 0;
 
 		if (action == 0) // stand
 		{
+			
 			_frame = 0;
 			for (int i = 0; i < PARTSNUM; i++)
 			{
 				angles[i] = 0.0f;
 			}
 			position = 0;
+			
 		}
 		else if (action == 1) // walk
 		{
@@ -295,5 +236,5 @@ namespace CG
 		}
 	}
 
-	
+	*/
 }

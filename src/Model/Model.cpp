@@ -358,9 +358,9 @@ void Model::stand()
 	parts[RIGHT_HAND].setTranslate(glm::vec3(-3.650000, -8.500000, 3.900000));	// right_hand	
 	parts[BOTTOM_BODY].setTranslate(glm::vec3(0.000000, -3.550000, 0.000000));	// bottom_body
 	parts[LEFT_THIGH].setTranslate(glm::vec3(3.250000, -6.650000, 2.200000));	// left_thigh
-	parts[LEFT_CALF].setTranslate(glm::vec3(3.200000, -13.100000, 1.150000));	// left_calf
-	parts[LEFT_FOOT].setTranslate(glm::vec3(1.350000, -16.799999, -1.150000));	// left_foot
+	parts[LEFT_CALF].setTranslate(glm::vec3(3.000000, -10.000000, 1.150000));	// left_calf
+	parts[LEFT_FOOT].setTranslate(glm::vec3(1.350000, -16.500000, -1.550000));	// left_foot
 	parts[RIGHT_THIGH].setTranslate(glm::vec3(-3.250000, -6.650000, 2.200000));	// right_thigh
-	parts[RIGHT_CALF].setTranslate(glm::vec3(-3.350000, -13.100000, 1.150000));	// right_calf
-	parts[RIGHT_FOOT].setTranslate(glm::vec3(-1.350000, -16.799999, -1.150000));// right_foot
+	parts[RIGHT_CALF].setTranslate(glm::vec3(-3.350000, -10.000000, 1.150000));	// right_calf
+	parts[RIGHT_FOOT].setTranslate(glm::vec3(-1.350000, -16.500000, -1.550000));// right_foot
 }

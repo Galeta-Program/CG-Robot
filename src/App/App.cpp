@@ -8,14 +8,174 @@
 
 #include "App.h"
 
+
 namespace CG
 {
-	App::App()
+
+	double lastCursorX;
+	double lastCursorY;
+
+	bool mouseMiddlePressed;
+	bool mouseRightPressed;
+
+
+	static void keyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
+	{
+		App* app = static_cast<App*>(glfwGetWindowUserPointer(window));
+		Camera* camera = &(app->getCamera());
+		glm::vec3 cameraPos = camera->getPos();
+		glm::vec3 cameraTarget = camera->getTarget();
+		const float ROTATE_SPEED = 2.0f;
+		const float TRANSLATE_SPEED = 0.5f;
+
+		if (action == GLFW_REPEAT || action == GLFW_PRESS)
+		{
+			if (key == GLFW_KEY_W) // camera forward
+			{
+				if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
+					cameraPos[2] -= TRANSLATE_SPEED;
+					camera->setTarget(glm::vec3(cameraTarget[0], cameraTarget[1], cameraTarget[2] - TRANSLATE_SPEED));
+					camera->setPos(cameraPos);
+				}
+				else
+				{
+					camera->rotateAround(-ROTATE_SPEED, glm::vec3(1.0f, 0.0f, 0.0f));
+				}
+			}
+			if (key == GLFW_KEY_S) // camera backward
+			{
+				if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
+					cameraPos[2] += TRANSLATE_SPEED;
+					camera->setTarget(glm::vec3(cameraTarget[0], cameraTarget[1], cameraTarget[2] + TRANSLATE_SPEED));
+					camera->setPos(cameraPos);
+				}
+				else
+				{
+					camera->rotateAround(ROTATE_SPEED, glm::vec3(1.0f, 0.0f, 0.0f));
+				}
+			}
+			if (key == GLFW_KEY_D) // camera go right
+			{
+				if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
+					cameraPos[0] += TRANSLATE_SPEED;
+					camera->setTarget(glm::vec3(cameraTarget[0] + TRANSLATE_SPEED, cameraTarget[1], cameraTarget[2]));
+					camera->setPos(cameraPos);
+				}
+				else
+				{
+					camera->rotateAround(ROTATE_SPEED, glm::vec3(0.0f, 1.0f, 0.0f));
+
+				}
+			}
+			if (key == GLFW_KEY_A) // camera go left
+			{
+				if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
+					cameraPos[0] -= TRANSLATE_SPEED;
+					camera->setTarget(glm::vec3(cameraTarget[0] - TRANSLATE_SPEED, cameraTarget[1], cameraTarget[2]));
+					camera->setPos(cameraPos);
+				}
+				else
+				{
+					camera->rotateAround(-ROTATE_SPEED, glm::vec3(0.0f, 1.0f, 0.0f));
+
+				}
+			}
+			if (key == GLFW_KEY_E) // camera go up
+			{
+				cameraPos[1] += TRANSLATE_SPEED;
+				camera->setPos(cameraPos);
+				if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
+					camera->setTarget(glm::vec3(cameraTarget[0], cameraTarget[1] + TRANSLATE_SPEED, cameraTarget[2]));
+				}
+			}
+			if (key == GLFW_KEY_Q) // camera go down
+			{
+				cameraPos[1] -= TRANSLATE_SPEED;
+				camera->setPos(cameraPos);
+				if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
+					camera->setTarget(glm::vec3(cameraTarget[0], cameraTarget[1] - TRANSLATE_SPEED, cameraTarget[2]));
+				}
+			}
+		}
+	}
+
+	static void windowResize(GLFWwindow* window, int width, int height)
+	{}
+
+	static void mouseEvent(GLFWwindow* window, int button, int action, int mods)
+	{
+
+		ImGui_ImplGlfw_MouseButtonCallback(window, button, action, mods);
+
+		ImGuiIO& io = ImGui::GetIO();
+		if (!io.WantCaptureMouse) {
+			if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS)
+			{
+				glfwGetCursorPos(window, &lastCursorX, &lastCursorY);
+				mouseMiddlePressed = true;
+
+			}
+			if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_RELEASE)
+			{
+				mouseMiddlePressed = false;
+
+			}
+			if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
+			{
+				glfwGetCursorPos(window, &lastCursorX, &lastCursorY);
+				mouseRightPressed = true;
+			}
+			if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE)
+			{
+				mouseRightPressed = false;
+			}
+		}
+	}
+
+	static void cursorEvent(GLFWwindow* window, double xpos, double ypos)
+	{
+		if (mouseMiddlePressed || mouseRightPressed)
+		{
+			App* app = static_cast<App*>(glfwGetWindowUserPointer(window));
+			Camera* camera = &(app->getCamera());
+			glm::vec3 cameraPos = camera->getPos();
+			glm::vec3 cameraTarget = camera->getTarget();
+
+			double x = xpos - lastCursorX;
+			double y = ypos - lastCursorY;
+
+			float translationSpeedFactor = 0.125f;
+			float rotationSpeedFactor = 0.75f;
+
+			if (mouseMiddlePressed)
+			{
+				camera->rotateAround(-y * rotationSpeedFactor, glm::vec3(1.0f, 0.0f, 0.0f));
+				camera->rotateAround(-x * rotationSpeedFactor, glm::vec3(0.0f, 1.0f, 0.0f));
+			}
+
+			if (mouseRightPressed)
+			{
+				cameraPos[0] += -x * translationSpeedFactor;
+				cameraPos[1] += y * translationSpeedFactor;
+
+				camera->setTarget(glm::vec3(cameraTarget[0] - x * translationSpeedFactor, cameraTarget[1] + y * translationSpeedFactor, cameraTarget[2]));
+				camera->setPos(cameraPos);
+			}
+
+			lastCursorX = xpos;
+			lastCursorY = ypos;
+		}
+	}
+
+	App::App():
+		gui(nullptr, nullptr)
 	{
 		mainWindow = nullptr;
 
+		/*
 		controlWindow = nullptr;
 		showControlWindow = true;
+		*/
 
 		mainScene = nullptr;
 	}
@@ -35,14 +195,12 @@ namespace CG
 		if (!glfwInit())
 			return false;
 
-		// GL 4.6 + GLSL 460
-		const char* glsl_version = "#version 460";
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 
 		// Create window with graphics context
-		mainWindow = glfwCreateWindow(1280, 720, "cg-gui", nullptr, nullptr);
+		mainWindow = glfwCreateWindow(1280, 720, "Group6", nullptr, nullptr);
 		if (mainWindow == nullptr)
 			return false;
 		glfwMakeContextCurrent(mainWindow);
@@ -59,49 +217,23 @@ namespace CG
 
 		GLInit();
 
-		// Setup Dear ImGui context
-		IMGUI_CHECKVERSION();
-		ImGui::CreateContext();
-		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
-		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;   // Enable Multi-Viewport / Platform Windows
-
-		// Setup Dear ImGui style
-		ImGui::StyleColorsDark();
-
-		// Setup Platform/Renderer backends
-		ImGui_ImplGlfw_InitForOpenGL(mainWindow, true);
-		ImGui_ImplOpenGL3_Init(glsl_version);
-
 		glfwSetWindowUserPointer(mainWindow, this);
-		glfwSetFramebufferSizeCallback(
-			mainWindow,
-			[](GLFWwindow* window, int w, int h)
-			{
-				auto app = static_cast<App*>(glfwGetWindowUserPointer(window));
-				auto mainScene = app->GetMainScene();
-				mainScene->OnResize(w, h);
-			}
-		);
+		glfwSetKeyCallback(mainWindow, keyPress);
+		glfwSetMouseButtonCallback(mainWindow, mouseEvent);
+		glfwSetCursorPosCallback(mainWindow, cursorEvent);
+		glfwSetFramebufferSizeCallback(mainWindow,windowResize);
 
-		glfwSetKeyCallback(
-			mainWindow,
-			[](GLFWwindow* window, int key, int scancode, int action, int mode)
-			{
-				auto app = static_cast<App*>(glfwGetWindowUserPointer(window));
-				auto mainScene = app->GetMainScene();
-				mainScene->OnKeyboard(key, action);
-			}
-		);
+		// Camera matrix
+		camera.LookAt(glm::vec3(0, -20, 40), glm::vec3(0, -20, 0), glm::vec3(0, 1, 0));
 
-		controlWindow = new ControlWindow();
-		controlWindow->Initialize();
+		//controlWindow = new ControlWindow();
+		//controlWindow->Initialize();
 
-		mainScene = new MainScene();
+		mainScene = new MainScene(camera);
 		mainScene->Initialize();
 
-		controlWindow->SetTargetScene(mainScene);
+		//controlWindow->SetTargetScene(mainScene);
+		gui.init(mainWindow, mainScene);
 
 		// Initialization done
 		return true;
@@ -123,27 +255,23 @@ namespace CG
 			timeLast = timeNow;
 			Update(timeDelta);
 
-			// Start the Dear ImGui frame
-			ImGui_ImplOpenGL3_NewFrame();
-			ImGui_ImplGlfw_NewFrame();
-			ImGui::NewFrame();
+			// Render 3D scene
+			Render();
+			gui.render();
 
+			/*
 			if (showControlWindow)
 			{
 				controlWindow->Display();
 			}
+			*/
 
-			// GUI Rendering
-			ImGui::Render();
-
-			// Render 3D scene
-			Render();
-
-			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+			
 
 			// Update and Render additional Platform Windows
 			// (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
 			//  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
+			
 			ImGuiIO& io = ImGui::GetIO();
 			(void)io;
 			if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)

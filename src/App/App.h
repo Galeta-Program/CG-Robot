@@ -10,6 +10,8 @@
 
 #include "Window/ControlWindow.h"
 #include "Scene/MainScene.h"
+#include "../Scene/GUI.h"
+#include "../Scene/Camera.h"
 
 namespace CG
 {
@@ -23,6 +25,9 @@ namespace CG
         void Loop();
         void Terminate();
 
+        void rotateAround(float angle, glm::vec3 axis);
+        inline Camera& getCamera() { return camera; }
+
     private:
         void Update(double dt);
         void Render();
@@ -32,10 +37,16 @@ namespace CG
     private:
         GLFWwindow* mainWindow;
 
-        ControlWindow* controlWindow;
-        bool showControlWindow;
-
+        //ControlWindow* controlWindow;
+        //bool showControlWindow;
+        GUI gui;
         MainScene* mainScene;
+        Camera camera;
+        float angles[PARTSNUM];
+        float position = 0.0;
+        float angle = 0.0;
+        float eyeAngley = 0.0;
+        float eyedistance = 40.0;
 
         double timeNow = 0;
         double timeLast = 0;
