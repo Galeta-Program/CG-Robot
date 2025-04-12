@@ -4,6 +4,22 @@
 #include "../src/Utilty/OBJLoader.hpp"
 #include "Part.h"
 
+#define TOP_BODY 0
+#define LEFT_UPPER_ARM 1
+#define LEFT_LOWER_ARM 2
+#define LEFT_HAND 3
+#define HEAD 4
+#define RIGHT_UPPER_ARM 5
+#define RIGHT_LOWER_ARM 6
+#define RIGHT_HAND 7
+#define BOTTOM_BODY 8
+#define LEFT_THIGH 9
+#define LEFT_CALF 10
+#define LEFT_FOOT 11
+#define RIGHT_THIGH 12
+#define RIGHT_CALF 13
+#define RIGHT_FOOT 14
+
 void Model::initialize(std::vector<std::string>& mtlPaths, std::vector<std::string>& objPaths)
 {
 	std::vector<glm::vec3> Kds;
@@ -28,6 +44,21 @@ void Model::initialize(std::vector<std::string>& mtlPaths, std::vector<std::stri
 		texture.LoadTexture("../res/models2/" + textureName);
 	else
 		texture.LoadTexture("../res/models2/Robot_Base_color 7.png");
+}
+
+void Model::setPartsRelationship(std::vector<std::vector<unsigned int>> relationships)
+{
+	for (auto relationship : relationships)
+	{
+		std::vector<Node*> children;
+		// first one is parent, and the others are its children
+		for (int i = 1; i < relationship.size(); i++)
+		{
+			children.emplace_back(&parts[relationship[i]]);
+		}
+
+		parts[relationship[0]].addChildren(children);		
+	}
 }
 
 void Model::mapMtlNameToKds(std::vector<std::string>& materials, std::vector<glm::vec3>& Kds)
@@ -245,8 +276,12 @@ void Model::render(GLuint program)
 		Part& currentPart = parts[i].getPart();
 
 		GLCall(GLuint ModelID = glGetUniformLocation(program, "Model"));
+
 		glm::mat4 modelMat = parts[i].getModelMatrix();
-		GLCall(glUniformMatrix4fv(ModelID, 1, GL_FALSE, &modelMat[0][0]));
+		glm::mat4 parentModelMat = parts[i].getParentModelMatrix();
+		glm::mat4 overallModelMat = parentModelMat * modelMat;
+
+		GLCall(glUniformMatrix4fv(ModelID, 1, GL_FALSE, &overallModelMat[0][0]));
 
 		vbo.bind();
 		// 1rst attribute buffer : vertices
@@ -309,4 +344,23 @@ void Model::render(GLuint program)
 	texture.bind(0);
 	GLuint TextureID = glGetUniformLocation(program, "Texture");
 	GLCall(glUniform1i(TextureID, 0));
+}
+
+void Model::stand()
+{
+	parts[TOP_BODY].setTranslate(glm::vec3(0.000000, 0.000000, 0.000000));		// top_body
+	parts[LEFT_UPPER_ARM].setTranslate(glm::vec3(7.650000, 0.000000, 0.000000));		// left_upper_arm
+	parts[LEFT_LOWER_ARM].setTranslate(glm::vec3(2.900000, -6.400000, 0.000000));	// left_lower_arm
+	parts[LEFT_HAND].setTranslate(glm::vec3(3.650000, -8.500000, 3.900000));	// left_hand
+	parts[HEAD].setTranslate(glm::vec3(0.000000, 3.100000, 0.000000));		// head
+	parts[RIGHT_UPPER_ARM].setTranslate(glm::vec3(-7.650000, 0.050000, 0.000000));	// right_upper_arm
+	parts[RIGHT_LOWER_ARM].setTranslate(glm::vec3(-2.950000, -6.400000, 0.000000));	// right_lower_arm
+	parts[RIGHT_HAND].setTranslate(glm::vec3(-3.650000, -8.500000, 3.900000));	// right_hand	
+	parts[BOTTOM_BODY].setTranslate(glm::vec3(0.000000, -3.550000, 0.000000));	// bottom_body
+	parts[LEFT_THIGH].setTranslate(glm::vec3(3.250000, -6.650000, 2.200000));	// left_thigh
+	parts[LEFT_CALF].setTranslate(glm::vec3(3.200000, -13.100000, 1.150000));	// left_calf
+	parts[LEFT_FOOT].setTranslate(glm::vec3(1.350000, -16.799999, -1.150000));	// left_foot
+	parts[RIGHT_THIGH].setTranslate(glm::vec3(-3.250000, -6.650000, 2.200000));	// right_thigh
+	parts[RIGHT_CALF].setTranslate(glm::vec3(-3.350000, -13.100000, 1.150000));	// right_calf
+	parts[RIGHT_FOOT].setTranslate(glm::vec3(-1.350000, -16.799999, -1.150000));// right_foot
 }

@@ -5,38 +5,6 @@
 #include "MainScene.h"
 #include "../Utilty/Error.h"
 
-static glm::mat4 translate(float x, float y, float z)
-{
-	glm::vec4 t = glm::vec4(x, y, z, 1); //w = 1 ,則x,y,z=0時也能translate
-	glm::vec4 c1 = glm::vec4(1, 0, 0, 0);
-	glm::vec4 c2 = glm::vec4(0, 1, 0, 0);
-	glm::vec4 c3 = glm::vec4(0, 0, 1, 0);
-	glm::mat4 M = glm::mat4(c1, c2, c3, t);
-	return M;
-}
-static glm::mat4 scale(float x, float y, float z)
-{
-	glm::vec4 c1 = glm::vec4(x, 0, 0, 0);
-	glm::vec4 c2 = glm::vec4(0, y, 0, 0);
-	glm::vec4 c3 = glm::vec4(0, 0, z, 0);
-	glm::vec4 c4 = glm::vec4(0, 0, 0, 1);
-	glm::mat4 M = glm::mat4(c1, c2, c3, c4);
-	return M;
-}
-
-static glm::mat4 rotate(float angle, float x, float y, float z)
-{
-	float r = glm::radians(angle);
-	glm::mat4 M = glm::mat4(1);
-
-	glm::vec4 c1 = glm::vec4(cos(r) + (1 - cos(r)) * x * x, (1 - cos(r)) * y * x + sin(r) * z, (1 - cos(r)) * z * x - sin(r) * y, 0);
-	glm::vec4 c2 = glm::vec4((1 - cos(r)) * y * x - sin(r) * z, cos(r) + (1 - cos(r)) * y * y, (1 - cos(r)) * z * y + sin(r) * x, 0);
-	glm::vec4 c3 = glm::vec4((1 - cos(r)) * z * x + sin(r) * y, (1 - cos(r)) * z * y - sin(r) * x, cos(r) + (1 - cos(r)) * z * z, 0);
-	glm::vec4 c4 = glm::vec4(0, 0, 0, 1);
-	M = glm::mat4(c1, c2, c3, c4);
-	return M;
-}
-
 namespace CG
 {
 	MainScene::MainScene()
@@ -184,7 +152,7 @@ namespace CG
 		*/
 
 		// Camera matrix
-		camera.LookAt(glm::vec3(0, 10, 25), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+		camera.LookAt(glm::vec3(0, -10, 60), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 
 		LoadModel();
 
@@ -222,31 +190,46 @@ namespace CG
 			});
 
 		std::vector<std::string> objPaths({
-			"../res/models2/top_body.obj",
+			"../res/models2/top_body.obj", // 0
 
-			"../res/models2/left_upper_arm.obj",
-			"../res/models2/left_lower_arm.obj",
-			"../res/models2/left_hand.obj",
+			"../res/models2/left_upper_arm.obj", // 1
+			"../res/models2/left_lower_arm.obj", // 2
+			"../res/models2/left_hand.obj", // 3
 
-			"../res/models2/head.obj",
+			"../res/models2/head.obj", // 4
 
-			"../res/models2/right_upper_arm.obj",
-			"../res/models2/right_lower_arm.obj",
-			"../res/models2/right_hand.obj",
+			"../res/models2/right_upper_arm.obj", // 5
+			"../res/models2/right_lower_arm.obj", // 6
+			"../res/models2/right_hand.obj", // 7
 
-			"../res/models2/bottom_body.obj",
+			"../res/models2/bottom_body.obj", // 8
 
-			"../res/models2/left_thigh.obj",
-			"../res/models2/left_calf.obj", 
-			"../res/models2/left_foot.obj", 
+			"../res/models2/left_thigh.obj", // 9
+			"../res/models2/left_calf.obj", // 10
+			"../res/models2/left_foot.obj", // 11
 
-			"../res/models2/right_thigh.obj",
-			"../res/models2/right_calf.obj", 
-			"../res/models2/right_foot.obj", 
+			"../res/models2/right_thigh.obj", //12
+			"../res/models2/right_calf.obj", // 13
+			"../res/models2/right_foot.obj", // 14
+			});
+
+		std::vector<std::vector<unsigned int>> relationship({
+			{0, 1, 4, 5, 8},
+			{1, 2},
+			{2, 3},
+			{5, 6},
+			{6, 7},
+			{8, 9, 12},
+			{9, 10},
+			{10, 11},
+			{12, 13},
+			{13, 14}
 			});
 
 		robot.initialize(mtlPaths, objPaths);
+		robot.setPartsRelationship(relationship);
 		robot.gatherPartsData();
+		robot.stand();
 	}
 
 

@@ -46,11 +46,10 @@ namespace CG
 
 	private:
 		Camera camera;
-
 		Model robot;
-		UBO matVPUbo;
 
 		ShaderProgram program;
+		UBO matVPUbo;
 
 		int action = 0; // idle
 		GLenum mode = GL_FILL; 
@@ -60,7 +59,6 @@ namespace CG
 		float angle = 0.0;
 		float eyeAngley = 0.0;
 		float eyedistance = 40.0;
-		float size = 1;
 		GLfloat movex, movey;
 
 		/* unused
@@ -72,8 +70,7 @@ namespace CG
 		GLuint TextureID;
 		*/
 
-		glm::mat4 Model;
-		glm::mat4 Models[PARTSNUM];
+		
 	};
 }
 

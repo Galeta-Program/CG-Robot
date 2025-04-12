@@ -31,11 +31,14 @@ public:
 	~Model() {}
 
 	void initialize(std::vector<std::string>& mtlPaths, std::vector<std::string>& objPaths);
+	void setPartsRelationship(std::vector<std::vector<unsigned int>> relationships);
 	void mapMtlNameToKds(std::vector<std::string>& materials, std::vector<glm::vec3>& Kds);
 	void loadModel(const char* mtlPaths, const char* objPath);
 	void gatherPartsData();
-
 	void render(GLuint program);
+
+	// motion
+	void stand();
 
 	inline Node& getPart(unsigned int index) { return parts[index]; }
 };
