@@ -1,5 +1,7 @@
 #include "UBO.h"
 
+#include "../Utilty/Error.h"
+
 UBO::UBO(unsigned int _size)
 {
 	initialize(_size);
@@ -14,7 +16,7 @@ UBO::UBO(UBO&& other) noexcept:
 
 UBO::~UBO()
 {
-	glDeleteBuffers(1, &id);
+	GLCall(glDeleteBuffers(1, &id));
 }
 
 UBO& UBO::operator=(UBO&& other) noexcept
@@ -23,7 +25,7 @@ UBO& UBO::operator=(UBO&& other) noexcept
 	{
 		if (id != 0)
 		{
-			glDeleteBuffers(1, &id);
+			GLCall(glDeleteBuffers(1, &id));
 		}
 		size = other.size;
 		id = other.id;
@@ -35,34 +37,34 @@ UBO& UBO::operator=(UBO&& other) noexcept
 void UBO::associateWithShaderBlock(unsigned int program, const char* uniformBlockName, unsigned int bindingPoint)
 {
 	int UBOsize = 0;
-	int idx = glGetUniformBlockIndex(program, uniformBlockName);
+	GLCall(int idx = glGetUniformBlockIndex(program, uniformBlockName));
 
-	glGetActiveUniformBlockiv(program, idx, GL_UNIFORM_BLOCK_DATA_SIZE, &UBOsize);
+	GLCall(glGetActiveUniformBlockiv(program, idx, GL_UNIFORM_BLOCK_DATA_SIZE, &UBOsize));
 	//bind UBO to its idx
-	glBindBufferRange(GL_UNIFORM_BUFFER, 0, id, 0, UBOsize);
-	glUniformBlockBinding(program, idx, bindingPoint);
+	GLCall(glBindBufferRange(GL_UNIFORM_BUFFER, 0, id, 0, UBOsize));
+	GLCall(glUniformBlockBinding(program, idx, bindingPoint));
 }
 
 void UBO::fillInData(GLintptr offset, GLintptr size, const void* data)
 {
-	glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
+	GLCall(glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data));
 }
 
 
 void UBO::initialize(unsigned int _size)
 {
-	glGenBuffers(1, &id);
-	glBindBuffer(GL_UNIFORM_BUFFER, id);
-	glBufferData(GL_UNIFORM_BUFFER, size, 0, GL_DYNAMIC_DRAW);
+	GLCall(glGenBuffers(1, &id));
+	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, id));
+	GLCall(glBufferData(GL_UNIFORM_BUFFER, _size, 0, GL_DYNAMIC_DRAW));
 	size = _size;
 }
 
 void UBO::bind() const
 {
-	glBindBuffer(GL_UNIFORM_BUFFER, id);
+	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, id));
 }
 
 void UBO::unbind() const
 {
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 }

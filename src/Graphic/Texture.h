@@ -10,12 +10,12 @@ private:
 	int width, height, channels;
 
 public:
-	Texture();
-	Texture(Texture&& other);
+	Texture(): id(0), width(0), height(0), channels(0) {}
+	Texture(Texture&& other) noexcept;
 	Texture(const Texture& other) = delete;
 	~Texture();
 
-	Texture& operator=(Texture&& other);
+	Texture& operator=(Texture&& other) noexcept;
 	Texture& operator=(const Texture& other) = delete;
 
 	GLuint LoadTexture(std::string filename);

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Part.h"
+#include "../Scene/SceneGraph/Node.h"
 #include "../Graphic/VAO.h"
 #include "../Graphic/Texture.h"
 
@@ -24,7 +24,7 @@ private:
 	std::map<std::string, glm::vec3> KSs; //mtl-name&Ks -> not used now
 
 	int partSum;
-	std::vector<Part> parts;
+	std::vector<Node> parts;
 
 public:
 	Model() : partSum(0) {}
@@ -37,6 +37,6 @@ public:
 
 	void render(GLuint program);
 
-	inline Part& getPart(unsigned int index) { return parts[index]; }
+	inline Node& getPart(unsigned int index) { return parts[index]; }
 };
 

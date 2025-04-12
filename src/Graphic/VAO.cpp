@@ -1,12 +1,13 @@
 #include "VAO.h"
+#include "../Utilty/Error.h"
 
 #include <GL/glew.h>
 
 
 VAO::VAO()
 {
-	glGenVertexArrays(1, &id);
-	glBindVertexArray(id);
+	GLCall(glGenVertexArrays(1, &id));
+	GLCall(glBindVertexArray(id));
 }
 
 VAO::VAO(VAO&& other) noexcept : id(other.id)
@@ -16,7 +17,7 @@ VAO::VAO(VAO&& other) noexcept : id(other.id)
 
 VAO::~VAO()
 {
-	glDeleteVertexArrays(1, &id);
+	GLCall(glDeleteVertexArrays(1, &id));
 }
 
 VAO& VAO::operator=(VAO&& other) noexcept
@@ -25,7 +26,7 @@ VAO& VAO::operator=(VAO&& other) noexcept
 	{
 		if (id != 0)
 		{
-			glDeleteVertexArrays(1, &id);
+			GLCall(glDeleteVertexArrays(1, &id));
 		}
 
 		id = other.id;
@@ -37,10 +38,10 @@ VAO& VAO::operator=(VAO&& other) noexcept
 
 void VAO::bind() const
 {
-	glBindVertexArray(id);
+	GLCall(glBindVertexArray(id));
 }
 
 void VAO::unbind() const
 {
-	glBindVertexArray(0);
+	GLCall(glBindVertexArray(0));
 }

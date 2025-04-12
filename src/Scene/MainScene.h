@@ -43,7 +43,6 @@ namespace CG
 		void LoadModel();
 
 		void UpdateAction(double dt);
-		void UpdateModel();
 
 	private:
 		Camera camera;
@@ -54,7 +53,7 @@ namespace CG
 		ShaderProgram program;
 
 		int action = 0; // idle
-		GLenum mode = 0; // fill
+		GLenum mode = GL_FILL; 
 
 		float angles[PARTSNUM];
 		float position = 0.0;
@@ -63,15 +62,15 @@ namespace CG
 		float eyedistance = 40.0;
 		float size = 1;
 		GLfloat movex, movey;
-		GLint MatricesIdx;
-		GLuint ModelID;
 
+		/* unused
 		int materialCount[PARTSNUM];
-
+		GLuint ModelID;
 		GLuint M_KaID;
 		GLuint M_KdID;
 		GLuint M_KsID;
 		GLuint TextureID;
+		*/
 
 		glm::mat4 Model;
 		glm::mat4 Models[PARTSNUM];

@@ -1,4 +1,6 @@
 #pragma once
+
+#include "../Utilty/Error.h"
 #include <vector>
 #include <GL/glew.h>
 #include <iostream>
@@ -38,12 +40,12 @@ public:
 template< typename T >
 void VBO<T>::copyAndWrite(GLuint readBuffer, GLuint writeBuffer, GLintptr readOffset, GLintptr writeOffset, unsigned int size)
 {
-	glBindBuffer(GL_COPY_WRITE_BUFFER, readBuffer);
-	glBindBuffer(GL_COPY_READ_BUFFER, writeBuffer);
-	glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, readOffset, writeOffset, size);
-
-	glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
-	glBindBuffer(GL_COPY_READ_BUFFER, 0);
+	GLCall(glBindBuffer(GL_COPY_WRITE_BUFFER, writeBuffer));
+	GLCall(glBindBuffer(GL_COPY_READ_BUFFER, readBuffer));
+	GLCall(glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, readOffset, writeOffset, size));
+	
+	GLCall(glBindBuffer(GL_COPY_WRITE_BUFFER, 0));
+	GLCall(glBindBuffer(GL_COPY_READ_BUFFER, 0));
 }
 
 template<class T>
@@ -64,7 +66,7 @@ VBO<T>::~VBO()
 {
 	if (id != 0)
 	{
-		glDeleteBuffers(1, &id);
+		GLCall(glDeleteBuffers(1, &id));
 	}
 }
 
@@ -75,7 +77,7 @@ VBO<T>& VBO<T>::operator=(VBO<T>&& other) noexcept
 	{
 		if (id != 0)
 		{
-			glDeleteBuffers(1, &id);
+			GLCall(glDeleteBuffers(1, &id));
 		}
 
 		id = other.id;
@@ -88,10 +90,10 @@ VBO<T>& VBO<T>::operator=(VBO<T>&& other) noexcept
 template<class T>
 void VBO<T>::initialize(unsigned int size)
 {
-	glGenBuffers(1, &id);
-	glBindBuffer(GL_ARRAY_BUFFER, id);
-	glBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
-	size = 0;
+	GLCall(glGenBuffers(1, &id));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, id));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW));
+	size = size;
 }
 
 template<class T>
@@ -103,26 +105,26 @@ void VBO<T>::initialize(const std::vector<T>& v)
 		return;
 	}
 
-	glGenBuffers(1, &id);
-	glBindBuffer(GL_ARRAY_BUFFER, id);
-	glBufferData(GL_ARRAY_BUFFER, v.size() * sizeof(T), &v[0], GL_STATIC_DRAW);
+	GLCall(glGenBuffers(1, &id));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, id));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, v.size() * sizeof(T), &v[0], GL_STATIC_DRAW));
 	size = v.size();
 }
 
 template<class T>
 void VBO<T>::bind() const
 {
-	glBindBuffer(GL_ARRAY_BUFFER, id);
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, id));
 }
 
 template<class T>
 void VBO<T>::unbind() const
 {
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
 template<class T>
 void VBO<T>::invalid() const
 {
-	glInvalidateBufferData(id);
+	GLCall(glInvalidateBufferData(id));
 }

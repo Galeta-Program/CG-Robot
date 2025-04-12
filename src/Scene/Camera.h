@@ -13,14 +13,14 @@ namespace CG
 
         void LookAt(glm::vec3 eye, glm::vec3 center, glm::vec3 up);
 
-        auto GetProjectionMatrix() -> const glm::mat4
+        auto GetProjectionMatrix() -> const glm::mat4*
         {
-            return projection;
+            return &projection;
         }
 
-        auto GetViewMatrix() -> const glm::mat4
+        auto GetViewMatrix() -> const glm::mat4*
         {
-            return view;
+            return &view;
         }
 
         void SetFov(float degree)

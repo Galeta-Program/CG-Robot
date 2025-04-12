@@ -16,7 +16,10 @@ Part::Part(Part&& other) noexcept :
 	nVbo(std::move(other.nVbo)),
 	mVbo(std::move(other.mVbo)),
 	faces(std::move(other.faces)),
-	mtls(std::move(other.mtls))
+	mtls(std::move(other.mtls)),
+	verticesSize(other.verticesSize),
+	uvsSize(other.uvsSize),
+	normalsSize(other.normalsSize)
 {}
 
 Part::~Part()
@@ -34,6 +37,9 @@ Part& Part::operator=(Part&& other) noexcept
 		mVbo	= std::move(other.mVbo);
 		faces	= std::move(other.faces);
 		mtls	= std::move(other.mtls);
+		verticesSize = other.verticesSize;
+		uvsSize = other.uvsSize;
+		normalsSize = other.normalsSize;
 	}
 
 	return *this;
@@ -63,5 +69,5 @@ void Part::invalidBuffers()
 	vbo.invalid();
 	uVbo.invalid();
 	nVbo.invalid();
-	mVbo.invalid();
+	//mVbo.invalid();
 }

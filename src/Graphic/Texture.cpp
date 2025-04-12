@@ -1,6 +1,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 
 #include "Texture.h"
+#include "../Utilty/Error.h"
 #include "../src/stb_image.h"
 
 #include <iostream>
@@ -41,16 +42,15 @@ void Texture::bind(unsigned int textureUnit /* = 0 */) const
 		return;
 	}
 
-	glActiveTexture(GL_TEXTURE0 + textureUnit);
+	GLCall(glActiveTexture(GL_TEXTURE0 + textureUnit));
 	glBindTexture(GL_TEXTURE_2D, id);
 }
 
 GLuint Texture::LoadTexture(std::string filename)
 {
 	
-	GLuint texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
+	glGenTextures(1, &id);
+	glBindTexture(GL_TEXTURE_2D, id);
 
 	unsigned char* data = stbi_load(filename.c_str(), &width, &height, &channels, 0);
 	if (data)
@@ -65,7 +65,5 @@ GLuint Texture::LoadTexture(std::string filename)
 	}
 	stbi_image_free(data);
 
-	return texture;
-	
-	return 0;
+	return id;
 }
