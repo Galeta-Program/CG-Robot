@@ -9,6 +9,7 @@
 #include <imgui_internal.h>
 #include <imgui_impl_opengl3.h>
 #include <imgui_impl_glfw.h>
+#include <fstream>
 
 #define TOP_BODY 0
 #define LEFT_UPPER_ARM 1
@@ -59,6 +60,8 @@ namespace CG {
         bindScene(_scene);
         robot = scene->getModel();
         selectedNode = &(robot->getPart(HEAD));
+        editmodeFlag = false;
+        seperateMode = true;
     }
 
     void GUI::bindScene(MainScene* _scene)
@@ -92,23 +95,65 @@ namespace CG {
 
     void GUI::mainPanel()
     {
+        ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(320, ImGui::GetIO().DisplaySize.y), ImGuiCond_Always);
 
-        ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_FirstUseEver);
-        ImGui::SetNextWindowSize(ImVec2(300, 200), ImGuiCond_FirstUseEver);
+        ImGui::Begin("Panel", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
-        ImGui::Begin("Configure Panel");
+        if (ImGui::BeginTabBar("Mode"))
+        {
+            if (ImGui::BeginTabItem("Animation"))
+            {
+                editmodeFlag = false;
+                animationPanel();
+                ImGui::EndTabItem();
+            }
+            if (ImGui::BeginTabItem("Edit"))
+            {
+                editmodeFlag = true;
+                editPanel();
+                ImGui::EndTabItem();
+            }
+            
+            ImGui::EndTabBar();
+        }
+        ImGui::End();
+
+        if (editmodeFlag)
+        {
+            ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 320, 0), ImGuiCond_Always);
+            ImGui::SetNextWindowSize(ImVec2(320, 250), ImGuiCond_Always);
+
+            ImGui::Begin("Transform", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+            transformPanel(selectedNode);
+            ImGui::End();
+        }
+    }
+
+    void GUI::animationPanel()
+    {
+        ImGui::SeparatorText("Usage");
+        ImGui::Text("Select an animation to play.");
+    }
+
+    void GUI::editPanel()
+    {
         if (ImGui::Button("Report"))
         {
             report();
         }
         ImGui::SeparatorText("Usage");
         ImGui::Text("1. Press WASDQE to move camara.\n\
-2. Right click your mouse and drag it to move the camara up, down, left and right\n\
-3. Scroll your mouse up and down to voom the camera in and out.\n\
+2. Right click your mouse and drag it\n\
+   to move the camara up, down, left and right\n\
+3. Scroll your mouse up and down\n\
+   to voom the camera in and out.\n\
 4. Press ALT + WASD to rotate camara.\n\
-5. Press your mouse middle button to rotate camera.\n\
+5. Press your mouse middle button \n\
+   to rotate camera.\n\
 6. Choose a part to modify.\n\
-7. Press \"Report\" to output transformation info of each parts.\n");
+7. Press \"Report\" to output transformation\n\
+   info of each parts.\n");
         ImGui::SeparatorText("Parts");
         // Part names array
         const char* partNames[] = {
@@ -135,35 +180,27 @@ namespace CG {
             int index;
             switch (partSelected)
             {
-                case 0: index = 4; break;
-                case 1: index = 0; break;
-                case 2: index = 8; break;
-                case 3: index = 5; break;
-                case 4: index = 6; break;
-                case 5: index = 7; break;
-                case 6: index = 1; break;
-                case 7: index = 2; break;
-                case 8: index = 3; break;
-                case 9: index = 12; break;
-                case 10: index = 13; break;
-                case 11: index = 14; break;
-                case 12: index = 9; break;
-                case 13: index = 10; break;
-                case 14: index = 11; break;
+            case 0: index = 4; break;
+            case 1: index = 0; break;
+            case 2: index = 8; break;
+            case 3: index = 5; break;
+            case 4: index = 6; break;
+            case 5: index = 7; break;
+            case 6: index = 1; break;
+            case 7: index = 2; break;
+            case 8: index = 3; break;
+            case 9: index = 12; break;
+            case 10: index = 13; break;
+            case 11: index = 14; break;
+            case 12: index = 9; break;
+            case 13: index = 10; break;
+            case 14: index = 11; break;
             }
 
             Model* robot = scene->getModel();
             selectedNode = &robot->getPart(index);
         }
         ImGui::PopItemWidth();
-        ImGui::End();
-
-        ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_FirstUseEver);
-        ImGui::SetNextWindowSize(ImVec2(200, 200), ImGuiCond_FirstUseEver);
-        ImGui::Begin("Transformation of the Model");
-        transformPanel(selectedNode);
-        ImGui::End();
-
     }
 
     void GUI::transformPanel(Node* node)
@@ -208,6 +245,8 @@ namespace CG {
 
     void GUI::report()
     {
+        //TODO
+        std::ofstream outFile("../res/animation/report.txt");
         for (int i = 0; i < 15; i++)
         {
             Node* node = &(robot->getPart(i));

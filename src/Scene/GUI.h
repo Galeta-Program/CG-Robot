@@ -15,10 +15,13 @@ namespace CG {
 		Node* selectedNode;
 
 		bool seperateMode;
+		bool editmodeFlag;
 
 		int partSelected;
 		void startFrame();
 		void mainPanel();
+		void animationPanel();
+		void editPanel();
 		void transformPanel(Node* node);
 		void _render();
 
