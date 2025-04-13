@@ -102,7 +102,13 @@ namespace CG {
             report();
         }
         ImGui::SeparatorText("Usage");
-        ImGui::Text("1. WASDQE to move camara.\n2. Press ALT + WASD to rotate camara.\n 3. Choose a part to modify.\n 4. Press \"Report\" to output transformation info of each parts.");
+        ImGui::Text("1. Press WASDQE to move camara.\n\
+2. Right click your mouse and drag it to move the camara up, down, left and right\n\
+3. Scroll your mouse up and down to voom the camera in and out.\n\
+4. Press ALT + WASD to rotate camara.\n\
+5. Press your mouse middle button to rotate camera.\n\
+6. Choose a part to modify.\n\
+7. Press \"Report\" to output transformation info of each parts.\n");
         ImGui::SeparatorText("Parts");
         // Part names array
         const char* partNames[] = {
@@ -122,7 +128,6 @@ namespace CG {
             "Left Calf",
             "Left Foot"
         };
-
 
         ImGui::PushItemWidth(-1);  // Make ListBox fill available width
         if (ImGui::ListBox("##PartsList", &partSelected, partNames, IM_ARRAYSIZE(partNames), IM_ARRAYSIZE(partNames)))

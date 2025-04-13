@@ -11,7 +11,6 @@
 
 namespace CG
 {
-
 	double lastCursorX;
 	double lastCursorY;
 
@@ -27,82 +26,60 @@ namespace CG
 		if (!io.WantCaptureKeyboard) {
 			App* app = static_cast<App*>(glfwGetWindowUserPointer(window));
 			Camera* camera = &(app->getCamera());
-			glm::vec3 cameraPos = camera->getPos();
-			glm::vec3 cameraTarget = camera->getTarget();
-			const float ROTATE_SPEED = 2.0f;
-			const float TRANSLATE_SPEED = 0.5f;
+			const float rotatSpeed = 2.0f;
+			const float transSpeed = 0.5f;
 
 			if (action == GLFW_REPEAT || action == GLFW_PRESS)
 			{
 				if (key == GLFW_KEY_W) // camera forward
 				{
 					if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
-						glm::vec3 direction = cameraPos - cameraTarget;
-						direction = glm::normalize(direction);
-						camera->setPos(glm::vec3(cameraPos[0] - direction[0] * TRANSLATE_SPEED,
-							cameraPos[1] - direction[1] * TRANSLATE_SPEED,
-							cameraPos[2] - direction[2] * TRANSLATE_SPEED));
+						camera->zoom(-transSpeed);
+
 					}
 					else
 					{
-						camera->rotateAround(-ROTATE_SPEED, glm::vec3(1.0f, 0.0f, 0.0f));
+						camera->rotateAround(-rotatSpeed, glm::vec3(1.0f, 0.0f, 0.0f));
 					}
 				}
 				if (key == GLFW_KEY_S) // camera backward
 				{
 					if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
-						glm::vec3 direction = cameraPos - cameraTarget;
-						direction = glm::normalize(direction);
-						camera->setPos(glm::vec3(cameraPos[0] + direction[0] * TRANSLATE_SPEED,
-							cameraPos[1] + direction[1] * TRANSLATE_SPEED,
-							cameraPos[2] + direction[2] * TRANSLATE_SPEED));
+						camera->zoom(transSpeed);						
 					}
 					else
 					{
-						camera->rotateAround(ROTATE_SPEED, glm::vec3(1.0f, 0.0f, 0.0f));
+						camera->rotateAround(rotatSpeed, glm::vec3(1.0f, 0.0f, 0.0f));
 					}
 				}
 				if (key == GLFW_KEY_D) // camera go right
 				{
 					if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
-						cameraPos[0] += TRANSLATE_SPEED;
-						camera->setTarget(glm::vec3(cameraTarget[0] + TRANSLATE_SPEED, cameraTarget[1], cameraTarget[2]));
-						camera->setPos(cameraPos);
+						camera->flatTranslate(transSpeed, 0);
 					}
 					else
 					{
-						camera->rotateAround(ROTATE_SPEED, glm::vec3(0.0f, 1.0f, 0.0f));
-
+						camera->rotateAround(rotatSpeed, glm::vec3(0.0f, 1.0f, 0.0f));
 					}
 				}
 				if (key == GLFW_KEY_A) // camera go left
 				{
 					if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
-						cameraPos[0] -= TRANSLATE_SPEED;
-						camera->setTarget(glm::vec3(cameraTarget[0] - TRANSLATE_SPEED, cameraTarget[1], cameraTarget[2]));
-						camera->setPos(cameraPos);
+						camera->flatTranslate(-transSpeed, 0);
 					}
 					else
 					{
-						camera->rotateAround(-ROTATE_SPEED, glm::vec3(0.0f, 1.0f, 0.0f));
+						camera->rotateAround(-rotatSpeed, glm::vec3(0.0f, 1.0f, 0.0f));
 
 					}
 				}
 				if (key == GLFW_KEY_E) // camera go up
 				{
-					cameraPos[1] += TRANSLATE_SPEED;
-					camera->setPos(cameraPos);
-					if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
-						camera->setTarget(glm::vec3(cameraTarget[0], cameraTarget[1] + TRANSLATE_SPEED, cameraTarget[2]));
-					}
+					camera->flatTranslate(0, transSpeed);
 				}
 				if (key == GLFW_KEY_Q) // camera go down
 				{
-					cameraPos[1] -= TRANSLATE_SPEED;
-					camera->setPos(cameraPos);
-					if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
-						camera->setTarget(glm::vec3(cameraTarget[0], cameraTarget[1] - TRANSLATE_SPEED, cameraTarget[2]));
-					}
+					camera->flatTranslate(0, - transSpeed);
 				}
 			}
 		}
@@ -143,17 +120,12 @@ namespace CG
 
 	static void mouseScroll(GLFWwindow* window, double xoffset, double yoffset)
 	{
+		const float transSpeed = 1.5f;
+
 		App* app = static_cast<App*>(glfwGetWindowUserPointer(window));
 		Camera* camera = &(app->getCamera());
-		glm::vec3 cameraPos = camera->getPos();
-		glm::vec3 cameraTarget = camera->getTarget();
-		const float TRANSLATE_SPEED = 1.5f;
+		camera->zoom(-transSpeed * yoffset);
 
-		glm::vec3 direction = cameraPos - cameraTarget;
-		direction = glm::normalize(direction);
-		camera->setPos(glm::vec3(cameraPos[0] - direction[0] * TRANSLATE_SPEED * yoffset,
-			cameraPos[1] - direction[1] * TRANSLATE_SPEED * yoffset,
-			cameraPos[2] - direction[2] * TRANSLATE_SPEED * yoffset));
 	}
 
 	static void cursorEvent(GLFWwindow* window, double xpos, double ypos)
@@ -162,28 +134,22 @@ namespace CG
 		{
 			App* app = static_cast<App*>(glfwGetWindowUserPointer(window));
 			Camera* camera = &(app->getCamera());
-			glm::vec3 cameraPos = camera->getPos();
-			glm::vec3 cameraTarget = camera->getTarget();
 
 			double x = xpos - lastCursorX;
 			double y = ypos - lastCursorY;
 
-			float translationSpeedFactor = 0.125f;
-			float rotationSpeedFactor = 0.75f;
+			float transSpeed = 0.125f;
+			float rotatSpeed = 0.75f;
 
 			if (mouseMiddlePressed)
 			{
-				camera->rotateAround(-y * rotationSpeedFactor, glm::vec3(1.0f, 0.0f, 0.0f));
-				camera->rotateAround(-x * rotationSpeedFactor, glm::vec3(0.0f, 1.0f, 0.0f));
+				camera->rotateAround(-y * rotatSpeed, glm::vec3(1.0f, 0.0f, 0.0f));
+				camera->rotateAround(-x * rotatSpeed, glm::vec3(0.0f, 1.0f, 0.0f));
 			}
 
 			if (mouseRightPressed)
 			{
-				cameraPos[0] += -x * translationSpeedFactor;
-				cameraPos[1] += y * translationSpeedFactor;
-
-				camera->setTarget(glm::vec3(cameraTarget[0] - x * translationSpeedFactor, cameraTarget[1] + y * translationSpeedFactor, cameraTarget[2]));
-				camera->setPos(cameraPos);
+				camera->flatTranslate(-x * transSpeed, y * transSpeed);
 			}
 
 			lastCursorX = xpos;
@@ -268,11 +234,6 @@ namespace CG
 	{
 		while (!glfwWindowShouldClose(mainWindow))
 		{
-			// Poll and handle events (inputs, window resize, etc.)
-			// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-			// - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
-			// - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
-			// Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
 			glfwPollEvents();
 
 			timeNow = glfwGetTime();
@@ -280,7 +241,6 @@ namespace CG
 			timeLast = timeNow;
 			Update(timeDelta);
 
-			// Render 3D scene
 			Render();
 			gui.render();
 
@@ -290,12 +250,6 @@ namespace CG
 				controlWindow->Display();
 			}
 			*/
-
-			
-
-			// Update and Render additional Platform Windows
-			// (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
-			//  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
 			
 			ImGuiIO& io = ImGui::GetIO();
 			(void)io;
@@ -313,10 +267,7 @@ namespace CG
 
 	void App::Terminate()
 	{
-		// Cleanup
-		ImGui_ImplOpenGL3_Shutdown();
-		ImGui_ImplGlfw_Shutdown();
-		ImGui::DestroyContext();
+		gui.terminate();
 
 		glfwDestroyWindow(mainWindow);
 		glfwTerminate();

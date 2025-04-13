@@ -49,16 +49,20 @@ namespace CG
 
         void rotateAround(float angle, glm::vec3 axis);
 
-        void setPos(glm::vec3 newPos);
-        void setTarget(glm::vec3 newTarget);
-        void setUpVector(glm::vec3 newUp);
+        void flatTranslate(float wRight, float wUp);
+        void zoom(float weight);
 
         inline glm::vec3 getPos() const { return pos; }
         inline glm::vec3 getTarget() const { return target; }
+        inline glm::vec3 getUp() const { return up; }
 
     private:
         void UpdateProjectionMatrix();
         void updateVectors(const glm::quat deltaOrientation);
+
+        void setPos(glm::vec3 newPos);
+        void setTarget(glm::vec3 newTarget);
+        void setUpVector(glm::vec3 newUp);
 
     private:
         glm::mat4 projection;
