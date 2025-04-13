@@ -131,8 +131,28 @@ namespace CG {
         ImGui::PushItemWidth(-1);  // Make ListBox fill available width
         if (ImGui::ListBox("##PartsList", &partSelected, partNames, IM_ARRAYSIZE(partNames), IM_ARRAYSIZE(partNames)))
         {
+            int index;
+            switch (partSelected)
+            {
+                case 0: index = 4; break;
+                case 1: index = 0; break;
+                case 2: index = 8; break;
+                case 3: index = 5; break;
+                case 4: index = 6; break;
+                case 5: index = 7; break;
+                case 6: index = 1; break;
+                case 7: index = 2; break;
+                case 8: index = 3; break;
+                case 9: index = 12; break;
+                case 10: index = 13; break;
+                case 11: index = 14; break;
+                case 12: index = 9; break;
+                case 13: index = 10; break;
+                case 14: index = 11; break;
+            }
+
             Model* robot = scene->getModel();
-            selectedNode = &robot->getPart(partSelected);
+            selectedNode = &robot->getPart(index);
         }
         ImGui::PopItemWidth();
         ImGui::End();

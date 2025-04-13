@@ -21,79 +21,84 @@ namespace CG
 
 	static void keyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
-		App* app = static_cast<App*>(glfwGetWindowUserPointer(window));
-		Camera* camera = &(app->getCamera());
-		glm::vec3 cameraPos = camera->getPos();
-		glm::vec3 cameraTarget = camera->getTarget();
-		const float ROTATE_SPEED = 2.0f;
-		const float TRANSLATE_SPEED = 0.5f;
+		ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
 
-		if (action == GLFW_REPEAT || action == GLFW_PRESS)
-		{
-			if (key == GLFW_KEY_W) // camera forward
-			{
-				if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
-					cameraPos[2] -= TRANSLATE_SPEED;
-					camera->setTarget(glm::vec3(cameraTarget[0], cameraTarget[1], cameraTarget[2] - TRANSLATE_SPEED));
-					camera->setPos(cameraPos);
-				}
-				else
-				{
-					camera->rotateAround(-ROTATE_SPEED, glm::vec3(1.0f, 0.0f, 0.0f));
-				}
-			}
-			if (key == GLFW_KEY_S) // camera backward
-			{
-				if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
-					cameraPos[2] += TRANSLATE_SPEED;
-					camera->setTarget(glm::vec3(cameraTarget[0], cameraTarget[1], cameraTarget[2] + TRANSLATE_SPEED));
-					camera->setPos(cameraPos);
-				}
-				else
-				{
-					camera->rotateAround(ROTATE_SPEED, glm::vec3(1.0f, 0.0f, 0.0f));
-				}
-			}
-			if (key == GLFW_KEY_D) // camera go right
-			{
-				if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
-					cameraPos[0] += TRANSLATE_SPEED;
-					camera->setTarget(glm::vec3(cameraTarget[0] + TRANSLATE_SPEED, cameraTarget[1], cameraTarget[2]));
-					camera->setPos(cameraPos);
-				}
-				else
-				{
-					camera->rotateAround(ROTATE_SPEED, glm::vec3(0.0f, 1.0f, 0.0f));
+		ImGuiIO& io = ImGui::GetIO();
+		if (!io.WantCaptureKeyboard) {
+			App* app = static_cast<App*>(glfwGetWindowUserPointer(window));
+			Camera* camera = &(app->getCamera());
+			glm::vec3 cameraPos = camera->getPos();
+			glm::vec3 cameraTarget = camera->getTarget();
+			const float ROTATE_SPEED = 2.0f;
+			const float TRANSLATE_SPEED = 0.5f;
 
-				}
-			}
-			if (key == GLFW_KEY_A) // camera go left
+			if (action == GLFW_REPEAT || action == GLFW_PRESS)
 			{
-				if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
-					cameraPos[0] -= TRANSLATE_SPEED;
-					camera->setTarget(glm::vec3(cameraTarget[0] - TRANSLATE_SPEED, cameraTarget[1], cameraTarget[2]));
-					camera->setPos(cameraPos);
-				}
-				else
+				if (key == GLFW_KEY_W) // camera forward
 				{
-					camera->rotateAround(-ROTATE_SPEED, glm::vec3(0.0f, 1.0f, 0.0f));
+					if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
+						cameraPos[2] -= TRANSLATE_SPEED;
+						camera->setTarget(glm::vec3(cameraTarget[0], cameraTarget[1], cameraTarget[2] - TRANSLATE_SPEED));
+						camera->setPos(cameraPos);
+					}
+					else
+					{
+						camera->rotateAround(-ROTATE_SPEED, glm::vec3(1.0f, 0.0f, 0.0f));
+					}
+				}
+				if (key == GLFW_KEY_S) // camera backward
+				{
+					if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
+						cameraPos[2] += TRANSLATE_SPEED;
+						camera->setTarget(glm::vec3(cameraTarget[0], cameraTarget[1], cameraTarget[2] + TRANSLATE_SPEED));
+						camera->setPos(cameraPos);
+					}
+					else
+					{
+						camera->rotateAround(ROTATE_SPEED, glm::vec3(1.0f, 0.0f, 0.0f));
+					}
+				}
+				if (key == GLFW_KEY_D) // camera go right
+				{
+					if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
+						cameraPos[0] += TRANSLATE_SPEED;
+						camera->setTarget(glm::vec3(cameraTarget[0] + TRANSLATE_SPEED, cameraTarget[1], cameraTarget[2]));
+						camera->setPos(cameraPos);
+					}
+					else
+					{
+						camera->rotateAround(ROTATE_SPEED, glm::vec3(0.0f, 1.0f, 0.0f));
 
+					}
 				}
-			}
-			if (key == GLFW_KEY_E) // camera go up
-			{
-				cameraPos[1] += TRANSLATE_SPEED;
-				camera->setPos(cameraPos);
-				if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
-					camera->setTarget(glm::vec3(cameraTarget[0], cameraTarget[1] + TRANSLATE_SPEED, cameraTarget[2]));
+				if (key == GLFW_KEY_A) // camera go left
+				{
+					if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
+						cameraPos[0] -= TRANSLATE_SPEED;
+						camera->setTarget(glm::vec3(cameraTarget[0] - TRANSLATE_SPEED, cameraTarget[1], cameraTarget[2]));
+						camera->setPos(cameraPos);
+					}
+					else
+					{
+						camera->rotateAround(-ROTATE_SPEED, glm::vec3(0.0f, 1.0f, 0.0f));
+
+					}
 				}
-			}
-			if (key == GLFW_KEY_Q) // camera go down
-			{
-				cameraPos[1] -= TRANSLATE_SPEED;
-				camera->setPos(cameraPos);
-				if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
-					camera->setTarget(glm::vec3(cameraTarget[0], cameraTarget[1] - TRANSLATE_SPEED, cameraTarget[2]));
+				if (key == GLFW_KEY_E) // camera go up
+				{
+					cameraPos[1] += TRANSLATE_SPEED;
+					camera->setPos(cameraPos);
+					if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
+						camera->setTarget(glm::vec3(cameraTarget[0], cameraTarget[1] + TRANSLATE_SPEED, cameraTarget[2]));
+					}
+				}
+				if (key == GLFW_KEY_Q) // camera go down
+				{
+					cameraPos[1] -= TRANSLATE_SPEED;
+					camera->setPos(cameraPos);
+					if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
+						camera->setTarget(glm::vec3(cameraTarget[0], cameraTarget[1] - TRANSLATE_SPEED, cameraTarget[2]));
+					}
 				}
 			}
 		}
@@ -218,8 +223,8 @@ namespace CG
 		GLInit();
 
 		glfwSetWindowUserPointer(mainWindow, this);
-		glfwSetKeyCallback(mainWindow, keyPress);
 		glfwSetMouseButtonCallback(mainWindow, mouseEvent);
+		glfwSetKeyCallback(mainWindow, keyPress);
 		glfwSetCursorPosCallback(mainWindow, cursorEvent);
 		glfwSetFramebufferSizeCallback(mainWindow,windowResize);
 
