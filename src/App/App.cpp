@@ -37,9 +37,11 @@ namespace CG
 				if (key == GLFW_KEY_W) // camera forward
 				{
 					if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
-						cameraPos[2] -= TRANSLATE_SPEED;
-						camera->setTarget(glm::vec3(cameraTarget[0], cameraTarget[1], cameraTarget[2] - TRANSLATE_SPEED));
-						camera->setPos(cameraPos);
+						glm::vec3 direction = cameraPos - cameraTarget;
+						direction = glm::normalize(direction);
+						camera->setPos(glm::vec3(cameraPos[0] - direction[0] * TRANSLATE_SPEED,
+							cameraPos[1] - direction[1] * TRANSLATE_SPEED,
+							cameraPos[2] - direction[2] * TRANSLATE_SPEED));
 					}
 					else
 					{
@@ -49,9 +51,11 @@ namespace CG
 				if (key == GLFW_KEY_S) // camera backward
 				{
 					if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
-						cameraPos[2] += TRANSLATE_SPEED;
-						camera->setTarget(glm::vec3(cameraTarget[0], cameraTarget[1], cameraTarget[2] + TRANSLATE_SPEED));
-						camera->setPos(cameraPos);
+						glm::vec3 direction = cameraPos - cameraTarget;
+						direction = glm::normalize(direction);
+						camera->setPos(glm::vec3(cameraPos[0] + direction[0] * TRANSLATE_SPEED,
+							cameraPos[1] + direction[1] * TRANSLATE_SPEED,
+							cameraPos[2] + direction[2] * TRANSLATE_SPEED));
 					}
 					else
 					{
@@ -145,9 +149,11 @@ namespace CG
 		glm::vec3 cameraTarget = camera->getTarget();
 		const float TRANSLATE_SPEED = 1.5f;
 
-		cameraPos[2] -= TRANSLATE_SPEED * yoffset;
-		camera->setTarget(glm::vec3(cameraTarget[0], cameraTarget[1], cameraTarget[2] - TRANSLATE_SPEED));
-		camera->setPos(cameraPos);
+		glm::vec3 direction = cameraPos - cameraTarget;
+		direction = glm::normalize(direction);
+		camera->setPos(glm::vec3(cameraPos[0] - direction[0] * TRANSLATE_SPEED * yoffset,
+			cameraPos[1] - direction[1] * TRANSLATE_SPEED * yoffset,
+			cameraPos[2] - direction[2] * TRANSLATE_SPEED * yoffset));
 	}
 
 	static void cursorEvent(GLFWwindow* window, double xpos, double ypos)
