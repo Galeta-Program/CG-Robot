@@ -61,7 +61,6 @@ namespace CG {
         robot = scene->getModel();
         selectedNode = &(robot->getPart(HEAD));
         editmodeFlag = false;
-        seperateMode = true;
     }
 
     void GUI::bindScene(MainScene* _scene)
@@ -138,10 +137,6 @@ namespace CG {
 
     void GUI::editPanel()
     {
-        if (ImGui::Button("Report"))
-        {
-            report();
-        }
         ImGui::SeparatorText("Usage");
         ImGui::Text("1. Press WASDQE to move camara.\n\
 2. Right click your mouse and drag it\n\
@@ -201,6 +196,17 @@ namespace CG {
             selectedNode = &robot->getPart(index);
         }
         ImGui::PopItemWidth();
+
+        ImGui::SeparatorText("Export current motion");
+
+        ImGui::Text("The file will be put under res/animation/");
+        ImGui::InputTextWithHint(" ", "ex. report.txt", outFileName, IM_ARRAYSIZE(outFileName));
+        ImGui::Text("");
+        if (ImGui::Button("Export"))
+        {
+            Export();
+        }
+
     }
 
     void GUI::transformPanel(Node* node)
@@ -243,15 +249,18 @@ namespace CG {
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
 
-    void GUI::report()
+    void GUI::Export()
     {
-        //TODO
-        std::ofstream outFile("../res/animation/report.txt");
+        // set out file
+        std::ofstream outFile((std::string("../res/animation/") + std::string(outFileName)).c_str(), std::ios_base::app);
+
+        // write the local coord of each node
         for (int i = 0; i < 15; i++)
         {
             Node* node = &(robot->getPart(i));
-            std::cout << "Node " << i << " have\nTranslation vector : " << glm::to_string(node->getTranslateOffset()) << std::endl <<
-                "Rotation angle: " << glm::to_string(node->getRotateAngle()) << std::endl << std::endl;
+            std::cout << "	parts[" << i << "].setTranslate(glm::" << glm::to_string(node->getTranslateOffset()) << ");		// top_body" << std::endl;;
+            outFile << glm::to_string(node->getTranslateOffset()) << std::endl <<
+                glm::to_string(node->getRotateAngle()) << std::endl << std::endl;
         }
     }
 

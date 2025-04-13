@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include <glm/glm.hpp>
+
 namespace CG
 {
     void Camera::updateVectors(const glm::quat deltaOrientation)
@@ -46,8 +47,6 @@ namespace CG
 
     void Camera::rotateAround(float angle, glm::vec3 axis)
     {
-        // Because the camara position use its current position as reference point, so it need to use deltaOrientation to to transform.
-        // While the camara up vector
         glm::quat deltaOrientation = glm::angleAxis(glm::radians(angle), axis);
 
         updateVectors(deltaOrientation);

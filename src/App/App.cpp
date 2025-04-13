@@ -20,6 +20,10 @@ namespace CG
 
 	static void keyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
+		ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
+
+		ImGuiIO& io = ImGui::GetIO();
+		if (!io.WantCaptureKeyboard) {
 			App* app = static_cast<App*>(glfwGetWindowUserPointer(window));
 			Camera* camera = &(app->getCamera());
 			const float rotatSpeed = 2.0f;
@@ -78,7 +82,12 @@ namespace CG
 					camera->flatTranslate(0, - transSpeed);
 				}
 			}
-		
+		}
+	}
+
+	static void charCallback(GLFWwindow* window, unsigned int c)
+	{
+		ImGui_ImplGlfw_CharCallback(window, c);
 	}
 
 	static void windowResize(GLFWwindow* window, int width, int height)
@@ -203,11 +212,12 @@ namespace CG
 		GLInit();
 
 		glfwSetWindowUserPointer(mainWindow, this);
-		glfwSetKeyCallback(mainWindow, keyPress);
-		glfwSetFramebufferSizeCallback(mainWindow, windowResize);
 		glfwSetMouseButtonCallback(mainWindow, mouseEvent);
 		glfwSetScrollCallback(mainWindow, mouseScroll);
+		glfwSetKeyCallback(mainWindow, keyPress);
 		glfwSetCursorPosCallback(mainWindow, cursorEvent);
+		glfwSetFramebufferSizeCallback(mainWindow,windowResize);
+		glfwSetCharCallback(mainWindow, charCallback);
 
 		// Camera matrix
 		camera.LookAt(glm::vec3(0, -20, 40), glm::vec3(0, -20, 0), glm::vec3(0, 1, 0));

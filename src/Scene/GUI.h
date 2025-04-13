@@ -14,10 +14,10 @@ namespace CG {
 		Model* robot;
 		Node* selectedNode;
 
-		bool seperateMode;
 		bool editmodeFlag;
-
 		int partSelected;
+		char outFileName[128];
+
 		void startFrame();
 		void mainPanel();
 		void animationPanel();
@@ -34,7 +34,7 @@ namespace CG {
 		void render();
 		void terminate();
 
-		void report();
+		void Export();
 	};
 
 }
