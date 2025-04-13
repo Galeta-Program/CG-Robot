@@ -38,11 +38,7 @@ namespace CG {
     }
 
     GUI::~GUI()
-    {
-        free(robot);
-        free(selectedNode);
-        free(scene);
-    }
+    {}
 
     void GUI::init(GLFWwindow* window, MainScene* _scene)
     {
