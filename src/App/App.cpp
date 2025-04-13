@@ -137,6 +137,19 @@ namespace CG
 		}
 	}
 
+	static void mouseScroll(GLFWwindow* window, double xoffset, double yoffset)
+	{
+		App* app = static_cast<App*>(glfwGetWindowUserPointer(window));
+		Camera* camera = &(app->getCamera());
+		glm::vec3 cameraPos = camera->getPos();
+		glm::vec3 cameraTarget = camera->getTarget();
+		const float TRANSLATE_SPEED = 1.5f;
+
+		cameraPos[2] -= TRANSLATE_SPEED * yoffset;
+		camera->setTarget(glm::vec3(cameraTarget[0], cameraTarget[1], cameraTarget[2] - TRANSLATE_SPEED));
+		camera->setPos(cameraPos);
+	}
+
 	static void cursorEvent(GLFWwindow* window, double xpos, double ypos)
 	{
 		if (mouseMiddlePressed || mouseRightPressed)
@@ -224,6 +237,7 @@ namespace CG
 
 		glfwSetWindowUserPointer(mainWindow, this);
 		glfwSetMouseButtonCallback(mainWindow, mouseEvent);
+		glfwSetScrollCallback(mainWindow, mouseScroll);
 		glfwSetKeyCallback(mainWindow, keyPress);
 		glfwSetCursorPosCallback(mainWindow, cursorEvent);
 		glfwSetFramebufferSizeCallback(mainWindow,windowResize);
