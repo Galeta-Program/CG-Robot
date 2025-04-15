@@ -106,12 +106,14 @@ namespace CG {
             if (ImGui::BeginTabItem("Animation"))
             {
                 editmodeFlag = false;
+                scene->setMode(editmodeFlag);
                 animationPanel();
                 ImGui::EndTabItem();
             }
             if (ImGui::BeginTabItem("Edit"))
             {
                 editmodeFlag = true;
+                scene->setMode(editmodeFlag);
                 editPanel();
                 ImGui::EndTabItem();
             }
@@ -274,9 +276,10 @@ namespace CG {
         for (int i = 0; i < 15; i++)
         {
             Node* node = &(robot->getPart(i));
-            std::cout << "	parts[" << i << "].setTranslate(glm::" << glm::to_string(node->getTranslateOffset()) << ");		// top_body" << std::endl;;
-            outFile << glm::to_string(node->getTranslateOffset()) << std::endl <<
-                glm::to_string(node->getRotateAngle()) << std::endl << std::endl;
+            glm::vec3 trans = node->getTranslateOffset();
+            glm::vec3 rotate = node->getRotateAngle();
+            outFile << trans[0] << " " << trans[1] << " " << trans[2]  << std::endl <<
+                rotate[0] << " " << rotate[1] << " " << rotate[2] << std::endl << std::endl;
         }
     }
 

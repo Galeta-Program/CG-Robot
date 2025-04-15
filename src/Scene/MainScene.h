@@ -30,10 +30,7 @@ namespace CG
 		void Update(double dt);
 		void Render();
 
-		void ResetAction();
-		void SetAction(int action);
-
-		void SetMode(int mode);
+		void setMode(bool isEditMode);
 
 		inline Model* getModel() { return &robot; }
 		inline Animator* getAnimator() { return &animator; }
@@ -50,6 +47,7 @@ namespace CG
 		ShaderProgram program;
 		UBO matVPUbo;
 
+		bool editMode;
 
 		int action = 0; // idle
 		GLenum mode = GL_FILL; 

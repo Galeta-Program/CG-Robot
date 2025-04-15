@@ -29,9 +29,6 @@
     <ClCompile Include="..\src\Utilty\OBJLoader.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Window\ControlWindow.cpp">
-      <Filter>Window</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Scene\MainScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
@@ -62,14 +59,14 @@
     <ClCompile Include="..\src\Utilty\Error.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Scene\GUI.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Animation\AnimationClip.cpp">
       <Filter>Animation</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Animation\Animator.cpp">
       <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Window\GUI.cpp">
+      <Filter>Window</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -138,9 +135,6 @@
     <ClInclude Include="..\src\Utilty\OBJLoader.hpp">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Window\ControlWindow.h">
-      <Filter>Window</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\Scene\MainScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
@@ -175,14 +169,14 @@
     <ClInclude Include="..\src\Utilty\Error.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Scene\GUI.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\Animation\Animator.h">
       <Filter>Animation</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Animation\AnimationClip.h">
       <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Window\GUI.h">
+      <Filter>Window</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

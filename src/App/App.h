@@ -8,9 +8,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "Window/ControlWindow.h"
 #include "Scene/MainScene.h"
-#include "../Scene/GUI.h"
+#include "../Window/GUI.h"
 #include "../Scene/Camera.h"
 
 namespace CG

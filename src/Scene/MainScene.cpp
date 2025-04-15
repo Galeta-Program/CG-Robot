@@ -34,12 +34,16 @@ namespace CG
 
 	auto MainScene::Initialize() -> bool
 	{
+		editMode = false;
 		return LoadScene();
 	}
 
 	void MainScene::Update(double dt)
 	{
-		animator.animate(dt);
+		if(!editMode)
+		{
+			animator.animate(dt);
+		}
 	}
 
 	void MainScene::Render()
@@ -59,33 +63,12 @@ namespace CG
 
 		GLCall(glFlush());
 	}
+
+	void MainScene::setMode(bool isEditMode)
+	{
+		editMode = isEditMode;
+	}
 	
-	void MainScene::ResetAction()
-	{
-		this->action = 0; // idle
-	}
-
-	void MainScene::SetAction(int action)
-	{
-		this->action = action;
-	}
-
-	void MainScene::SetMode(int mode)
-	{
-		switch (mode)
-		{
-		case 0:
-			this->mode = GL_FILL;
-			break;
-		case 1:
-			this->mode = GL_LINE;
-			break;
-		default:
-			this->mode = GL_FILL;
-			break;
-		}
-	}
-
 	auto MainScene::LoadScene() -> bool
 	{
 		ShaderInfo shaders[] = {
