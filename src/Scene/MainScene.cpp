@@ -5,6 +5,22 @@
 #include "MainScene.h"
 #include "../Utilty/Error.h"
 
+#define TOP_BODY 0
+#define LEFT_UPPER_ARM 1
+#define LEFT_LOWER_ARM 2
+#define LEFT_HAND 3
+#define HEAD 4
+#define RIGHT_UPPER_ARM 5
+#define RIGHT_LOWER_ARM 6
+#define RIGHT_HAND 7
+#define BOTTOM_BODY 8
+#define LEFT_THIGH 9
+#define LEFT_CALF 10
+#define LEFT_FOOT 11
+#define RIGHT_THIGH 12
+#define RIGHT_CALF 13
+#define RIGHT_FOOT 14
+
 namespace CG
 {
 	MainScene::MainScene(Camera& _camera)
@@ -23,8 +39,7 @@ namespace CG
 
 	void MainScene::Update(double dt)
 	{
-		//UpdateAction(dt);
-		//UpdateModel();
+		animator.animate(dt);
 	}
 
 	void MainScene::Render()
@@ -87,7 +102,6 @@ namespace CG
 		M_KdID = glGetUniformLocation(program.getId(), "Material.Kd");
 		M_KsID = glGetUniformLocation(program.getId(), "Material.Ks");
 		TextureID = glGetUniformLocation(program.getId(), "Texture");
-		
 
 		// use debug
 		if (TextureID == -1) std::cout << "Error! Couldn't find this uniform in shader" << std::endl;
@@ -95,6 +109,7 @@ namespace CG
 		*/
 
 		LoadModel();
+		loadAnimation();
 
 		//UBO
 		matVPUbo.initialize(sizeof(glm::mat4) * 2);
@@ -107,23 +122,23 @@ namespace CG
 	{
 		std::vector<std::string> mtlPaths({
 			"../res/models2/top_body.mtl",
-
+			 
 			"../res/models2/left_upper_arm.mtl",
 			"../res/models2/left_lower_arm.mtl",
 			"../res/models2/left_hand.mtl",
-
+			 
 			"../res/models2/head.mtl",
-
+			 
 			"../res/models2/right_upper_arm.mtl",
 			"../res/models2/right_lower_arm.mtl",
 			"../res/models2/right_hand.mtl",
-
+			 
 			"../res/models2/bottom_body.mtl",
-
+			 
 			"../res/models2/left_thigh.mtl", 
 			"../res/models2/left_calf.mtl", 
 			"../res/models2/left_foot.mtl",
-
+			 
 			"../res/models2/right_thigh.mtl",
 			"../res/models2/right_calf.mtl", 
 			"../res/models2/right_foot.mtl", 
@@ -154,232 +169,51 @@ namespace CG
 			});
 
 		std::vector<std::vector<unsigned int>> relationship({
-			{0, 1, 4, 5, 8},
-			{1, 2},
-			{2, 3},
-			{5, 6},
-			{6, 7},
-			{8, 9, 12},
-			{9, 10},
-			{10, 11},
-			{12, 13},
-			{13, 14}
+			{TOP_BODY, LEFT_UPPER_ARM, HEAD, RIGHT_UPPER_ARM, BOTTOM_BODY},
+			{LEFT_UPPER_ARM, LEFT_LOWER_ARM},
+			{LEFT_LOWER_ARM, LEFT_HAND},
+			{RIGHT_UPPER_ARM, RIGHT_LOWER_ARM},
+			{RIGHT_LOWER_ARM, RIGHT_HAND},
+			{BOTTOM_BODY, LEFT_THIGH, RIGHT_THIGH},
+			{LEFT_THIGH, LEFT_CALF},
+			{LEFT_CALF, LEFT_FOOT},
+			{RIGHT_THIGH, RIGHT_CALF},
+			{RIGHT_CALF, RIGHT_FOOT}
 			});
 
 		robot.initialize(mtlPaths, objPaths);
 		robot.setPartsRelationship(relationship);
 		robot.gatherPartsData();
-		robot.stand();
+
+		animator.target(&robot);
 	}
 
-	/*
-	void MainScene::UpdateAction(double dt)
+	void MainScene::loadAnimation()
 	{
-		static double _frame = 0;
+		std::vector<std::vector<KeyFrame>> keyFrameBuffer;
 
-		if (action == 0) // stand
+		for (int i = 0; i < 15; i++)
 		{
-			
-			_frame = 0;
-			for (int i = 0; i < PARTSNUM; i++)
-			{
-				angles[i] = 0.0f;
-			}
-			position = 0;
-			
+			keyFrameBuffer.emplace_back();
 		}
-		else if (action == 1) // walk
-		{
-			_frame += dt;
 
-			if (_frame >= 13)
-			{
-				_frame = 1;
-			}
+		keyFrameBuffer[TOP_BODY].emplace_back(KeyFrame{ glm::vec3(0.000000, 0.000000, 0.000000) , glm::vec3(0.000000, 0.000000, 0.000000) });
+		keyFrameBuffer[LEFT_UPPER_ARM].emplace_back(KeyFrame{ glm::vec3(7.650000, 0.000000, 0.000000) , glm::vec3(0.000000, 0.000000, 0.000000) });
+		keyFrameBuffer[LEFT_LOWER_ARM].emplace_back(KeyFrame{ glm::vec3(2.900000, -6.400000, 0.000000) , glm::vec3(0.000000, 0.000000, 0.000000) });
+		keyFrameBuffer[LEFT_HAND].emplace_back(KeyFrame{ glm::vec3(3.650000, -8.500000, 3.900000) , glm::vec3(0.000000, 0.000000, 0.000000) });
+		keyFrameBuffer[HEAD].emplace_back(KeyFrame{ glm::vec3(0.000000, 3.100000, 0.000000) , glm::vec3(0.000000, 0.000000, 0.000000) });
+		keyFrameBuffer[RIGHT_UPPER_ARM].emplace_back(KeyFrame{ glm::vec3(-7.650000, 0.050000, 0.000000) , glm::vec3(0.000000, 0.000000, 0.000000) });
+		keyFrameBuffer[RIGHT_LOWER_ARM].emplace_back(KeyFrame{ glm::vec3(-2.950000, -6.400000, 0.000000) , glm::vec3(0.000000, 0.000000, 0.000000) });
+		keyFrameBuffer[RIGHT_HAND].emplace_back(KeyFrame{ glm::vec3(-3.650000, -8.500000, 3.900000) , glm::vec3(0.000000, 0.000000, 0.000000) });
+		keyFrameBuffer[BOTTOM_BODY].emplace_back(KeyFrame{ glm::vec3(0.000000, -5.050000, -1.450000) , glm::vec3(0.000000, 0.000000, 0.000000) });
+		keyFrameBuffer[LEFT_THIGH].emplace_back(KeyFrame{ glm::vec3(3.250000, -6.650000, 2.200000) , glm::vec3(0.000000, 0.000000, 0.000000) });
+		keyFrameBuffer[LEFT_CALF].emplace_back(KeyFrame{ glm::vec3(3.000000, -10.000000, 1.150000) , glm::vec3(0.000000, 0.000000, 0.000000) });
+		keyFrameBuffer[LEFT_FOOT].emplace_back(KeyFrame{ glm::vec3(1.350000, -16.500000, -1.550000) , glm::vec3(0.000000, 0.000000, 0.000000) });
+		keyFrameBuffer[RIGHT_THIGH].emplace_back(KeyFrame{ glm::vec3(-3.250000, -6.650000, 2.200000) , glm::vec3(0.000000, 0.000000, 0.000000) });
+		keyFrameBuffer[RIGHT_CALF].emplace_back(KeyFrame{ glm::vec3(-3.350000, -10.000000, 1.150000) , glm::vec3(0.000000, 0.000000, 0.000000) });
+		keyFrameBuffer[RIGHT_FOOT].emplace_back(KeyFrame{ glm::vec3(-1.350000, -16.500000, -1.550000) , glm::vec3(0.000000, 0.000000, 0.000000) });
 
-			int frame = _frame;
-
-			switch (frame)
-			{
-			case 1:
-			case 2:
-			case 3:
-				angles[1] += 10 * dt;
-				angles[9] -= 15 * dt;
-				angles[10] += 5 * dt;
-				position += 0.1 * dt;
-				break;
-			case 4:
-			case 5:
-			case 6:
-				angles[1] -= 10 * dt;
-				angles[9] += 15 * dt;
-				angles[10] -= 5 * dt;
-				position -= 0.1 * dt;
-				break;
-			case 7:
-			case 8:
-			case 9:
-				angles[1] -= 10 * dt;
-				angles[9] += 15 * dt;
-				angles[10] += 5 * dt;
-				position += 0.1 * dt;
-				break;
-			case 10:
-			case 11:
-			case 12:
-				angles[1] += 10 * dt;
-				angles[9] -= 15 * dt;
-				angles[10] -= 5 * dt;
-				position -= 0.1 * dt;
-				break;
-			}
-		}
+		animator.addClip("Stand", keyFrameBuffer);
+		animator.setCurrentClip("Stand");
 	}
-
-	void MainScene::UpdateModel()
-	{
-		glm::mat4 Rotatation[PARTSNUM];
-		glm::mat4 Translation[PARTSNUM];
-		for (int i = 0; i < PARTSNUM; i++)
-		{
-			Models[i] = glm::mat4(1.0f);
-			Rotatation[i] = glm::mat4(1.0f);
-			Translation[i] = glm::mat4(1.0f);
-		}
-		float r, pitch, yaw, roll;
-		float alpha, beta, gamma;
-
-		//身體=======================================================
-		//== 上身
-		beta = angle;
-		Rotatation[0] = rotate(beta, 0, 1, 0);
-		Translation[0] = translate(0, 15.8 + position, 0);
-		Models[0] = Translation[0] * Rotatation[0];
-
-		//== 下身
-		Translation[8] = translate(0, -5.3, 0);
-		Models[8] = Models[0] * Translation[8] * Rotatation[8];
-		//=============================================================
-
-
-
-		//頭==========================================================
-		Translation[4] = translate(0, 3.2, -0.5);
-		Models[4] = Models[0] * Translation[4] * Rotatation[4];
-		//============================================================
-
-
-
-		//左手=======================================================
-		//== 左上手臂
-		yaw = glm::radians(beta); r = 3.7;
-		alpha = angles[1];
-		gamma = 10;
-		Rotatation[1] = rotate(alpha, 1, 0, 0) * rotate(gamma, 0, 0, 1);//向前旋轉*向右旋轉
-		Translation[1] = translate(7.3, 0, 0);
-
-		Models[1] = Models[0] * Translation[1] * Rotatation[1];
-
-		//== 左下手臂
-		pitch = glm::radians(alpha); r = 3;
-		roll = glm::radians(gamma);
-		static int i = 0;
-		i += 5;
-		alpha = angles[2] - 0;
-		//上手臂+下手臂向前旋轉*向右旋轉
-		Rotatation[2] = rotate(alpha, 1, 0, 0);
-		//延x軸位移以上手臂為半徑的圓周長:translate(0,r*cos,r*sin)
-		//延z軸位移以上手臂為半徑角度:translate(r*sin,-rcos,0)
-		Translation[2] = translate(3, -6.5, 0);
-
-		Models[2] = Models[1] * Translation[2] * Rotatation[2];
-
-		//== 左手掌
-		pitch = glm::radians(alpha);
-		//b = glm::radians(angles[2]);
-		roll = glm::radians(gamma);
-		//手掌角度與下手臂相同
-		//Rotatation[3] = Rotatation[2];
-		//延x軸位移以上手臂為半徑的圓周長:translate(0,r*cos,r*sin) ,角度為上手臂+下手臂
-		Translation[3] = translate(3.7, -8.6, 4);
-		Models[3] = Models[2] * Translation[3] * Rotatation[3];
-		//============================================================
-
-		//右手=========================================================
-		//== 右上手臂
-		gamma = -10; alpha = angles[5] = -angles[1];
-		Rotatation[5] = rotate(alpha, 1, 0, 0) * rotate(gamma, 0, 0, 1);
-		Translation[5] = translate(-7.3, 0, 0);
-		Models[5] = Models[0] * Translation[5] * Rotatation[5];
-
-		//== 右下手臂
-		angles[6] = angles[2];
-		pitch = glm::radians(alpha); r = -3;
-		roll = glm::radians(gamma);
-		alpha = angles[6] - 0;
-		Rotatation[6] = rotate(alpha, 1, 0, 0);
-		Translation[6] = translate(-3, -6.5, 0);
-		Models[6] = Models[5] * Translation[6] * Rotatation[6];
-
-		//== 右手掌
-		pitch = glm::radians(alpha);
-		//b = glm::radians(angles[7]);
-		roll = glm::radians(gamma);
-		Translation[7] = translate(-3.7, -8.6, 4);
-		Models[7] = Models[6] * Translation[7] * Rotatation[7];
-		//=============================================================
-
-
-
-
-
-		//左腳=========================================================
-		//== 左大腿
-		alpha = angles[9]; gamma = 0;
-		Rotatation[9] = rotate(alpha, 1, 0, 0) * rotate(gamma, 0, 0, 1);
-		Translation[9] = translate(3.3, -7, 2.5);
-		Models[9] = Models[8] * Translation[9] * Rotatation[9];
-
-		//== 左小腿
-		pitch = glm::radians(alpha);
-		roll = glm::radians(gamma);
-		alpha = angles[10];
-		Translation[10] = translate(3, -9.5, 1.2);
-		Rotatation[10] = rotate(alpha, 1, 0, 0);
-		Models[10] = Models[9] * Translation[10] * Rotatation[10];
-
-
-
-		//== 左腳
-		alpha = angles[11];
-		Translation[11] = translate(1.5, -17, -1.5);
-		Rotatation[11] = rotate(alpha, 1, 0, 0);
-		Models[11] = Models[10] * Translation[11] * Rotatation[11];
-		//=============================================================
-
-		//右腳=========================================================
-		//== 右大腿
-		alpha = angles[12] = -angles[9];
-		gamma = -0;
-		Rotatation[12] = rotate(alpha, 1, 0, 0) * rotate(gamma, 0, 0, 1);
-		Translation[12] = translate(-3.3, -7, 2.5);
-		Models[12] = Models[8] * Translation[12] * Rotatation[12];
-
-		//== 右小腿
-		pitch = glm::radians(alpha);
-		roll = glm::radians(gamma);
-		alpha = angles[13] = angles[10];
-		Translation[13] = translate(-3, -9.5, 1.2);
-		Rotatation[13] = rotate(alpha, 1, 0, 0);
-		Models[13] = Models[12] * Translation[13] * Rotatation[13];
-
-		//== 右腳
-		alpha = angles[14];
-		Translation[14] = translate(-1.5, -17, -1.5);
-		Rotatation[14] = rotate(alpha, 1, 0, 0);
-		Models[14] = Models[13] * Translation[14] * Rotatation[14];
-		//=============================================================
-	}
-	*/
 }

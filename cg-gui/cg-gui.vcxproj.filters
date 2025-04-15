@@ -65,6 +65,12 @@
     <ClCompile Include="..\src\Scene\GUI.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Animation\AnimationClip.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Animation\Animator.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="App">
@@ -99,6 +105,9 @@
     </Filter>
     <Filter Include="Scene\SceneGraph">
       <UniqueIdentifier>{e7f04319-b11d-4eff-914c-b63954d951be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Animation">
+      <UniqueIdentifier>{1fe2ccf8-63d2-42d5-bad6-27ca5250cef5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -168,6 +177,12 @@
     </ClInclude>
     <ClInclude Include="..\src\Scene\GUI.h">
       <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Animation\Animator.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Animation\AnimationClip.h">
+      <Filter>Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

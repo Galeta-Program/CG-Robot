@@ -33,8 +33,9 @@ public:
 
 	void setTranslate(glm::vec3 trans);
 	void setRotate(glm::vec3 eular);
-	void updateModelMatrix();
+	void setRotate(glm::quat quaternion);
 
+	void updateModelMatrix();
 
 	inline bool isDirty() { return dirty; }
 	inline Part& getPart() { return part; }

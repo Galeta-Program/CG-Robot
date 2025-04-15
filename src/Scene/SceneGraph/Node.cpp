@@ -79,3 +79,15 @@ void Node::setRotate(glm::vec3 eular)
 	dirty = true;
 	updateModelMatrix();
 }
+
+void Node::setRotate(glm::quat quaternion)
+{
+	if (quaternion == rotateOffset)
+	{
+		return;
+	}
+
+	rotateOffset = glm::normalize(quaternion);
+	dirty = true;
+	updateModelMatrix();
+}

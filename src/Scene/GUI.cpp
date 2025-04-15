@@ -61,6 +61,8 @@ namespace CG {
         robot = scene->getModel();
         selectedNode = &(robot->getPart(HEAD));
         editmodeFlag = false;
+
+        animationSelected = 0;
     }
 
     void GUI::bindScene(MainScene* _scene)
@@ -133,6 +135,19 @@ namespace CG {
     {
         ImGui::SeparatorText("Usage");
         ImGui::Text("Select an animation to play.");
+        ImGui::SeparatorText("Animations");
+
+        ImGui::PushItemWidth(-1);  // Make ListBox fill available width
+
+        const char* animationNames[] = {
+            "Stand"
+        };
+        
+        if (ImGui::ListBox("##AnimationList", &animationSelected, animationNames, IM_ARRAYSIZE(animationNames), IM_ARRAYSIZE(animationNames)))
+        {
+            scene->getAnimator()->setCurrentClip(std::string(animationNames[animationSelected]));
+        }
+        ImGui::PopItemWidth();
     }
 
     void GUI::editPanel()
@@ -140,7 +155,8 @@ namespace CG {
         ImGui::SeparatorText("Usage");
         ImGui::Text("1. Press WASDQE to move camara.\n\
 2. Right click your mouse and drag it\n\
-   to move the camara up, down, left and right\n\
+   to move the camara up, down, left \n\
+   and right\n\
 3. Scroll your mouse up and down\n\
    to voom the camera in and out.\n\
 4. Press ALT + WASD to rotate camara.\n\

@@ -14,6 +14,7 @@
 #include "../Graphic/ShaderProgram/shaderProgram.h"
 #include "../Model/Model.h"
 #include "../Graphic/UBO.h"
+#include "../Animation/Animator.h"
 
 constexpr auto PARTSNUM = 15;
 
@@ -35,21 +36,20 @@ namespace CG
 		void SetMode(int mode);
 
 		inline Model* getModel() { return &robot; }
+		inline Animator* getAnimator() { return &animator; }
 
 	private:
 		auto LoadScene() -> bool;
-
 		void LoadModel();
-
-		// void UpdateAction(double dt);
-
+		void loadAnimation();
 	private:
 		Model robot;
+		Camera* camera;
+		Animator animator;
 
 		ShaderProgram program;
 		UBO matVPUbo;
 
-		Camera* camera;
 
 		int action = 0; // idle
 		GLenum mode = GL_FILL; 

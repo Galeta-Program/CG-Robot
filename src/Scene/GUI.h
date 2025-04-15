@@ -15,8 +15,10 @@ namespace CG {
 		Node* selectedNode;
 
 		bool editmodeFlag;
-		int partSelected;
 		char outFileName[128];
+
+		int partSelected;
+		int animationSelected;
 
 		void startFrame();
 		void mainPanel();

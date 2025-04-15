@@ -37,9 +37,7 @@ public:
 	void gatherPartsData();
 	void render(GLuint program);
 
-	// motion
-	void stand();
-
 	inline Node& getPart(unsigned int index) { return parts[index]; }
+	inline unsigned int getPartsAmount() { return parts.size(); }
 };
 
