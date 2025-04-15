@@ -198,5 +198,8 @@ namespace CG
 
 		animator.addClip("Stand", keyFrameBuffer);
 		animator.setCurrentClip("Stand");
+
+		// Add animation here
+		animator.addClip("Example", "../res/animation/example.txt");
 	}
 }

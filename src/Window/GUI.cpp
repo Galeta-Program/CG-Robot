@@ -141,11 +141,16 @@ namespace CG {
 
         ImGui::PushItemWidth(-1);  // Make ListBox fill available width
 
-        const char* animationNames[] = {
-            "Stand"
-        };
+        std::vector<const char*> animationNames;
+        for (const auto& str : scene->getAnimator()->getClipNames()) {
+            animationNames.push_back(str.c_str());
+        }
         
-        if (ImGui::ListBox("##AnimationList", &animationSelected, animationNames, IM_ARRAYSIZE(animationNames), IM_ARRAYSIZE(animationNames)))
+        if (ImGui::ListBox("##AnimationList", 
+            &animationSelected, 
+            animationNames.data(), 
+            (int)(animationNames.size()),
+            (int)(animationNames.size())))
         {
             scene->getAnimator()->setCurrentClip(std::string(animationNames[animationSelected]));
         }
@@ -269,7 +274,7 @@ namespace CG {
 
     void GUI::Export()
     {
-        // set out file
+        // set output file
         std::ofstream outFile((std::string("../res/animation/") + std::string(outFileName)).c_str(), std::ios_base::app);
 
         // write the local coord of each node
@@ -278,8 +283,8 @@ namespace CG {
             Node* node = &(robot->getPart(i));
             glm::vec3 trans = node->getTranslateOffset();
             glm::vec3 rotate = node->getRotateAngle();
-            outFile << trans[0] << " " << trans[1] << " " << trans[2]  << std::endl <<
-                rotate[0] << " " << rotate[1] << " " << rotate[2] << std::endl << std::endl;
+            outFile << trans[0] << " " << trans[1] << " " << trans[2] << std::endl <<
+                rotate[0] << " " << rotate[1] << " " << rotate[2] << std::endl;
         }
     }
 
