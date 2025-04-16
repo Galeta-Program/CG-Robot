@@ -200,5 +200,6 @@ namespace CG
 		animator.setCurrentClip("Stand");
 
 		// Add animation here
+		animator.addClip("Hopak", "../res/animation/hopak.anim");
 	}
 }
