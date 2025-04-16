@@ -131,6 +131,15 @@ namespace CG {
             transformPanel(selectedNode);
             ImGui::End();
         }
+        else
+        {
+            ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 320, 0), ImGuiCond_Always);
+            ImGui::SetNextWindowSize(ImVec2(320, 250), ImGuiCond_Always);
+
+            ImGui::Begin("Speed", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+            speedPanel();
+            ImGui::End();
+        }
     }
 
     void GUI::animationPanel()
@@ -155,6 +164,22 @@ namespace CG {
             scene->getAnimator()->setCurrentClip(std::string(animationNames[animationSelected]));
         }
         ImGui::PopItemWidth();
+
+        importPanel();
+        exportPanel();
+
+    }
+
+    void GUI::speedPanel()
+    {
+        ImGui::SeparatorText("Usage");
+        ImGui::Text("Configure the speed of the animation.\n");
+
+        float speed = scene->getAnimator()->getCurrentClipSpeed();
+        if (ImGui::DragFloat("drag float", &speed, 0.005f, -0.1f, 10.0f, "%.3f"))
+        {
+            scene->getAnimator()->setCurrentClipSpeed(speed);
+        }
     }
 
     void GUI::editPanel()
@@ -220,14 +245,60 @@ namespace CG {
         }
         ImGui::PopItemWidth();
 
+        exportPanel();
+
+    }
+
+    void GUI::exportPanel()
+    {
         ImGui::SeparatorText("Export current motion");
 
-        ImGui::Text("The file will be put under res/animation/");
+        if (editmodeFlag)
+        {
+            ImGui::Text("(1) The file will be put under \n\
+\"res/animation/\" directory.\n\
+(2) Will append current motion to the file\n\
+everytime you press the button.");
+        }
+        else
+        {
+            ImGui::Text("(1) The file will be put under \n\
+\"res/animation/\" directory.\n\
+(2) Will overwrite whole animation \n\
+and its speed to the file\n\
+everytime you press the button.\n");
+        }
+
         ImGui::InputTextWithHint(" ", "ex. report.txt", outFileName, IM_ARRAYSIZE(outFileName));
         ImGui::Text("");
         if (ImGui::Button("Export"))
         {
-            Export();
+            if (editmodeFlag)
+            {
+                exportFromEditor();
+            }
+            else
+            {
+                exportFromAnimator();
+            }
+        }
+    }
+
+    void GUI::importPanel()
+    {
+        ImGui::SeparatorText("Import animation file");
+        ImGui::Text("(1) The file will be import from \n\
+\"res/animation/\" directory.\n\
+(2) Give the animation a name.\n");
+        
+        ImGui::InputTextWithHint("  ", "The import \"file name\".", inFileName, IM_ARRAYSIZE(inFileName));
+        ImGui::InputTextWithHint("   ", "Name the animation.", animationName, IM_ARRAYSIZE(animationName));
+
+        ImGui::Text("\n");
+
+        if (ImGui::Button("Import"))
+        {
+            scene->getAnimator()->addClip(std::string(animationName), ("../res/animation/" + std::string(inFileName)).c_str());
         }
 
     }
@@ -272,10 +343,10 @@ namespace CG {
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
 
-    void GUI::Export()
+    void GUI::exportFromEditor()
     {
         // set output file
-        std::ofstream outFile((std::string("../res/animation/") + std::string(outFileName)).c_str(), std::ios_base::app);
+        std::ofstream outFile((std::string("../res/animation/") + std::string(outFileName)).c_str(), std::ios_base::app); // append
 
         // write the local coord of each node
         for (int i = 0; i < 15; i++)
@@ -287,5 +358,29 @@ namespace CG {
                 rotate[0] << " " << rotate[1] << " " << rotate[2] << std::endl;
         }
     }
+
+    void GUI::exportFromAnimator()
+    {
+        // set output file
+        std::ofstream outFile((std::string("../res/animation/") + std::string(outFileName)).c_str()); // overwrite
+        const std::vector<Track>& tracks = scene->getAnimator()->getCurrentClipTrack();
+
+        // Output the speed
+        outFile << "speed " << scene->getAnimator()->getCurrentClipSpeed() << std::endl; 
+
+        // write the local coord of each node
+        for (int frame = 0; frame < tracks[0].keyFrames.size(); frame++)
+        {
+            for (int i = 0; i < 15; i++) // 15 nodes
+            {
+                Node* node = &(robot->getPart(i));
+                glm::vec3 trans = tracks[i].keyFrames[frame].transOffset;
+                glm::vec3 rotate = tracks[i].keyFrames[frame].rotatOffset;
+                outFile << trans[0] << " " << trans[1] << " " << trans[2] << std::endl <<
+                    rotate[0] << " " << rotate[1] << " " << rotate[2] << std::endl;
+            }
+        }
+    }
+
 
 }

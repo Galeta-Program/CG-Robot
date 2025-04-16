@@ -12,9 +12,9 @@ void Animator::target(Model* _model)
 	model = _model;
 }
 
-void Animator::addClip(std::string clipName, std::vector<std::vector<KeyFrame>>& allKeyFrames)
+void Animator::addClip(std::string clipName, std::vector<std::vector<KeyFrame>>& allKeyFrames, double _speed /* = 1 */)
 {
-	clips[clipName] = AnimationClip(clipName);
+	clips[clipName] = AnimationClip(clipName, _speed);
 	clipNames.emplace_back(clipName);
 
 	std::vector<Track> tracks;
@@ -46,11 +46,29 @@ void Animator::addClip(std::string clipName, const char* fileName)
 
 	std::ifstream in(fileName);
 	std::string buffer[3];
+
+	bool setSpeedFlag = false;
 	while (1)
 	{
 		if (in.peek() == EOF)
 		{
 			break;
+		}
+
+		// CHeck if speed specified.
+		std::streampos pos = in.tellg();
+		if (in >> buffer[0])
+		{
+			if (buffer[0] == "speed")
+			{
+				in >> buffer[0];
+				clips[clipName].setSpeed(stof(buffer[0]));
+				setSpeedFlag = true;
+			}
+			else
+			{
+				in.seekg(pos);
+			}
 		}
 
 		for (int i = 0; i < model->getPartsAmount(); i++)
@@ -72,11 +90,16 @@ void Animator::addClip(std::string clipName, const char* fileName)
 	}
 
 	clips[clipName].updateTracks(tracks);
+
+	if (!setSpeedFlag)
+	{
+		clips[clipName].setSpeed(1.0f);
+	}
 }
 
 void Animator::animate(double dt)
 {
-	currentFrame += dt * 5;
+	currentFrame += dt * currentClip->getSpeed();
 	unsigned totalFrames = currentClip->getAmountOfFrame();
 
 	if (totalFrames == 0)
@@ -107,7 +130,18 @@ void Animator::animate(double dt)
 	}
 }
 
+
 void Animator::setCurrentClip(std::string clipName)
 {
 	currentClip = &clips[clipName];
+}
+
+void Animator::setCurrentClipSpeed(float _speed)
+{
+	if (currentClip == nullptr)
+	{
+		return;
+	}
+
+	currentClip->setSpeed(_speed);
 }

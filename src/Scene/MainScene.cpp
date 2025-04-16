@@ -200,6 +200,5 @@ namespace CG
 		animator.setCurrentClip("Stand");
 
 		// Add animation here
-		animator.addClip("Example", "../res/animation/example.txt");
 	}
 }

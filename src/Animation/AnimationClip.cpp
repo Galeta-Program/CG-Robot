@@ -8,3 +8,13 @@ void AnimationClip::updateTracks(std::vector<Track>& _tracks)
 		frameAmount = _tracks[i].keyFrames.size();
 	}
 }
+
+void AnimationClip::setSpeed(float _speed)
+{
+	if (_speed <= 0)
+	{
+		return;
+	}
+
+	speed = _speed;
+}

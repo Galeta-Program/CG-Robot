@@ -16,6 +16,8 @@ namespace CG {
 
 		bool editmodeFlag;
 		char outFileName[128];
+		char inFileName[128];
+		char animationName[128];
 
 		int partSelected;
 		int animationSelected;
@@ -23,8 +25,11 @@ namespace CG {
 		void startFrame();
 		void mainPanel();
 		void animationPanel();
+		void speedPanel();
 		void editPanel();
 		void transformPanel(Node* node);
+		void exportPanel();
+		void importPanel();
 		void _render();
 
 	public:
@@ -36,7 +41,8 @@ namespace CG {
 		void render();
 		void terminate();
 
-		void Export();
+		void exportFromEditor();
+		void exportFromAnimator();
 	};
 
 }
