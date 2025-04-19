@@ -141,10 +141,10 @@ namespace CG {
             ImGui::End();
 
             ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 320, 100), ImGuiCond_Always);
-            ImGui::SetNextWindowSize(ImVec2(320, 250), ImGuiCond_Always);
+            ImGui::SetNextWindowSize(ImVec2(320, 450), ImGuiCond_Always);
 
             ImGui::Begin("Light", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
-            lightTranslatePanel();
+            lightPanel();
             ImGui::End();
         }
     }
@@ -189,11 +189,14 @@ namespace CG {
         }
     }
 
-    void GUI::lightTranslatePanel()
+    void GUI::lightPanel()
     {
         ImGui::SeparatorText("Usage");
-        ImGui::Text("Configure the position of the light source.\n");
+        ImGui::Text("Configure the position,\n\
+shininess and color of \n\
+the light source.\n");
 
+        ImGui::SeparatorText("Translate");
         glm::vec3 pos = scene->getLight()->getPos();
         if (ImGui::DragFloat("light x", &pos[0], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
         {
@@ -206,6 +209,28 @@ namespace CG {
         if (ImGui::DragFloat("light z", &pos[2], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
         {
             scene->getLight()->setPosition(pos);
+        }
+
+        ImGui::SeparatorText("Shininess");
+        float shininess = scene->getLight()->getShininess();
+        if (ImGui::DragFloat("shininess", &shininess, 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
+        {
+            scene->getLight()->setShininess(shininess);
+        }
+
+        ImGui::SeparatorText("Color");
+        glm::vec3 color = scene->getLight()->getColor();
+        if (ImGui::DragFloat("light r", &color[0], 0.005f, 0, 1, "%.3f"))
+        {
+            scene->getLight()->setColor(color);
+        }
+        if (ImGui::DragFloat("light g", &color[1], 0.005f, 0, 1, "%.3f"))
+        {
+            scene->getLight()->setColor(color);
+        }
+        if (ImGui::DragFloat("light b", &color[2], 0.005f, 0, 1, "%.3f"))
+        {
+            scene->getLight()->setColor(color);
         }
     }
 

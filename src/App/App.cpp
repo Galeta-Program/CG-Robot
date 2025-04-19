@@ -162,7 +162,8 @@ namespace CG
 	}
 
 	App::App():
-		gui(nullptr, nullptr)
+		gui(nullptr, nullptr),
+		light()
 	{
 		mainWindow = nullptr;
 
@@ -221,6 +222,7 @@ namespace CG
 
 		// Camera matrix
 		camera.LookAt(glm::vec3(0, -20, 40), glm::vec3(0, -20, 0), glm::vec3(0, 1, 0));
+		light.initialize();
 
 		//controlWindow = new ControlWindow();
 		//controlWindow->Initialize();

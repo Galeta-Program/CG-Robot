@@ -186,10 +186,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\res\shaders\DSPhong_Material.vp">
+    <None Include="..\res\shaders\Phong_Vertex.vp">
       <Filter>Shader</Filter>
     </None>
-    <None Include="..\res\shaders\DSPhong_Material.fp">
+    <None Include="..\res\shaders\Phong_Fragment.fp">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

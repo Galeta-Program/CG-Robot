@@ -40,14 +40,19 @@ void UBO::associateWithShaderBlock(unsigned int program, const char* uniformBloc
 	GLCall(int idx = glGetUniformBlockIndex(program, uniformBlockName));
 
 	GLCall(glGetActiveUniformBlockiv(program, idx, GL_UNIFORM_BLOCK_DATA_SIZE, &UBOsize));
-	//bind UBO to its idx
-	GLCall(glBindBufferRange(GL_UNIFORM_BUFFER, 0, id, 0, UBOsize));
+	
+	//bind UBO to its binding point
+	GLCall(glBindBufferRange(GL_UNIFORM_BUFFER, bindingPoint, id, 0, UBOsize));
+	
+	// get the uniform with index idx from the binding point bindingPoint
 	GLCall(glUniformBlockBinding(program, idx, bindingPoint));
 }
 
 void UBO::fillInData(GLintptr offset, GLintptr size, const void* data)
 {
+	bind();
 	GLCall(glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data));
+	unbind();
 }
 
 

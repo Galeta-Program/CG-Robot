@@ -195,8 +195,8 @@
     <ClInclude Include="..\src\Window\GUI.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\res\shaders\DSPhong_Material.fp" />
-    <None Include="..\res\shaders\DSPhong_Material.vp" />
+    <None Include="..\res\shaders\Phong_Fragment.fp" />
+    <None Include="..\res\shaders\Phong_Vertex.vp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

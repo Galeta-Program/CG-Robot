@@ -52,18 +52,13 @@ namespace CG
 		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 		GLCall(glPolygonMode(GL_FRONT_AND_BACK, mode));
 
-		program.use(); //uniform參數數值前必須先use shader
+		program.use(); 
 
-		//update data to UBO for MVP
-		matVPUbo.bind();
 		matVPUbo.fillInData(0, sizeof(glm::mat4), camera->GetViewMatrix());
 		matVPUbo.fillInData(sizeof(glm::mat4), sizeof(glm::mat4), camera->GetProjectionMatrix());
-		matVPUbo.unbind();
 
-		GLCall(unsigned int lightUniformLocation = glGetUniformLocation(program.getId(), "vLightPosition"));
-		GLCall(glUniform3fv(lightUniformLocation, 1, &light->getPos()[0]));
-
-		robot.render(program.getId());
+		light->bind(program.getId());
+		robot.render(program.getId(), camera);
 
 		GLCall(glFlush());
 	}
@@ -76,12 +71,12 @@ namespace CG
 	auto MainScene::LoadScene() -> bool
 	{
 		ShaderInfo shaders[] = {
-			{ GL_VERTEX_SHADER, "../res/shaders/DSPhong_Material.vp" }, //vertex shader
-			{ GL_FRAGMENT_SHADER, "../res/shaders/DSPhong_Material.fp" }, //fragment shader
+			{ GL_VERTEX_SHADER, "../res/shaders/Phong_Vertex.vp" },
+			{ GL_FRAGMENT_SHADER, "../res/shaders/Phong_Fragment.fp" }, 
 			{ GL_NONE, NULL } };
-		program.load(shaders); //讀取shader
+		program.load(shaders); 
 
-		program.use(); //uniform參數數值前必須先use shader
+		program.use(); 
 
 		/*
 		ModelID = glGetUniformLocation(program.getId(), "Model");
@@ -100,7 +95,7 @@ namespace CG
 
 		//UBO
 		matVPUbo.initialize(sizeof(glm::mat4) * 2);
-		matVPUbo.associateWithShaderBlock(program.getId(), "MatVP", 0);
+		matVPUbo.associateWithShaderBlock(program.getId(), "u_MatVP", 0);
 
 		return true;
 	}

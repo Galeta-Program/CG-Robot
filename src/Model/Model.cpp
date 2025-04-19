@@ -128,7 +128,7 @@ void Model::gatherPartsData()
 	}
 }
 
-void Model::render(GLuint program)
+void Model::render(GLuint program, CG::Camera* camera)
 {
 	vao.bind();
 
@@ -137,48 +137,32 @@ void Model::render(GLuint program)
 	{
 		Part& currentPart = parts[i].getPart();
 
-		GLCall(GLuint ModelID = glGetUniformLocation(program, "Model"));
-
+		GLCall(GLuint ModelID = glGetUniformLocation(program, "u_Model"));
 		glm::mat4 modelMat = parts[i].getModelMatrix();
 		glm::mat4 parentModelMat = parts[i].getParentModelMatrix();
 		glm::mat4 overallModelMat = parentModelMat * modelMat;
-
 		GLCall(glUniformMatrix4fv(ModelID, 1, GL_FALSE, &overallModelMat[0][0]));
+
+		GLCall(GLuint NormalMatID = glGetUniformLocation(program, "u_NormalMatrix"));
+		glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(*(camera->GetViewMatrix()) * modelMat)));
+		GLCall(glUniformMatrix3fv(NormalMatID, 1, GL_FALSE, &normalMatrix[0][0]));
 
 		vbo.bind();
 		// 1rst attribute buffer : vertices
 		GLCall(glEnableVertexAttribArray(0));
-		GLCall(glVertexAttribPointer(0,				//location
-			3,				//vec3
-			GL_FLOAT,			//type
-			GL_FALSE,			//not normalized
-			0,				//strip
-			(void*)offset[0]));//buffer offset
-		//(location,vec3,type,固定點,連續點的偏移量,buffer point)
+		GLCall(glVertexAttribPointer(0,	3, GL_FLOAT, GL_FALSE, 0, (void*)offset[0]));
 		offset[0] += currentPart.getVerticesSize() * sizeof(glm::vec3);
 
 		// 2nd attribute buffer : UVs
-		GLCall(glEnableVertexAttribArray(1));//location 1 :vec2 UV
+		GLCall(glEnableVertexAttribArray(1));
 		uVbo.bind();
-		GLCall(glVertexAttribPointer(1,
-			2,
-			GL_FLOAT,
-			GL_FALSE,
-			0,
-			(void*)offset[1]));
-		//(location,vec2,type,固定點,連續點的偏移量,point)
+		GLCall(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)offset[1]));
 		offset[1] += currentPart.getUvsSize() * sizeof(glm::vec2);
 
 		// 3rd attribute buffer : normals
-		GLCall(glEnableVertexAttribArray(2));//location 2 :vec3 Normal
+		GLCall(glEnableVertexAttribArray(2));
 		nVbo.bind();
-		GLCall(glVertexAttribPointer(2,
-			3,
-			GL_FLOAT,
-			GL_FALSE,
-			0,
-			(void*)offset[2]));
-		//(location,vec3,type,固定點,連續點的偏移量,point)
+		GLCall(glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset[2]));
 		offset[2] += currentPart.getNormalsSize() * sizeof(glm::vec3);
 
 		int vertexIDoffset = 0;//glVertexID's offset 
@@ -191,8 +175,8 @@ void Model::render(GLuint program)
 		{
 			mtlname = mtls[j];
 			//find the material diffuse color in map:KDs by material name.
-			GLCall(GLuint M_KdID = glGetUniformLocation(program, "Material.Kd"));
-			GLCall(GLuint M_KsID = glGetUniformLocation(program, "Material.Ks"));
+			GLCall(GLuint M_KdID = glGetUniformLocation(program, "u_Material.Kd"));
+			GLCall(GLuint M_KsID = glGetUniformLocation(program, "u_Material.Ks"));
 			GLCall(glUniform3fv(M_KdID, 1, &KDs[mtlname][0]));
 			GLCall(glUniform3fv(M_KsID, 1, &Ks[0]));
 			//          (primitive   , glVertexID base , vertex count    )
@@ -204,7 +188,7 @@ void Model::render(GLuint program)
 	}//end for loop for updating and drawing model
 
 	texture.bind(0);
-	GLuint TextureID = glGetUniformLocation(program, "Texture");
+	GLuint TextureID = glGetUniformLocation(program, "u_Texture");
 	GLCall(glUniform1i(TextureID, 0));
 }
 
