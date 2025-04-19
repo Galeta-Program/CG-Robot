@@ -42,6 +42,6 @@ public:
 	inline glm::mat4 getModelMatrix() const { return modelMatrix; }
 	inline glm::mat4 getParentModelMatrix() const { return parentModelMatrix; }
 	inline glm::vec3 getTranslateOffset() const { return translateOffset; }
-	inline glm::vec3 getRotateAngle() const { return glm::degrees(glm::eulerAngles(rotateOffset)); }
+	inline glm::quat getRotateAngle() const { return rotateOffset; }
 };
 

@@ -23,9 +23,10 @@
 
 namespace CG
 {
-	MainScene::MainScene(Camera& _camera)
+	MainScene::MainScene(Camera& _camera, Light& _light)
 	{
 		camera = &_camera;
+		light = &_light;
 	}
 
 	MainScene::~MainScene()
@@ -58,6 +59,9 @@ namespace CG
 		matVPUbo.fillInData(0, sizeof(glm::mat4), camera->GetViewMatrix());
 		matVPUbo.fillInData(sizeof(glm::mat4), sizeof(glm::mat4), camera->GetProjectionMatrix());
 		matVPUbo.unbind();
+
+		GLCall(unsigned int lightUniformLocation = glGetUniformLocation(program.getId(), "vLightPosition"));
+		GLCall(glUniform3fv(lightUniformLocation, 1, &light->getPos()[0]));
 
 		robot.render(program.getId());
 
@@ -180,21 +184,21 @@ namespace CG
 			keyFrameBuffer.emplace_back();
 		}
 
-		keyFrameBuffer[TOP_BODY].emplace_back(KeyFrame{ glm::vec3(0.000000, 0.000000, 0.000000) , glm::vec3(0.000000, 0.000000, 0.000000) });
-		keyFrameBuffer[LEFT_UPPER_ARM].emplace_back(KeyFrame{ glm::vec3(7.650000, 0.000000, 0.000000) , glm::vec3(0.000000, 0.000000, 0.000000) });
-		keyFrameBuffer[LEFT_LOWER_ARM].emplace_back(KeyFrame{ glm::vec3(2.900000, -6.400000, 0.000000) , glm::vec3(0.000000, 0.000000, 0.000000) });
-		keyFrameBuffer[LEFT_HAND].emplace_back(KeyFrame{ glm::vec3(3.650000, -8.500000, 3.900000) , glm::vec3(0.000000, 0.000000, 0.000000) });
-		keyFrameBuffer[HEAD].emplace_back(KeyFrame{ glm::vec3(0.000000, 3.100000, 0.000000) , glm::vec3(0.000000, 0.000000, 0.000000) });
-		keyFrameBuffer[RIGHT_UPPER_ARM].emplace_back(KeyFrame{ glm::vec3(-7.650000, 0.050000, 0.000000) , glm::vec3(0.000000, 0.000000, 0.000000) });
-		keyFrameBuffer[RIGHT_LOWER_ARM].emplace_back(KeyFrame{ glm::vec3(-2.950000, -6.400000, 0.000000) , glm::vec3(0.000000, 0.000000, 0.000000) });
-		keyFrameBuffer[RIGHT_HAND].emplace_back(KeyFrame{ glm::vec3(-3.650000, -8.500000, 3.900000) , glm::vec3(0.000000, 0.000000, 0.000000) });
-		keyFrameBuffer[BOTTOM_BODY].emplace_back(KeyFrame{ glm::vec3(0.000000, -5.050000, -1.450000) , glm::vec3(0.000000, 0.000000, 0.000000) });
-		keyFrameBuffer[LEFT_THIGH].emplace_back(KeyFrame{ glm::vec3(3.250000, -6.650000, 2.200000) , glm::vec3(0.000000, 0.000000, 0.000000) });
-		keyFrameBuffer[LEFT_CALF].emplace_back(KeyFrame{ glm::vec3(3.000000, -10.000000, 1.150000) , glm::vec3(0.000000, 0.000000, 0.000000) });
-		keyFrameBuffer[LEFT_FOOT].emplace_back(KeyFrame{ glm::vec3(1.350000, -16.500000, -1.550000) , glm::vec3(0.000000, 0.000000, 0.000000) });
-		keyFrameBuffer[RIGHT_THIGH].emplace_back(KeyFrame{ glm::vec3(-3.250000, -6.650000, 2.200000) , glm::vec3(0.000000, 0.000000, 0.000000) });
-		keyFrameBuffer[RIGHT_CALF].emplace_back(KeyFrame{ glm::vec3(-3.350000, -10.000000, 1.150000) , glm::vec3(0.000000, 0.000000, 0.000000) });
-		keyFrameBuffer[RIGHT_FOOT].emplace_back(KeyFrame{ glm::vec3(-1.350000, -16.500000, -1.550000) , glm::vec3(0.000000, 0.000000, 0.000000) });
+		keyFrameBuffer[TOP_BODY].emplace_back(KeyFrame{ glm::vec3(0.000000, 0.000000, 0.000000) ,			glm::quat(1.0f, 0.0f, 0.0f, 0.0f) });
+		keyFrameBuffer[LEFT_UPPER_ARM].emplace_back(KeyFrame{ glm::vec3(7.650000, 0.000000, 0.000000) ,		glm::quat(1.0f, 0.0f, 0.0f, 0.0f) });
+		keyFrameBuffer[LEFT_LOWER_ARM].emplace_back(KeyFrame{ glm::vec3(2.900000, -6.400000, 0.000000) ,	glm::quat(1.0f, 0.0f, 0.0f, 0.0f) });
+		keyFrameBuffer[LEFT_HAND].emplace_back(KeyFrame{ glm::vec3(3.650000, -8.500000, 3.900000) ,			glm::quat(1.0f, 0.0f, 0.0f, 0.0f) });
+		keyFrameBuffer[HEAD].emplace_back(KeyFrame{ glm::vec3(0.000000, 3.100000, 0.000000) ,				glm::quat(1.0f, 0.0f, 0.0f, 0.0f) });
+		keyFrameBuffer[RIGHT_UPPER_ARM].emplace_back(KeyFrame{ glm::vec3(-7.650000, 0.050000, 0.000000) ,	glm::quat(1.0f, 0.0f, 0.0f, 0.0f) });
+		keyFrameBuffer[RIGHT_LOWER_ARM].emplace_back(KeyFrame{ glm::vec3(-2.950000, -6.400000, 0.000000) ,	glm::quat(1.0f, 0.0f, 0.0f, 0.0f) });
+		keyFrameBuffer[RIGHT_HAND].emplace_back(KeyFrame{ glm::vec3(-3.650000, -8.500000, 3.900000) ,		glm::quat(1.0f, 0.0f, 0.0f, 0.0f) });
+		keyFrameBuffer[BOTTOM_BODY].emplace_back(KeyFrame{ glm::vec3(0.000000, -5.050000, -1.450000) ,		glm::quat(1.0f, 0.0f, 0.0f, 0.0f) });
+		keyFrameBuffer[LEFT_THIGH].emplace_back(KeyFrame{ glm::vec3(3.250000, -6.650000, 2.200000) ,		glm::quat(1.0f, 0.0f, 0.0f, 0.0f) });
+		keyFrameBuffer[LEFT_CALF].emplace_back(KeyFrame{ glm::vec3(3.000000, -10.000000, 1.150000) ,		glm::quat(1.0f, 0.0f, 0.0f, 0.0f) });
+		keyFrameBuffer[LEFT_FOOT].emplace_back(KeyFrame{ glm::vec3(1.350000, -16.500000, -1.550000) ,		glm::quat(1.0f, 0.0f, 0.0f, 0.0f) });
+		keyFrameBuffer[RIGHT_THIGH].emplace_back(KeyFrame{ glm::vec3(-3.250000, -6.650000, 2.200000) ,		glm::quat(1.0f, 0.0f, 0.0f, 0.0f) });
+		keyFrameBuffer[RIGHT_CALF].emplace_back(KeyFrame{ glm::vec3(-3.350000, -10.000000, 1.150000) ,		glm::quat(1.0f, 0.0f, 0.0f, 0.0f) });
+		keyFrameBuffer[RIGHT_FOOT].emplace_back(KeyFrame{ glm::vec3(-1.350000, -16.500000, -1.550000) ,		glm::quat(1.0f, 0.0f, 0.0f, 0.0f) });
 
 		animator.addClip("Stand", keyFrameBuffer);
 		animator.setCurrentClip("Stand");

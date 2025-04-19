@@ -11,6 +11,7 @@
 #include "Scene/MainScene.h"
 #include "../Window/GUI.h"
 #include "../Scene/Camera.h"
+#include "../Scene/Light.h"
 
 namespace CG
 {
@@ -40,6 +41,7 @@ namespace CG
         GUI gui;
         MainScene* mainScene;
         Camera camera;
+        Light light;
 
         double timeNow = 0;
         double timeLast = 0;

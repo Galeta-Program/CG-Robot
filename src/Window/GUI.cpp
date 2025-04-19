@@ -1,4 +1,4 @@
-#include "GUI.h"
+﻿#include "GUI.h"
 
 #include "glm/glm.hpp"
 #define GLM_ENABLE_EXPERIMENTAL
@@ -134,10 +134,17 @@ namespace CG {
         else
         {
             ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 320, 0), ImGuiCond_Always);
-            ImGui::SetNextWindowSize(ImVec2(320, 250), ImGuiCond_Always);
+            ImGui::SetNextWindowSize(ImVec2(320, 100), ImGuiCond_Always);
 
             ImGui::Begin("Speed", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
             speedPanel();
+            ImGui::End();
+
+            ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 320, 100), ImGuiCond_Always);
+            ImGui::SetNextWindowSize(ImVec2(320, 250), ImGuiCond_Always);
+
+            ImGui::Begin("Light", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+            lightTranslatePanel();
             ImGui::End();
         }
     }
@@ -176,9 +183,29 @@ namespace CG {
         ImGui::Text("Configure the speed of the animation.\n");
 
         float speed = scene->getAnimator()->getCurrentClipSpeed();
-        if (ImGui::DragFloat("drag float", &speed, 0.005f, -0.1f, 10.0f, "%.3f"))
+        if (ImGui::DragFloat("    ", &speed, 0.005f, -0.1f, 10.0f, "%.3f"))
         {
             scene->getAnimator()->setCurrentClipSpeed(speed);
+        }
+    }
+
+    void GUI::lightTranslatePanel()
+    {
+        ImGui::SeparatorText("Usage");
+        ImGui::Text("Configure the position of the light source.\n");
+
+        glm::vec3 pos = scene->getLight()->getPos();
+        if (ImGui::DragFloat("light x", &pos[0], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
+        {
+            scene->getLight()->setPosition(pos);
+        }
+        if (ImGui::DragFloat("light y", &pos[1], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
+        {
+            scene->getLight()->setPosition(pos);
+        }
+        if (ImGui::DragFloat("light z", &pos[2], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
+        {
+            scene->getLight()->setPosition(pos);
         }
     }
 
@@ -306,7 +333,7 @@ everytime you press the button.\n");
     void GUI::transformPanel(Node* node)
     {
         glm::vec3 trans = node->getTranslateOffset();
-        glm::vec3 angle = node->getRotateAngle();
+        glm::vec3 angle = glm::degrees(glm::eulerAngles(node->getRotateAngle()));
 
         ImGui::SeparatorText("Translation");
         if (ImGui::DragFloat("x (Translate)", &trans[0], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
@@ -329,6 +356,10 @@ everytime you press the button.\n");
         }
         if (ImGui::DragFloat("y (Rotate)", &angle[1], 0.05f, -360.0f, 360.0f, "%.3f"))
         {
+            if (abs(angle[1]) > 89.9)
+            {
+                angle[1] = angle[1] > 0 ? 91 : -91.9;
+            }
             node->setRotate(angle);
         }
         if (ImGui::DragFloat("z (Rotate)", &angle[2], 0.05f, -360.0f, 360.0f, "%.3f"))
@@ -353,7 +384,8 @@ everytime you press the button.\n");
         {
             Node* node = &(robot->getPart(i));
             glm::vec3 trans = node->getTranslateOffset();
-            glm::vec3 rotate = node->getRotateAngle();
+            glm::vec3 rotate = glm::degrees(glm::eulerAngles(node->getRotateAngle()));
+
             outFile << trans[0] << " " << trans[1] << " " << trans[2] << std::endl <<
                 rotate[0] << " " << rotate[1] << " " << rotate[2] << std::endl;
         }
@@ -375,7 +407,7 @@ everytime you press the button.\n");
             {
                 Node* node = &(robot->getPart(i));
                 glm::vec3 trans = tracks[i].keyFrames[frame].transOffset;
-                glm::vec3 rotate = tracks[i].keyFrames[frame].rotatOffset;
+                glm::vec3 rotate = glm::degrees(glm::eulerAngles(tracks[i].keyFrames[frame].rotatOffset));
                 outFile << trans[0] << " " << trans[1] << " " << trans[2] << std::endl <<
                     rotate[0] << " " << rotate[1] << " " << rotate[2] << std::endl;
             }

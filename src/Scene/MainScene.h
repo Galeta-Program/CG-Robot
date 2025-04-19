@@ -15,6 +15,7 @@
 #include "../Model/Model.h"
 #include "../Graphic/UBO.h"
 #include "../Animation/Animator.h"
+#include "../Scene/Light.h"
 
 constexpr auto PARTSNUM = 15;
 
@@ -23,7 +24,7 @@ namespace CG
 	class MainScene
 	{
 	public:
-		MainScene(Camera& _camera);
+		MainScene(Camera& _camera, Light& _light);
 		~MainScene();
 
 		auto Initialize() -> bool;
@@ -34,6 +35,7 @@ namespace CG
 
 		inline Model* getModel() { return &robot; }
 		inline Animator* getAnimator() { return &animator; }
+		inline Light* getLight() { return light; }
 
 	private:
 		auto LoadScene() -> bool;
@@ -42,6 +44,7 @@ namespace CG
 	private:
 		Model robot;
 		Camera* camera;
+		Light* light;
 		Animator animator;
 
 		ShaderProgram program;

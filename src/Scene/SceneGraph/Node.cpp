@@ -67,15 +67,14 @@ void Node::setTranslate(glm::vec3 trans)
 
 void Node::setRotate(glm::vec3 eular)
 {
-	if (eular == getRotateAngle())
-	{
+	glm::quat angle = glm::normalize(glm::quat(glm::radians(eular)));
+
+	if (glm::length(angle - getRotateAngle()) < 0.0001f) {
 		return;
 	}
 
-	glm::vec3 eularAngle = glm::radians(eular);
-	rotateOffset = glm::quat(eularAngle);
+	rotateOffset = angle;
 
-	rotateOffset = glm::normalize(rotateOffset);
 	dirty = true;
 	updateModelMatrix();
 }

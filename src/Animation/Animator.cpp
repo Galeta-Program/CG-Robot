@@ -83,7 +83,15 @@ void Animator::addClip(std::string clipName, const char* fileName)
 			{
 				break;
 			}
-			glm::vec3 rotate(stof(buffer[0]), stof(buffer[1]), stof(buffer[2]));
+			glm::quat rotate(
+				glm::normalize(
+					glm::quat(
+						glm::radians(
+							glm::vec3(stof(buffer[0]), stof(buffer[1]), stof(buffer[2]))
+						)
+					)
+				)
+			);
 
 			tracks[i].keyFrames.emplace_back(KeyFrame{ trans, rotate });
 		}
@@ -122,8 +130,8 @@ void Animator::animate(double dt)
 		KeyFrame& nextKeyFrame = currentTrack.keyFrames[frame1];
 
 		glm::vec3 translate = glm::mix(lastKeyFrame.transOffset, nextKeyFrame.transOffset, interpolation);
-		glm::quat rotate = glm::slerp(glm::normalize(glm::quat(glm::radians(lastKeyFrame.rotatOffset))),
-			glm::normalize(glm::quat(glm::radians(nextKeyFrame.rotatOffset))), float(interpolation));
+		glm::quat rotate = glm::slerp(glm::normalize(lastKeyFrame.rotatOffset),
+			glm::normalize(nextKeyFrame.rotatOffset), float(interpolation));
 
 		model->getPart(i).setTranslate(translate);
 		model->getPart(i).setRotate(rotate);

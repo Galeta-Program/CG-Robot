@@ -225,7 +225,7 @@ namespace CG
 		//controlWindow = new ControlWindow();
 		//controlWindow->Initialize();
 
-		mainScene = new MainScene(camera);
+		mainScene = new MainScene(camera, light);
 		mainScene->Initialize();
 
 		//controlWindow->SetTargetScene(mainScene);

@@ -51,6 +51,7 @@ GLuint Texture::LoadTexture(std::string filename)
 	
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_2D, id);
+	stbi_set_flip_vertically_on_load(1);
 
 	unsigned char* data = stbi_load(filename.c_str(), &width, &height, &channels, 0);
 	if (data)

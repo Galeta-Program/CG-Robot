@@ -159,6 +159,7 @@
     <ClCompile Include="..\src\Model\Model.cpp" />
     <ClCompile Include="..\src\Model\Part.cpp" />
     <ClCompile Include="..\src\Scene\Camera.cpp" />
+    <ClCompile Include="..\src\Scene\Light.cpp" />
     <ClCompile Include="..\src\Scene\MainScene.cpp" />
     <ClCompile Include="..\src\Scene\SceneGraph\Node.cpp" />
     <ClCompile Include="..\src\Utilty\Error.cpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="..\src\Model\Model.h" />
     <ClInclude Include="..\src\Model\Part.h" />
     <ClInclude Include="..\src\Scene\Camera.h" />
+    <ClInclude Include="..\src\Scene\Light.h" />
     <ClInclude Include="..\src\Scene\MainScene.h" />
     <ClInclude Include="..\src\Scene\SceneGraph\Node.h" />
     <ClInclude Include="..\src\stb_image.h" />

@@ -8,13 +8,14 @@ layout(location = 0) in vec3 vPosition;
 layout(location = 1) in vec2 vertexUV;
 layout(location = 2) in vec3 vertexNormal;
 
-vec3 vLightPosition = vec3(0,10,50);
 
 uniform MatVP{
 	mat4 View;
 	mat4 Projection;
 };
 uniform mat4 Model;
+uniform vec3 vLightPosition;
+
 
 // Color to fragment program
 out vec3 vVaryingNormal;

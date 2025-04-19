@@ -26,6 +26,7 @@ namespace CG {
 		void mainPanel();
 		void animationPanel();
 		void speedPanel();
+		void lightTranslatePanel();
 		void editPanel();
 		void transformPanel(Node* node);
 		void exportPanel();

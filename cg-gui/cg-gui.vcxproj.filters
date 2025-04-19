@@ -68,6 +68,9 @@
     <ClCompile Include="..\src\Window\GUI.cpp">
       <Filter>Window</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Scene\Light.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="App">
@@ -177,6 +180,9 @@
     </ClInclude>
     <ClInclude Include="..\src\Window\GUI.h">
       <Filter>Window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Scene\Light.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
