@@ -24,7 +24,7 @@ public:
 	VBO& operator=(const VBO& other) = delete;
 	VBO& operator=(VBO&& other) noexcept;
 
-	void initialize(unsigned int size);
+	void initialize(unsigned int _size);
 	void initialize(const std::vector<T>& v);
 
 	void bind() const;
@@ -88,12 +88,12 @@ VBO<T>& VBO<T>::operator=(VBO<T>&& other) noexcept
 }
 
 template<class T>
-void VBO<T>::initialize(unsigned int size)
+void VBO<T>::initialize(unsigned int _size)
 {
 	GLCall(glGenBuffers(1, &id));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, id));
-	GLCall(glBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW));
-	size = size;
+	GLCall(glBufferData(GL_ARRAY_BUFFER, _size, NULL, GL_STATIC_DRAW));
+	size = _size;
 }
 
 template<class T>

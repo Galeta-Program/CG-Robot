@@ -5,13 +5,20 @@
 #ifndef OBJ_LOADER_H
 #define OBJ_LOADER_H
 
+
+struct Vertex
+{
+	glm::vec3 v;
+	glm::vec2 t;
+	glm::vec3 n;
+};
+
 bool LoadOBJ(
-	const char * path, 
-	std::vector<glm::vec3> & out_vertices, 
-	std::vector<glm::vec2> & out_uvs,
-	std::vector<glm::vec3> & out_normals,
-	std::vector<unsigned int> &out_materialIndices,
-	std::vector<std::string> &out_mtls
+	const char* path,
+	std::vector<unsigned int>& outMaterialIndices,
+	std::vector<std::string>& outMtls,
+	std::vector<Vertex>& outArrangedVertex,
+	std::vector<unsigned int>& outElementIndex
 );
 
 bool LoadMTL(const char * path,

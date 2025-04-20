@@ -13,11 +13,8 @@ class Model
 {
 private:
 	VAO vao;
-
-	VBO<glm::vec3> vbo;
-	VBO<glm::vec2> uVbo;
-	VBO<glm::vec3> nVbo;
-	VBO<glm::vec3> mVbo;
+	EBO ebo;
+	VBO<Vertex> vbo;
 
 	Texture texture;
 

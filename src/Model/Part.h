@@ -1,6 +1,9 @@
 #pragma once
 
 #include "../Graphic/VBO.h"
+#include "../Graphic/EBO.h"
+#include "../src/Utilty/OBJLoader.hpp"
+
 #include <glm/glm.hpp>
 #include <vector>
 #include <string>
@@ -8,17 +11,17 @@
 class Part
 {
 private:
-	VBO<glm::vec3> vbo;
-	VBO<glm::vec2> uVbo;
-	VBO<glm::vec3> nVbo;
-	VBO<glm::vec3> mVbo;
+	EBO ebo;
+	VBO<Vertex> vbo;
+
+	std::vector<Vertex> arrangedVertex;
+	std::vector<unsigned int> elementIndex;
 
 	std::vector<unsigned int> faces;
-	std::vector<std::string> mtls;
+	std::vector<std::string> mtlNames;
 
-	unsigned int verticesSize;
-	unsigned int uvsSize;
-	unsigned int normalsSize;
+	unsigned int vertexSize;
+	unsigned int elementSize; //v/t/n
 
 public:
 	Part(const char* obj);
@@ -29,18 +32,14 @@ public:
 	Part& operator=(Part&& other) noexcept;
 	Part& operator=(const Part& other) = delete;
 
-	void Load2Buffer(const char* obj);
-	void invalidBuffers();
+	void LoadToBuffer(const char* obj);
 
 	inline GLuint vboId() const { return vbo.getId(); }
-	inline GLuint uVboId() const { return uVbo.getId(); }
-	inline GLuint nVboId() const { return nVbo.getId(); }
-	inline GLuint mVboId() const { return mVbo.getId(); }
+	inline GLuint eboId() const { return ebo.getId(); }
 	
-	inline unsigned int getVerticesSize() { return verticesSize; }
-	inline unsigned int getUvsSize() { return uvsSize; }
-	inline unsigned int getNormalsSize() { return normalsSize; }
-	inline unsigned int& getFace(unsigned int index) { return faces[index]; }
-	inline std::vector<std::string>& getMtls() { return mtls; }
+	inline unsigned int getVertexSize() const { return vertexSize; } // unique vertices (struct Vertex)
+	inline unsigned int getElementSize() const { return elementSize; } // indices of vertices
+	inline unsigned int getFace(unsigned int index) const { return faces[index]; }
+	inline const std::vector<std::string>& getMtlNames() { return mtlNames; }
 };
 

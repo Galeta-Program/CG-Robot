@@ -1,5 +1,4 @@
 #include "Part.h"
-#include "../src/Utilty/OBJLoader.hpp"
 #include <glm/glm.hpp>
 
 template class VBO<glm::vec3>;
@@ -7,19 +6,16 @@ template class VBO<glm::vec2>;
 
 Part::Part(const char* obj)
 {
-	Load2Buffer(obj);
+	LoadToBuffer(obj);
 }
 
 Part::Part(Part&& other) noexcept :
+	ebo(std::move(other.ebo)),
 	vbo(std::move(other.vbo)),
-	uVbo(std::move(other.uVbo)),
-	nVbo(std::move(other.nVbo)),
-	mVbo(std::move(other.mVbo)),
 	faces(std::move(other.faces)),
-	mtls(std::move(other.mtls)),
-	verticesSize(other.verticesSize),
-	uvsSize(other.uvsSize),
-	normalsSize(other.normalsSize)
+	mtlNames(std::move(other.mtlNames)),
+	vertexSize(other.vertexSize),
+	elementSize(other.elementSize)
 {}
 
 Part::~Part()
@@ -29,45 +25,28 @@ Part::~Part()
 
 Part& Part::operator=(Part&& other) noexcept
 {
-	if (this != &other)
+	if ( this != &other )
 	{
+		ebo		= std::move(other.ebo);
 		vbo		= std::move(other.vbo);
-		uVbo	= std::move(other.uVbo);
-		nVbo	= std::move(other.nVbo);
-		mVbo	= std::move(other.mVbo);
 		faces	= std::move(other.faces);
-		mtls	= std::move(other.mtls);
-		verticesSize = other.verticesSize;
-		uvsSize = other.uvsSize;
-		normalsSize = other.normalsSize;
+		mtlNames	= std::move(other.mtlNames);
+		vertexSize = other.vertexSize;
+		elementSize = other.elementSize;
 	}
 
 	return *this;
 }
 
 
-void Part::Load2Buffer(const char* obj)
+void Part::LoadToBuffer(const char* obj)
 {
-	std::vector<glm::vec3> vertices;
-	std::vector<glm::vec2> uvs;
-	std::vector<glm::vec3> normals; // Won't be used at the moment.
-
-	bool res = LoadOBJ(obj, vertices, uvs, normals, faces, mtls);
+	bool res = LoadOBJ(obj, faces, mtlNames, arrangedVertex, elementIndex);
 	if (!res) printf("load failed\n");
 
-	vbo.initialize(vertices);
-	uVbo.initialize(uvs);
-	nVbo.initialize(normals);
+	vbo.initialize(arrangedVertex);
+	ebo.initialize(elementIndex);
 
-	verticesSize = vertices.size();
-	uvsSize = uvs.size();
-	normalsSize = normals.size();
-}
-
-void Part::invalidBuffers()
-{
-	vbo.invalid();
-	uVbo.invalid();
-	nVbo.invalid();
-	//mVbo.invalid();
+	vertexSize = arrangedVertex.size();
+	elementSize = elementIndex.size();
 }
