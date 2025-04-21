@@ -40,7 +40,7 @@ namespace CG
 
 	void MainScene::Update(double dt)
 	{
-		if(!editMode)
+		if (!editMode)
 		{
 			animator.animate(dt);
 		}
@@ -200,6 +200,9 @@ namespace CG
 		animator.setCurrentClip("Stand");
 
 		// Add animation here
+		animator.addClip("Walk", "../res/animation/walk.anim");
 		animator.addClip("Hopak", "../res/animation/hopak.anim");
+		animator.addClip("Sit-Up", "../res/animation/sit-up.anim");
+		animator.addClip("Push-Up", "../res/animation/push-up.anim");
 	}
 }
