@@ -142,16 +142,16 @@ namespace CG
 			double x = xpos - lastCursorX;
 			double y = ypos - lastCursorY;
 
-			float transSpeed = 0.125f;
+			float transSpeed = 0.07f;
 			float rotatSpeed = 0.25f;
 
-			if (mouseMiddlePressed)
+			if (mouseRightPressed)
 			{
 				camera->rotateAround(-y * rotatSpeed, glm::vec3(1.0f, 0.0f, 0.0f));
 				camera->rotateAround(-x * rotatSpeed, glm::vec3(0.0f, 1.0f, 0.0f));
 			}
 
-			if (mouseRightPressed)
+			if (mouseMiddlePressed)
 			{
 				camera->flatTranslate(-x * transSpeed, y * transSpeed);
 			}

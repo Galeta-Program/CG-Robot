@@ -30,14 +30,14 @@ void main(void)
 
     vec4 texColor = texture(u_Texture, v_TexCoord);
     
-    vec3 ambient = 0.5 * u_LightColor;
+    vec3 ambient = 1.0 * u_LightColor;
 
     float diff = max(dot(normal, lightDir), 0.0);
-    vec3 diffuse = diff * u_LightColor;
+    vec3 diffuse = diff * u_Material.Kd * u_LightColor;
 
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_Shininess);
-    vec3 specular = spec * u_LightColor;
+    vec3 specular = spec * u_Material.Ks * u_LightColor;
     
     vec3 result = ambient + diffuse + specular;    
     out_FragColor = vec4(result, 1.0) * texColor;

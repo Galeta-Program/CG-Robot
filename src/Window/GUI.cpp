@@ -220,15 +220,15 @@ the light source.\n");
 
         ImGui::SeparatorText("Color");
         glm::vec3 color = scene->getLight()->getColor();
-        if (ImGui::DragFloat("light r", &color[0], 0.005f, 0, 1, "%.3f"))
+        if (ImGui::DragFloat("light r", &color[0], 0.0005f, 0, 1, "%.3f"))
         {
             scene->getLight()->setColor(color);
         }
-        if (ImGui::DragFloat("light g", &color[1], 0.005f, 0, 1, "%.3f"))
+        if (ImGui::DragFloat("light g", &color[1], 0.0005f, 0, 1, "%.3f"))
         {
             scene->getLight()->setColor(color);
         }
-        if (ImGui::DragFloat("light b", &color[2], 0.005f, 0, 1, "%.3f"))
+        if (ImGui::DragFloat("light b", &color[2], 0.0005f, 0, 1, "%.3f"))
         {
             scene->getLight()->setColor(color);
         }

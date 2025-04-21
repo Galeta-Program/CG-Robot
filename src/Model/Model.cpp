@@ -26,13 +26,21 @@ void Model::initialize( std::vector<std::string>& mtlPaths, std::vector<std::str
 	std::vector<glm::vec3> Kas;
 	std::vector<glm::vec3> Kss;
 	std::vector<std::string> Materials; //mtl-name
-	std::string textureName;
+	std::vector<std::string> map_Kd;
+	std::vector<std::string> map_Ns;
+	std::vector<std::string> map_refl;
+	std::vector<std::string> map_Ke;
+	std::vector<std::string> map_d;
+	std::vector<std::string> map_Bump;
 
 	for ( std::string path: mtlPaths )
 	{
-		LoadMTL( path.c_str(), Kds, Kas, Kss, Materials, textureName );
+		LoadMTL( path.c_str(), Kds, Kas, Kss, Materials, map_Kd, map_Ns, map_refl, map_Ke, map_d, map_Bump);
 	}
-	mapMtlNameToKds( Materials, Kds );
+	mapMtlNameToKds( Materials, KAs, Kas );
+	mapMtlNameToKds( Materials, KDs, Kds );
+	mapMtlNameToKds( Materials, KSs, Kss );
+
 
 	for ( int i = 0; i < objPaths.size(); i++ )
 	{
@@ -40,8 +48,8 @@ void Model::initialize( std::vector<std::string>& mtlPaths, std::vector<std::str
 	}
 
 	// maybe add another method to handle this
-	if (!textureName.empty())
-		texture.LoadTexture( "../res/models2/" + textureName );
+	if (!map_Kd.empty())
+		texture.LoadTexture( "../res/models2/" + map_Kd[0]);
 	else
 		texture.LoadTexture( "../res/models2/Robot_Base_color 7.png" );
 }
@@ -61,13 +69,14 @@ void Model::setPartsRelationship( std::vector<std::vector<unsigned int>> relatio
 	}
 }
 
-void Model::mapMtlNameToKds( std::vector<std::string>& materials, std::vector<glm::vec3>& Kds )
+void Model::mapMtlNameToKds( std::vector<std::string>& materials, 
+							 std::map<std::string, glm::vec3>& mapping, 
+							 std::vector<glm::vec3>& content )
 {
 	for ( int i = 0; i < materials.size(); i++ )
 	{
 		std::string mtlname = materials[i];
-		//  name       vec3
-		KDs[mtlname] = Kds[i];
+		mapping[mtlname] = content[i];
 	}
 }
 
@@ -77,15 +86,22 @@ void Model::loadModel(const char* mtlPaths, const char* objPath)
 	std::vector<glm::vec3> Kas;
 	std::vector<glm::vec3> Kss;
 	std::vector<std::string> Materials; //mtl-name
-	std::string textureName;
+	std::vector<std::string> map_Kd;
+	std::vector<std::string> map_Ns;
+	std::vector<std::string> map_refl;
+	std::vector<std::string> map_Ke;
+	std::vector<std::string> map_d;
+	std::vector<std::string> map_Bump;
 
 	parts.emplace_back( objPath );
-	LoadMTL( mtlPaths, Kds, Kas, Kss, Materials, textureName );
-	mapMtlNameToKds( Materials, Kds );
+	LoadMTL( mtlPaths, Kds, Kas, Kss, Materials, map_Kd, map_Ns, map_refl, map_Ke, map_d, map_Bump );
 
+	mapMtlNameToKds( Materials, KAs, Kas );
+	mapMtlNameToKds( Materials, KDs, Kds );
+	mapMtlNameToKds( Materials, KSs, Kss );
 	// maybe add another method to handle this
-	if (!textureName.empty())
-		texture.LoadTexture( "../res/models2/" + textureName );
+	if (!map_Kd.empty())
+		texture.LoadTexture( "../res/models2/" + map_Kd[0]);
 	else
 		texture.LoadTexture( "../res/models2/Robot_Base_color 7.png" );
 }
@@ -182,11 +198,12 @@ void Model::render( GLuint program, CG::Camera* camera )
 		for ( int j = 0; j < mtls.size(); j++ )
 		{
 			mtlname = mtls[j];
-			//find the material diffuse color in map:KDs by material name.
+			GLCall( GLuint M_KaID = glGetUniformLocation( program, "u_Material.Ka" ) );
 			GLCall( GLuint M_KdID = glGetUniformLocation( program, "u_Material.Kd" ) );
 			GLCall( GLuint M_KsID = glGetUniformLocation( program, "u_Material.Ks" ) );
+			GLCall( glUniform3fv( M_KaID, 1, &KAs[mtlname][0] ) );
 			GLCall( glUniform3fv( M_KdID, 1, &KDs[mtlname][0] ) );
-			GLCall( glUniform3fv( M_KsID, 1, &Ks[0] ) );
+			GLCall( glUniform3fv( M_KsID, 1, &KSs[mtlname][0] ) );
 		}
 		GLCall(glDrawElements(GL_TRIANGLES, drawSize, GL_UNSIGNED_INT, (void*)offset));
 

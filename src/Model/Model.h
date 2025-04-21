@@ -18,8 +18,9 @@ private:
 
 	Texture texture;
 
+	std::map<std::string, glm::vec3> KAs; //mtl-name&Ka
 	std::map<std::string, glm::vec3> KDs; //mtl-name&Kd
-	std::map<std::string, glm::vec3> KSs; //mtl-name&Ks -> not used now
+	std::map<std::string, glm::vec3> KSs; //mtl-name&Ks 
 
 	int partSum;
 	std::vector<Node> parts;
@@ -30,7 +31,9 @@ public:
 
 	void initialize(std::vector<std::string>& mtlPaths, std::vector<std::string>& objPaths);
 	void setPartsRelationship(std::vector<std::vector<unsigned int>> relationships);
-	void mapMtlNameToKds(std::vector<std::string>& materials, std::vector<glm::vec3>& Kds);
+	void mapMtlNameToKds(std::vector<std::string>& materials, 
+						 std::map<std::string, glm::vec3>& mapping,
+						 std::vector<glm::vec3>& content);
 	void loadModel(const char* mtlPaths, const char* objPath);
 	void gatherPartsData();
 	void render(GLuint program, CG::Camera* camera);
