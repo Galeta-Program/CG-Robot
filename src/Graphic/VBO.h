@@ -24,8 +24,8 @@ public:
 	VBO& operator=(const VBO& other) = delete;
 	VBO& operator=(VBO&& other) noexcept;
 
-	void initialize(unsigned int _size);
-	void initialize(const std::vector<T>& v);
+	void initialize(unsigned int _size, GLuint usageMode = GL_STATIC_DRAW);
+	void initialize(const std::vector<T>& v, GLuint usageMode = GL_STATIC_DRAW);
 
 	void bind() const;
 	void unbind() const;
@@ -88,16 +88,16 @@ VBO<T>& VBO<T>::operator=(VBO<T>&& other) noexcept
 }
 
 template<class T>
-void VBO<T>::initialize(unsigned int _size)
+void VBO<T>::initialize(unsigned int _size, GLuint usageMode)
 {
 	GLCall(glGenBuffers(1, &id));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, id));
-	GLCall(glBufferData(GL_ARRAY_BUFFER, _size, NULL, GL_STATIC_DRAW));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, _size, NULL, usageMode));
 	size = _size;
 }
 
 template<class T>
-void VBO<T>::initialize(const std::vector<T>& v)
+void VBO<T>::initialize(const std::vector<T>& v, GLuint usageMode)
 {
 	if (v.size() == 0)
 	{
@@ -107,7 +107,7 @@ void VBO<T>::initialize(const std::vector<T>& v)
 
 	GLCall(glGenBuffers(1, &id));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, id));
-	GLCall(glBufferData(GL_ARRAY_BUFFER, v.size() * sizeof(T), &v[0], GL_STATIC_DRAW));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, v.size() * sizeof(T), &v[0], usageMode));
 	size = v.size();
 }
 

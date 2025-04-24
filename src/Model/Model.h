@@ -15,6 +15,7 @@ private:
 	VAO vao;
 	EBO ebo;
 	VBO<Vertex> vbo;
+	VBO<glm::mat4> instancingVbo;
 
 	Texture texture;
 
@@ -24,6 +25,9 @@ private:
 
 	int partSum;
 	std::vector<Node> parts;
+
+	unsigned int instancingCount = 1;
+	std::vector<glm::mat4> instancingOffests;
 
 public:
 	Model() : partSum(0) {}
@@ -37,8 +41,10 @@ public:
 	void loadModel(const char* mtlPaths, const char* objPath);
 	void gatherPartsData();
 	void render(GLuint program, CG::Camera* camera);
+	void modifyInstance(unsigned int count);
 
 	inline Node& getPart(unsigned int index) { return parts[index]; }
 	inline unsigned int getPartsAmount() { return parts.size(); }
+	inline unsigned int getInstancingCount() { return instancingCount; }
 };
 

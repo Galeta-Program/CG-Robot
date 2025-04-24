@@ -199,9 +199,15 @@ namespace CG
 		animator.setCurrentClip("Stand");
 
 		// Add animation here
-		animator.addClip("Walk", "../res/animation/walk.anim");
-		animator.addClip("Hopak", "../res/animation/hopak.anim");
+		animator.addClip("Walk", "../res/animation/walk.anim");	
 		animator.addClip("Sit-Up", "../res/animation/sit-up.anim");
 		animator.addClip("Push-Up", "../res/animation/push-up.anim");
+		animator.addClip("Hopak", "../res/animation/hopak.anim");
+		animator.addClip("APT", "../res/animation/apt.anim");
+		animator.addClip("Shadow_Clone_Jutsu", "../res/animation/shadow_clone_jutsu.anim",
+			{
+				AnimationEvent{1, [=]() { robot.modifyInstance(1); }},
+				AnimationEvent{8, [=]() { robot.modifyInstance(3); }}
+			});
 	}
 }

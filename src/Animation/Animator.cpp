@@ -12,10 +12,11 @@ void Animator::target(Model* _model)
 	model = _model;
 }
 
-void Animator::addClip(std::string clipName, std::vector<std::vector<KeyFrame>>& allKeyFrames, double _speed /* = 1 */)
+void Animator::addClip(std::string clipName, std::vector<std::vector<KeyFrame>>& allKeyFrames, double _speed /* = 1 */, std::vector<AnimationEvent> animationEvents)
 {
 	clips[clipName] = AnimationClip(clipName, _speed);
 	clipNames.emplace_back(clipName);
+	clips[clipName].updateAnimationEvents(animationEvents);
 
 	std::vector<Track> tracks;
 
@@ -30,10 +31,11 @@ void Animator::addClip(std::string clipName, std::vector<std::vector<KeyFrame>>&
 	clips[clipName].updateTracks(tracks);
 }
 
-void Animator::addClip(std::string clipName, const char* fileName)
+void Animator::addClip(std::string clipName, const char* fileName, std::vector<AnimationEvent> animationEvents)
 {
 	clips[clipName] = AnimationClip(clipName);
 	clipNames.emplace_back(clipName);
+	clips[clipName].updateAnimationEvents(animationEvents);
 
 	std::vector<Track> tracks;
 	for (int i = 0; i < model->getPartsAmount(); i++)
@@ -135,6 +137,12 @@ void Animator::animate(double dt)
 
 		model->getPart(i).setTranslate(translate);
 		model->getPart(i).setRotate(rotate);
+	}
+
+	for (const auto& animationEvent : currentClip->getAnimationEvents())
+	{
+		if (frame0 == animationEvent.frameNum)
+			animationEvent.onTrigger();
 	}
 }
 

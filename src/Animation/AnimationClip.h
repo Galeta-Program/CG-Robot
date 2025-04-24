@@ -2,6 +2,7 @@
 #include "../Scene/SceneGraph/Node.h"
 
 #include <vector>
+#include <functional>
 
 struct KeyFrame
 {
@@ -15,6 +16,12 @@ struct Track
 	std::vector<KeyFrame> keyFrames;
 };
 
+struct AnimationEvent
+{
+	unsigned int frameNum;
+	std::function<void()> onTrigger;
+};
+
 class AnimationClip
 {
 private:
@@ -25,6 +32,8 @@ private:
 	unsigned int frameAmount;
 	float speed;
 
+	std::vector<AnimationEvent> animationEvents;
+
 public:
 	AnimationClip() : clipName(""), frameAmount(0), speed(1) {}
 	AnimationClip(std::string name): clipName(name), frameAmount(0), speed(1) {}
@@ -33,10 +42,12 @@ public:
 	~AnimationClip() {}
 
 	void updateTracks(std::vector<Track>& _tracks);
+	void updateAnimationEvents(std::vector<AnimationEvent>& _animationEvents);
 	void setSpeed(float _speed);
 
 	inline float getSpeed() const { return speed; }
 	inline unsigned int getAmountOfFrame() { return frameAmount; }
 	inline Track& getTrack(unsigned int index) { return tracks[index]; }
 	inline const std::vector<Track>& getTracks() { return tracks; }
+	inline const std::vector<AnimationEvent>& getAnimationEvents() { return animationEvents; }
 };

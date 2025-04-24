@@ -21,8 +21,8 @@ public:
 	~Animator();
 
 	void target(Model* _model);
-	void addClip(std::string clipName, std::vector<std::vector<KeyFrame>>& allKeyFrames, double _speed = 1);
-	void addClip(std::string clipName, const char* fileName);
+	void addClip(std::string clipName, std::vector<std::vector<KeyFrame>>& allKeyFrames, double _speed = 1, std::vector<AnimationEvent> animationEvents = {});
+	void addClip(std::string clipName, const char* fileName, std::vector<AnimationEvent> animationEvents = {});
 
 	void animate(double dt);
 

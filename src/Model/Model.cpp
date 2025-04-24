@@ -111,6 +111,8 @@ void Model::gatherPartsData()
 	vao.bind();
 	vbo.bind();
 	ebo.bind();
+	instancingVbo.bind();
+	
 
 	GLuint totalVertexSize = 0;
 	GLuint vertexSizeOffset = 0;
@@ -163,10 +165,40 @@ void Model::gatherPartsData()
 	GLCall(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float))));
 	GLCall(glEnableVertexAttribArray(2));
 	GLCall(glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float))));
+
+	instancingVbo.initialize(instancingCount * sizeof(glm::mat4), GL_DYNAMIC_DRAW);
+	for (int i = 0; i < 4; i++)
+	{
+		glEnableVertexAttribArray(3 + i);
+		glVertexAttribPointer(3 + i, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(float) * 4 * i));
+		glVertexAttribDivisor(3 + i, 1);
+	}
 }
 
 void Model::render( GLuint program, CG::Camera* camera )
 {
+	instancingVbo.bind();
+
+	int n, p = 0, limit = 0, count = 0, u = 0;
+	glm::mat4* matrices = (glm::mat4*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+	for (n = 0; n < instancingCount; n++)
+	{
+		float x = p * 30;
+		float y = 0;
+		float z = -u * 25;
+		matrices[n] = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, z));
+		p += 2;
+			
+		if (p > limit)
+		{
+			u += 1;
+			count += u;
+			p = -u;
+			limit = u;
+		}
+	}
+	glUnmapBuffer(GL_ARRAY_BUFFER);
+
 	vao.bind();
 	
 	texture.bind( 0 );
@@ -205,9 +237,22 @@ void Model::render( GLuint program, CG::Camera* camera )
 			GLCall( glUniform3fv( M_KdID, 1, &KDs[mtlname][0] ) );
 			GLCall( glUniform3fv( M_KsID, 1, &KSs[mtlname][0] ) );
 		}
-		GLCall(glDrawElements(GL_TRIANGLES, drawSize, GL_UNSIGNED_INT, (void*)offset));
+		GLCall(glDrawElementsInstanced(GL_TRIANGLES, drawSize, GL_UNSIGNED_INT, (void*)offset, instancingCount));
 
 		offset += drawSize * sizeof(unsigned int);
 	}//end for loop for updating and drawing model
+}
+
+void Model::modifyInstance(unsigned int count)
+{
+	instancingCount = count;
+	instancingVbo.bind();
+	instancingVbo.initialize(instancingCount * sizeof(glm::mat4), GL_DYNAMIC_DRAW);
+	for (int i = 0; i < 4; i++)
+	{
+		glEnableVertexAttribArray(3 + i);
+		glVertexAttribPointer(3 + i, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(float) * 4 * i));
+		glVertexAttribDivisor(3 + i, 1);
+	}
 }
 
