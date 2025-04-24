@@ -358,7 +358,7 @@ everytime you press the button.\n");
     void GUI::transformPanel(Node* node)
     {
         glm::vec3 trans = node->getTranslateOffset();
-        glm::vec3 angle = glm::degrees(glm::eulerAngles(node->getRotateAngle()));
+        glm::vec3 angle = node->getEulerRotateAngle();
 
         ImGui::SeparatorText("Translation");
         if (ImGui::DragFloat("x (Translate)", &trans[0], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
@@ -381,10 +381,6 @@ everytime you press the button.\n");
         }
         if (ImGui::DragFloat("y (Rotate)", &angle[1], 0.05f, -360.0f, 360.0f, "%.3f"))
         {
-            if (abs(angle[1]) > 89.9)
-            {
-                angle[1] = angle[1] > 0 ? 91 : -91.9;
-            }
             node->setRotate(angle);
         }
         if (ImGui::DragFloat("z (Rotate)", &angle[2], 0.05f, -360.0f, 360.0f, "%.3f"))
@@ -409,7 +405,7 @@ everytime you press the button.\n");
         {
             Node* node = &(robot->getPart(i));
             glm::vec3 trans = node->getTranslateOffset();
-            glm::vec3 rotate = glm::degrees(glm::eulerAngles(node->getRotateAngle()));
+            glm::vec3 rotate = node->getEulerRotateAngle();
 
             outFile << trans[0] << " " << trans[1] << " " << trans[2] << std::endl <<
                 rotate[0] << " " << rotate[1] << " " << rotate[2] << std::endl;
@@ -426,8 +422,8 @@ everytime you press the button.\n");
         outFile << "speed " << scene->getAnimator()->getCurrentClipSpeed() << std::endl; 
 
         // write the local coord of each node
-        for (int frame = 0; frame < tracks[0].keyFrames.size(); frame++)
-        {
+        for (int frame = 0; frame < tracks[0].keyFrames.size(); frame++){
+       
             for (int i = 0; i < 15; i++) // 15 nodes
             {
                 Node* node = &(robot->getPart(i));
@@ -438,6 +434,5 @@ everytime you press the button.\n");
             }
         }
     }
-
 
 }

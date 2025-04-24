@@ -3,6 +3,7 @@
 Node::Node(const char* obj, std::vector<Node*> _childern /*  = {} */) :
 	part(obj),
 	dirty(false),
+	rotateOffsetInEuler(0, 0, 0),
 	rotateOffset(1.0f, 0.0f, 0.0f, 0.0f),
 	translateOffset(0.0f),
 	modelMatrix(1.0f),
@@ -15,6 +16,7 @@ Node::Node(const char* obj, std::vector<Node*> _childern /*  = {} */) :
 Node::Node(Node&& other) noexcept :
 	part(std::move(other.part)),
 	dirty(other.dirty),
+	rotateOffsetInEuler(other.rotateOffsetInEuler),
 	rotateOffset(other.rotateOffset),
 	translateOffset(other.translateOffset),
 	children(std::move(other.children)),
@@ -24,10 +26,14 @@ Node::Node(Node&& other) noexcept :
 
 Node& Node::operator=(Node&& other) noexcept
 {
+	part = std::move(other.part);
+	dirty = other.dirty;
+	rotateOffsetInEuler = other.rotateOffsetInEuler;
+	rotateOffset = other.rotateOffset;
+	translateOffset = other.translateOffset;
 	children = std::move(other.children);
 	modelMatrix = other.modelMatrix;
 	parentModelMatrix = other.parentModelMatrix;
-	part = std::move(other.part);
 
 	return *this;
 }
@@ -72,6 +78,8 @@ void Node::setRotate(glm::vec3 eular)
 	if (glm::length(angle - getRotateAngle()) < 0.0001f) {
 		return;
 	}
+
+	rotateOffsetInEuler = eular;
 
 	rotateOffset = angle;
 

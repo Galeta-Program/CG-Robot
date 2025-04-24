@@ -13,6 +13,7 @@ private:
 
 	bool dirty;
 
+	glm::vec3 rotateOffsetInEuler;
 	glm::quat rotateOffset;
 	glm::vec3 translateOffset;
 
@@ -43,5 +44,6 @@ public:
 	inline glm::mat4 getParentModelMatrix() const { return parentModelMatrix; }
 	inline glm::vec3 getTranslateOffset() const { return translateOffset; }
 	inline glm::quat getRotateAngle() const { return rotateOffset; }
+	inline glm::vec3 getEulerRotateAngle() const { return rotateOffsetInEuler; }
 };
 
