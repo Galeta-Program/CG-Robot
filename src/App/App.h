@@ -36,8 +36,6 @@ namespace CG
     private:
         GLFWwindow* mainWindow;
 
-        //ControlWindow* controlWindow;
-        //bool showControlWindow;
         GUI gui;
         MainScene* mainScene;
         Camera camera;
