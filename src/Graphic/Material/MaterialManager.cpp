@@ -1,5 +1,4 @@
 #include "MaterialManager.h"
-#include "../ShaderProgram/OBJLoader.h"
 
 
 MaterialManager MaterialManager::instance;

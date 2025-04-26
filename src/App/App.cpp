@@ -180,7 +180,7 @@ namespace CG
 
 	}
 
-	auto App::Initialize() -> bool
+	auto App::initialize() -> bool
 	{
 		// Set error callback
 		glfwSetErrorCallback([](int error, const char* description)
@@ -224,20 +224,16 @@ namespace CG
 		camera.LookAt(glm::vec3(0, -20, 40), glm::vec3(0, -20, 0), glm::vec3(0, 1, 0));
 		light.initialize();
 
-		//controlWindow = new ControlWindow();
-		//controlWindow->Initialize();
 
 		mainScene = new MainScene(camera, light);
 		mainScene->Initialize();
 
-		//controlWindow->SetTargetScene(mainScene);
 		gui.init(mainWindow, mainScene);
 
-		// Initialization done
 		return true;
 	}
 
-	void App::Loop()
+	void App::loop()
 	{
 		while (!glfwWindowShouldClose(mainWindow))
 		{
@@ -246,9 +242,9 @@ namespace CG
 			timeNow = glfwGetTime();
 			timeDelta = timeNow - timeLast;
 			timeLast = timeNow;
-			Update(timeDelta);
+			update(timeDelta);
 
-			Render();
+			render();
 			gui.render();
 
 			/*
@@ -272,7 +268,7 @@ namespace CG
 		}
 	}
 
-	void App::Terminate()
+	void App::terminate()
 	{
 		gui.terminate();
 
@@ -280,12 +276,12 @@ namespace CG
 		glfwTerminate();
 	}
 
-	void App::Update(double dt)
+	void App::update(double dt)
 	{
 		mainScene->Update(dt);
 	}
 
-	void App::Render()
+	void App::render()
 	{
 		int display_w, display_h;
 		glfwGetFramebufferSize(mainWindow, &display_w, &display_h);

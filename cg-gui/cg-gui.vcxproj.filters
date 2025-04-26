@@ -77,9 +77,6 @@
     <ClCompile Include="..\src\Graphic\Material\MaterialManager.cpp">
       <Filter>Graphic\Material</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Graphic\ShaderProgram\OBJLoader.cpp">
-      <Filter>Graphic\ShaderProgram</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="App">
@@ -198,9 +195,6 @@
     </ClInclude>
     <ClInclude Include="..\src\Graphic\Material\MaterialManager.h">
       <Filter>Graphic\Material</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\Graphic\ShaderProgram\OBJLoader.h">
-      <Filter>Graphic\ShaderProgram</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

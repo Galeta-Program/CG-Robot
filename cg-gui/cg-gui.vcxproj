@@ -156,7 +156,6 @@
     <ClCompile Include="..\src\Graphic\Material\Material.cpp" />
     <ClCompile Include="..\src\Graphic\Material\MaterialManager.cpp" />
     <ClCompile Include="..\src\Graphic\Material\Texture.cpp" />
-    <ClCompile Include="..\src\Graphic\ShaderProgram\OBJLoader.cpp" />
     <ClCompile Include="..\src\Graphic\ShaderProgram\ShaderProgram.cpp" />
     <ClCompile Include="..\src\Graphic\UBO.cpp" />
     <ClCompile Include="..\src\Graphic\VAO.cpp" />
@@ -184,7 +183,6 @@
     <ClInclude Include="..\src\Graphic\Material\Material.h" />
     <ClInclude Include="..\src\Graphic\Material\MaterialManager.h" />
     <ClInclude Include="..\src\Graphic\Material\Texture.h" />
-    <ClInclude Include="..\src\Graphic\ShaderProgram\OBJLoader.h" />
     <ClInclude Include="..\src\Graphic\ShaderProgram\ShaderProgram.h" />
     <ClInclude Include="..\src\Graphic\UBO.h" />
     <ClInclude Include="..\src\Graphic\VAO.h" />

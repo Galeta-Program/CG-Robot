@@ -21,15 +21,15 @@ namespace CG
         App();
         ~App();
 
-        auto Initialize() -> bool;
-        void Loop();
-        void Terminate();
+        auto initialize() -> bool;
+        void loop();
+        void terminate();
 
         inline Camera& getCamera() { return camera; }
 
     private:
-        void Update(double dt);
-        void Render();
+        void update(double dt);
+        void render();
 
         void GLInit();
 

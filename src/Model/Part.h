@@ -2,7 +2,6 @@
 
 #include "../Graphic/VBO.h"
 #include "../Graphic/EBO.h"
-#include "../Graphic/ShaderProgram/OBJLoader.h"
 
 #include <glm/glm.hpp>
 #include <vector>

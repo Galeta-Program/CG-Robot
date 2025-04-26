@@ -1,6 +1,5 @@
 #include "MainScene.h"
 #include "../Utilty/Error.h"
-#include "../Graphic/ShaderProgram/OBJLoader.h"
 
 #include <iostream>
 
