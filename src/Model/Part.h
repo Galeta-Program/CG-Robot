@@ -24,7 +24,7 @@ private:
 	unsigned int elementSize; //v/t/n
 
 public:
-	Part(const char* obj);
+	Part(const char* obj, const char* mtl);
 	Part(Part&& other) noexcept;
 	Part(const Part& other) = delete;
 	~Part();

@@ -1,7 +1,7 @@
 #include "Node.h"
 
-Node::Node(const char* obj, std::vector<Node*> _childern /*  = {} */) :
-	part(obj),
+Node::Node(const char* obj, const char* mtl, std::vector<Node*> _childern /*  = {} */) :
+	part(obj, mtl),
 	dirty(false),
 	rotateOffsetInEuler(0, 0, 0),
 	rotateOffset(1.0f, 0.0f, 0.0f, 0.0f),

@@ -21,7 +21,7 @@ private:
 	glm::mat4 parentModelMatrix; // Transformation matrix of itself
 
 public:
-	Node(const char* obj, std::vector<Node*> _childern = {});
+	Node(const char* obj, const char* mtl, std::vector<Node*> _childern = {});
 	Node(Node&& other) noexcept;
 	Node(const Node& other) = delete;
 	~Node() {}

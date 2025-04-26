@@ -1,8 +1,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 
 #include "Texture.h"
-#include "../Utilty/Error.h"
-#include "../src/stb_image.h"
+#include "../../Utilty/Error.h"
+#include "../../src/stb_image.h"
 
 #include <iostream>
 
@@ -43,27 +43,28 @@ void Texture::bind(unsigned int textureUnit /* = 0 */) const
 	}
 
 	GLCall(glActiveTexture(GL_TEXTURE0 + textureUnit));
-	glBindTexture(GL_TEXTURE_2D, id);
+	GLCall(glBindTexture(GL_TEXTURE_2D, id));
 }
 
 GLuint Texture::LoadTexture(std::string filename)
 {
 	
-	glGenTextures(1, &id);
-	glBindTexture(GL_TEXTURE_2D, id);
+	GLCall(glGenTextures(1, &id));
+	GLCall(glBindTexture(GL_TEXTURE_2D, id));
 	stbi_set_flip_vertically_on_load(1);
 
 	unsigned char* data = stbi_load(filename.c_str(), &width, &height, &channels, 0);
 	if (data)
 	{
 		GLenum format = (channels == 4) ? GL_RGBA : GL_RGB;
-		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
+		GLCall(glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data));
+		GLCall(glGenerateMipmap(GL_TEXTURE_2D));
 	}
 	else
 	{
 		std::cout << "load failed: " << filename << std::endl;
 	}
+
 	stbi_image_free(data);
 
 	return id;

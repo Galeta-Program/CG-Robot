@@ -1,12 +1,18 @@
 #include "Part.h"
 #include <glm/glm.hpp>
 
+#include "../Graphic/Material/MaterialManager.h"
+
+
 template class VBO<glm::vec3>;
 template class VBO<glm::vec2>;
 
-Part::Part(const char* obj)
+Part::Part(const char* obj, const char* mtl)
 {
 	LoadToBuffer(obj);
+
+	MaterialManager& manager = MaterialManager::getInstance();
+	manager.registerMaterial(mtl, "../res/models2/");
 }
 
 Part::Part(Part&& other) noexcept :

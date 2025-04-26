@@ -38,9 +38,6 @@
     <ClCompile Include="..\src\Graphic\ShaderProgram\ShaderProgram.cpp">
       <Filter>Graphic\ShaderProgram</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Graphic\Texture.cpp">
-      <Filter>Graphic</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Graphic\UBO.cpp">
       <Filter>Graphic</Filter>
     </ClCompile>
@@ -73,6 +70,15 @@
     </ClCompile>
     <ClCompile Include="..\src\Graphic\EBO.cpp">
       <Filter>Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Graphic\Material\Texture.cpp">
+      <Filter>Graphic\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Graphic\Material\Material.cpp">
+      <Filter>Graphic\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Graphic\Material\MaterialManager.cpp">
+      <Filter>Graphic\Material</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -111,6 +117,9 @@
     </Filter>
     <Filter Include="Animation">
       <UniqueIdentifier>{1fe2ccf8-63d2-42d5-bad6-27ca5250cef5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphic\Material">
+      <UniqueIdentifier>{0cd95dbd-ef08-4102-973b-5336672eb4c4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -151,9 +160,6 @@
     <ClInclude Include="..\src\Graphic\ShaderProgram\ShaderProgram.h">
       <Filter>Graphic\ShaderProgram</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Graphic\Texture.h">
-      <Filter>Graphic</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\Graphic\UBO.h">
       <Filter>Graphic</Filter>
     </ClInclude>
@@ -189,6 +195,15 @@
     </ClInclude>
     <ClInclude Include="..\src\Graphic\EBO.h">
       <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Graphic\Material\Texture.h">
+      <Filter>Graphic\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Graphic\Material\Material.h">
+      <Filter>Graphic\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Graphic\Material\MaterialManager.h">
+      <Filter>Graphic\Material</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -2,7 +2,7 @@
 
 #include "../Scene/SceneGraph/Node.h"
 #include "../Graphic/VAO.h"
-#include "../Graphic/Texture.h"
+#include "../Graphic/Material/Texture.h"
 #include "../Scene/Camera.h"
 
 #include <string>
@@ -16,12 +16,6 @@ private:
 	EBO ebo;
 	VBO<Vertex> vbo;
 	VBO<glm::mat4> instancingVbo;
-
-	Texture texture;
-
-	std::map<std::string, glm::vec3> KAs; //mtl-name&Ka
-	std::map<std::string, glm::vec3> KDs; //mtl-name&Kd
-	std::map<std::string, glm::vec3> KSs; //mtl-name&Ks 
 
 	int partSum;
 	std::vector<Node> parts;
@@ -38,7 +32,7 @@ public:
 	void mapMtlNameToKds(std::vector<std::string>& materials, 
 						 std::map<std::string, glm::vec3>& mapping,
 						 std::vector<glm::vec3>& content);
-	void loadModel(const char* mtlPaths, const char* objPath);
+	void loadModel(const char* mtlPath, const char* objPath);
 	void gatherPartsData();
 	void render(GLuint program, CG::Camera* camera);
 	void modifyInstance(unsigned int count);

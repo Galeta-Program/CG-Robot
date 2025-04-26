@@ -153,8 +153,10 @@
     <ClCompile Include="..\src\Animation\Animator.cpp" />
     <ClCompile Include="..\src\App\App.cpp" />
     <ClCompile Include="..\src\Graphic\EBO.cpp" />
+    <ClCompile Include="..\src\Graphic\Material\Material.cpp" />
+    <ClCompile Include="..\src\Graphic\Material\MaterialManager.cpp" />
+    <ClCompile Include="..\src\Graphic\Material\Texture.cpp" />
     <ClCompile Include="..\src\Graphic\ShaderProgram\ShaderProgram.cpp" />
-    <ClCompile Include="..\src\Graphic\Texture.cpp" />
     <ClCompile Include="..\src\Graphic\UBO.cpp" />
     <ClCompile Include="..\src\Graphic\VAO.cpp" />
     <ClCompile Include="..\src\Model\Model.cpp" />
@@ -179,8 +181,10 @@
     <ClInclude Include="..\src\Animation\AnimationClip.h" />
     <ClInclude Include="..\src\App\App.h" />
     <ClInclude Include="..\src\Graphic\EBO.h" />
+    <ClInclude Include="..\src\Graphic\Material\Material.h" />
+    <ClInclude Include="..\src\Graphic\Material\MaterialManager.h" />
+    <ClInclude Include="..\src\Graphic\Material\Texture.h" />
     <ClInclude Include="..\src\Graphic\ShaderProgram\ShaderProgram.h" />
-    <ClInclude Include="..\src\Graphic\Texture.h" />
     <ClInclude Include="..\src\Graphic\UBO.h" />
     <ClInclude Include="..\src\Graphic\VAO.h" />
     <ClInclude Include="..\src\Graphic\VBO.h" />

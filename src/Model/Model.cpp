@@ -3,6 +3,7 @@
 #include "../Utilty/Error.h"
 #include "../src/Utilty/OBJLoader.hpp"
 #include "Part.h"
+#include "../Graphic/Material/MaterialManager.h"
 
 #define TOP_BODY 0
 #define LEFT_UPPER_ARM 1
@@ -22,36 +23,10 @@
 
 void Model::initialize( std::vector<std::string>& mtlPaths, std::vector<std::string>& objPaths )
 {
-	std::vector<glm::vec3> Kds;
-	std::vector<glm::vec3> Kas;
-	std::vector<glm::vec3> Kss;
-	std::vector<std::string> Materials; //mtl-name
-	std::vector<std::string> map_Kd;
-	std::vector<std::string> map_Ns;
-	std::vector<std::string> map_refl;
-	std::vector<std::string> map_Ke;
-	std::vector<std::string> map_d;
-	std::vector<std::string> map_Bump;
-
-	for ( std::string path: mtlPaths )
-	{
-		LoadMTL( path.c_str(), Kds, Kas, Kss, Materials, map_Kd, map_Ns, map_refl, map_Ke, map_d, map_Bump);
-	}
-	mapMtlNameToKds( Materials, KAs, Kas );
-	mapMtlNameToKds( Materials, KDs, Kds );
-	mapMtlNameToKds( Materials, KSs, Kss );
-
-
 	for ( int i = 0; i < objPaths.size(); i++ )
 	{
-		parts.emplace_back( objPaths[i].c_str() );
+		parts.emplace_back( objPaths[i].c_str(), mtlPaths[i].c_str());
 	}
-
-	// maybe add another method to handle this
-	if (!map_Kd.empty())
-		texture.LoadTexture( "../res/models2/" + map_Kd[0]);
-	else
-		texture.LoadTexture( "../res/models2/Robot_Base_color 7.png" );
 }
 
 void Model::setPartsRelationship( std::vector<std::vector<unsigned int>> relationships )
@@ -80,30 +55,9 @@ void Model::mapMtlNameToKds( std::vector<std::string>& materials,
 	}
 }
 
-void Model::loadModel(const char* mtlPaths, const char* objPath)
+void Model::loadModel(const char* mtlPath, const char* objPath)
 {
-	std::vector<glm::vec3> Kds;
-	std::vector<glm::vec3> Kas;
-	std::vector<glm::vec3> Kss;
-	std::vector<std::string> Materials; //mtl-name
-	std::vector<std::string> map_Kd;
-	std::vector<std::string> map_Ns;
-	std::vector<std::string> map_refl;
-	std::vector<std::string> map_Ke;
-	std::vector<std::string> map_d;
-	std::vector<std::string> map_Bump;
-
-	parts.emplace_back( objPath );
-	LoadMTL( mtlPaths, Kds, Kas, Kss, Materials, map_Kd, map_Ns, map_refl, map_Ke, map_d, map_Bump );
-
-	mapMtlNameToKds( Materials, KAs, Kas );
-	mapMtlNameToKds( Materials, KDs, Kds );
-	mapMtlNameToKds( Materials, KSs, Kss );
-	// maybe add another method to handle this
-	if (!map_Kd.empty())
-		texture.LoadTexture( "../res/models2/" + map_Kd[0]);
-	else
-		texture.LoadTexture( "../res/models2/Robot_Base_color 7.png" );
+	parts.emplace_back(objPath, mtlPath);
 }
 
 void Model::gatherPartsData()
@@ -112,7 +66,6 @@ void Model::gatherPartsData()
 	vbo.bind();
 	ebo.bind();
 	instancingVbo.bind();
-	
 
 	GLuint totalVertexSize = 0;
 	GLuint vertexSizeOffset = 0;
@@ -200,10 +153,6 @@ void Model::render( GLuint program, CG::Camera* camera )
 	glUnmapBuffer(GL_ARRAY_BUFFER);
 
 	vao.bind();
-	
-	texture.bind( 0 );
-	GLuint TextureID = glGetUniformLocation( program, "u_Texture" );
-	GLCall( glUniform1i( TextureID, 0 ) );
 
 	GLuint offset = 0;
 	for ( int i = 0; i < parts.size(); i++ )
@@ -223,24 +172,18 @@ void Model::render( GLuint program, CG::Camera* camera )
 		GLuint drawSize = currentPart.getElementSize();
 
 		std::string mtlname;
-		glm::vec3 Ks = glm::vec3( 1, 1, 1 );//because .mtl excluding specular , so give it here.
-
 		const std::vector<std::string>& mtls = currentPart.getMtlNames();
-
+		MaterialManager& mtlManager = MaterialManager::getInstance();
 		for ( int j = 0; j < mtls.size(); j++ )
 		{
 			mtlname = mtls[j];
-			GLCall( GLuint M_KaID = glGetUniformLocation( program, "u_Material.Ka" ) );
-			GLCall( GLuint M_KdID = glGetUniformLocation( program, "u_Material.Kd" ) );
-			GLCall( GLuint M_KsID = glGetUniformLocation( program, "u_Material.Ks" ) );
-			GLCall( glUniform3fv( M_KaID, 1, &KAs[mtlname][0] ) );
-			GLCall( glUniform3fv( M_KdID, 1, &KDs[mtlname][0] ) );
-			GLCall( glUniform3fv( M_KsID, 1, &KSs[mtlname][0] ) );
+			mtlManager.use(program, mtlname);
 		}
+
 		GLCall(glDrawElementsInstanced(GL_TRIANGLES, drawSize, GL_UNSIGNED_INT, (void*)offset, instancingCount));
 
 		offset += drawSize * sizeof(unsigned int);
-	}//end for loop for updating and drawing model
+	}
 }
 
 void Model::modifyInstance(unsigned int count)
