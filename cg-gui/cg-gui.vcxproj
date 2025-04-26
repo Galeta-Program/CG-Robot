@@ -156,6 +156,7 @@
     <ClCompile Include="..\src\Graphic\Material\Material.cpp" />
     <ClCompile Include="..\src\Graphic\Material\MaterialManager.cpp" />
     <ClCompile Include="..\src\Graphic\Material\Texture.cpp" />
+    <ClCompile Include="..\src\Graphic\ShaderProgram\OBJLoader.cpp" />
     <ClCompile Include="..\src\Graphic\ShaderProgram\ShaderProgram.cpp" />
     <ClCompile Include="..\src\Graphic\UBO.cpp" />
     <ClCompile Include="..\src\Graphic\VAO.cpp" />
@@ -166,7 +167,6 @@
     <ClCompile Include="..\src\Scene\MainScene.cpp" />
     <ClCompile Include="..\src\Scene\SceneGraph\Node.cpp" />
     <ClCompile Include="..\src\Utilty\Error.cpp" />
-    <ClCompile Include="..\src\Utilty\OBJLoader.cpp" />
     <ClCompile Include="..\src\Window\GUI.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -184,6 +184,7 @@
     <ClInclude Include="..\src\Graphic\Material\Material.h" />
     <ClInclude Include="..\src\Graphic\Material\MaterialManager.h" />
     <ClInclude Include="..\src\Graphic\Material\Texture.h" />
+    <ClInclude Include="..\src\Graphic\ShaderProgram\OBJLoader.h" />
     <ClInclude Include="..\src\Graphic\ShaderProgram\ShaderProgram.h" />
     <ClInclude Include="..\src\Graphic\UBO.h" />
     <ClInclude Include="..\src\Graphic\VAO.h" />
@@ -196,8 +197,6 @@
     <ClInclude Include="..\src\Scene\SceneGraph\Node.h" />
     <ClInclude Include="..\src\stb_image.h" />
     <ClInclude Include="..\src\Utilty\Error.h" />
-    <ClInclude Include="..\src\Utilty\LoadShaders.h" />
-    <ClInclude Include="..\src\Utilty\OBJLoader.hpp" />
     <ClInclude Include="..\src\Window\GUI.h" />
   </ItemGroup>
   <ItemGroup>

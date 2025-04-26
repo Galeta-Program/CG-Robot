@@ -2,11 +2,18 @@
 
 #include "../Graphic/VBO.h"
 #include "../Graphic/EBO.h"
-#include "../src/Utilty/OBJLoader.hpp"
+#include "../Graphic/ShaderProgram/OBJLoader.h"
 
 #include <glm/glm.hpp>
 #include <vector>
 #include <string>
+
+struct Vertex
+{
+	glm::vec3 v;
+	glm::vec2 t;
+	glm::vec3 n;
+};
 
 class Part
 {
@@ -33,6 +40,13 @@ public:
 	Part& operator=(const Part& other) = delete;
 
 	void LoadToBuffer(const char* obj);
+	bool LoadOBJ(
+		const char* path,
+		std::vector<unsigned int>& outMaterialIndices,
+		std::vector<std::string>& outMtls,
+		std::vector<Vertex>& outArrangedVertex,
+		std::vector<unsigned int>& outElementIndex
+	);
 
 	inline GLuint vboId() const { return vbo.getId(); }
 	inline GLuint eboId() const { return ebo.getId(); }

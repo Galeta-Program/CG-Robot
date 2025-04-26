@@ -1,7 +1,7 @@
 #include "Model.h"
 
 #include "../Utilty/Error.h"
-#include "../src/Utilty/OBJLoader.hpp"
+#include "../Graphic/ShaderProgram/OBJLoader.h"
 #include "Part.h"
 #include "../Graphic/Material/MaterialManager.h"
 

@@ -1,9 +1,8 @@
-#include <Utilty/LoadShaders.h>
-#include <Utilty/OBJLoader.hpp>
-#include <iostream>
-
 #include "MainScene.h"
 #include "../Utilty/Error.h"
+#include "../Graphic/ShaderProgram/OBJLoader.h"
+
+#include <iostream>
 
 #define TOP_BODY 0
 #define LEFT_UPPER_ARM 1

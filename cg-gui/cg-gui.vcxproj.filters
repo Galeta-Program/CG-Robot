@@ -26,9 +26,6 @@
     <ClCompile Include="..\include\imgui\backends\imgui_impl_opengl3.cpp">
       <Filter>ImGUI\backends</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Utilty\OBJLoader.cpp">
-      <Filter>Utility</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Scene\MainScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
@@ -79,6 +76,9 @@
     </ClCompile>
     <ClCompile Include="..\src\Graphic\Material\MaterialManager.cpp">
       <Filter>Graphic\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Graphic\ShaderProgram\OBJLoader.cpp">
+      <Filter>Graphic\ShaderProgram</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -144,12 +144,6 @@
     <ClInclude Include="..\include\imgui\backends\imgui_impl_opengl3_loader.h">
       <Filter>ImGUI\backends</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Utilty\LoadShaders.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\Utilty\OBJLoader.hpp">
-      <Filter>Utility</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\Scene\MainScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
@@ -204,6 +198,9 @@
     </ClInclude>
     <ClInclude Include="..\src\Graphic\Material\MaterialManager.h">
       <Filter>Graphic\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Graphic\ShaderProgram\OBJLoader.h">
+      <Filter>Graphic\ShaderProgram</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

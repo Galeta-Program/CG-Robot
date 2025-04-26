@@ -1,5 +1,5 @@
 #include "MaterialManager.h"
-#include "../src/Utilty/OBJLoader.hpp"
+#include "../ShaderProgram/OBJLoader.h"
 
 
 MaterialManager MaterialManager::instance;
@@ -81,4 +81,107 @@ void MaterialManager::use(GLuint program, const std::string& name, const std::ve
 MaterialManager& MaterialManager::getInstance()
 {
 	return instance;
+}
+
+bool MaterialManager::LoadMTL(
+	const char* path,
+	std::vector<glm::vec3>& Kd,
+	std::vector<glm::vec3>& Ka,
+	std::vector<glm::vec3>& Ks,
+	std::vector<std::string>& out_name,
+	std::vector<std::string>& map_Kd,
+	std::vector<std::string>& map_Ns,
+	std::vector<std::string>& map_refl,
+	std::vector<std::string>& map_Ke,
+	std::vector<std::string>& map_d,
+	std::vector<std::string>& map_Bump
+)
+{
+	FILE* file = fopen(path, "r");
+	if (file == NULL)
+	{
+		printf("Impossible to open the .mtl file ! Are you in the right path ? See Tutorial 1 for details\n");
+		return false;
+	}
+
+	while (1)
+	{
+		char lineHeader[128];
+
+		int result = fscanf(file, "%s", lineHeader);
+		if (result == EOF)
+			break;
+
+		if (strcmp(lineHeader, "newmtl") == 0)
+		{
+			char material[50];
+			fscanf(file, "%s", material);
+			out_name.push_back(material);
+		}
+		else if (strcmp(lineHeader, "Kd") == 0)
+		{
+			glm::vec3 diffuse;
+			fscanf(file, "%f %f %f\n", &diffuse.x, &diffuse.y, &diffuse.z);
+			Kd.push_back(diffuse);
+		}
+		else if (strcmp(lineHeader, "Ka") == 0)
+		{
+			glm::vec3 ambient;
+			fscanf(file, "%f %f %f\n", &ambient.x, &ambient.y, &ambient.z);
+			Ka.push_back(ambient);
+		}
+		else if (strcmp(lineHeader, "Ks") == 0)
+		{
+			glm::vec3 specular;
+			fscanf(file, "%f %f %f\n", &specular.x, &specular.y, &specular.z);
+			Ks.push_back(specular);
+		}
+		else if (strcmp(lineHeader, "map_Kd") == 0)
+		{
+			char buffer[256];
+			fscanf(file, " %[^\n]", buffer);
+			map_Kd.push_back(buffer);
+			Kd.push_back(glm::vec3(1, 1, 1));
+		}
+		else if (strcmp(lineHeader, "map_Ns") == 0)
+		{
+			char buffer[256];
+			fscanf(file, " %[^\n]", buffer);
+			map_Ns.push_back(buffer);
+		}
+		else if (strcmp(lineHeader, "map_refl") == 0)
+		{
+			char buffer[256];
+			fscanf(file, " %[^\n]", buffer);
+			map_refl.push_back(buffer);
+		}
+		else if (strcmp(lineHeader, "map_Ke") == 0)
+		{
+			char buffer[256];
+			fscanf(file, " %[^\n]", buffer);
+			map_Ke.push_back(buffer);
+		}
+		else if (strcmp(lineHeader, "map_d") == 0)
+		{
+			char buffer[256];
+			fscanf(file, " %[^\n]", buffer);
+			map_d.push_back(buffer);
+		}
+		else if (strcmp(lineHeader, "map_Bump") == 0)
+		{
+			char buffer[256];
+
+			fscanf(file, "%s", &buffer);
+			fscanf(file, "%s", &buffer);
+
+			fscanf(file, " %[^\n]", buffer);
+			map_Bump.push_back(buffer);
+		}
+		else
+		{
+			char trash[1000];
+			fgets(trash, 1000, file);
+		}
+	}
+	return true;
 }

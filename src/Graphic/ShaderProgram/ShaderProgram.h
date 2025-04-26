@@ -1,20 +1,26 @@
 #pragma once
 
-#include "../src/Utilty/LoadShaders.h"
-
 #include <string>
 #include <GL/glew.h>
+
+struct ShaderInfo
+{
+	GLenum type;
+	const char* filename;
+};
 
 class ShaderProgram
 {
 private:
 	unsigned int program;
 
+	const GLchar* ReadShader(const char* filename);
+
 public:
 	ShaderProgram() : program(0) {}
 	~ShaderProgram();
 
-	void load(ShaderInfo* info);
+	GLuint load(ShaderInfo* shaders);
 
 	void use() const;
 	void unUse() const;
