@@ -12,6 +12,9 @@
 #include "../Window/GUI.h"
 #include "../Scene/Camera.h"
 #include "../Scene/Light.h"
+#include "../Graphic/ShaderProgram/shaderProgram.h"
+#include "../Animation/Animator.h"
+
 
 namespace CG
 {
@@ -37,9 +40,12 @@ namespace CG
         GLFWwindow* mainWindow;
 
         GUI gui;
-        MainScene* mainScene;
         Camera camera;
         Light light;
+        Animator animator;
+        ShaderProgram program;
+        MainScene* mainScene;
+
 
         double timeNow = 0;
         double timeLast = 0;

@@ -24,33 +24,35 @@ namespace CG
 	class MainScene
 	{
 	public:
-		MainScene(Camera& _camera, Light& _light);
+		MainScene(Camera& _camera, Light& _light, Animator& _animator, ShaderProgram& _program);
 		~MainScene();
 
-		auto Initialize() -> bool;
+		bool Initialize();
 		void Update(double dt);
 		void Render();
 
 		void setMode(bool isEditMode);
 
 		inline Model* getModel() { return &robot; }
-		inline Animator* getAnimator() { return &animator; }
+		inline Animator* getAnimator() { return animator; }
 		inline Light* getLight() { return light; }
 
 	private:
-		auto LoadScene() -> bool;
+		bool LoadScene();
 		void LoadModel();
 		void loadAnimation();
 
 		Model robot;
 		Camera* camera;
 		Light* light;
-		Animator animator;
+		Animator* animator;
+		ShaderProgram* program;
 
-		ShaderProgram program;
 		UBO matVPUbo;
 
 		bool editMode;
+		
+		//GLenum mode = GL_FILL;
 	};
 }
 

@@ -21,17 +21,19 @@
 
 namespace CG
 {
-	MainScene::MainScene(Camera& _camera, Light& _light)
+	MainScene::MainScene(Camera& _camera, Light& _light, Animator& _animator, ShaderProgram& _program)
 	{
 		camera = &_camera;
 		light = &_light;
+		animator = &_animator;
+		program = &_program;
 	}
 
 	MainScene::~MainScene()
 	{
 	}
 
-	auto MainScene::Initialize() -> bool
+	bool MainScene::Initialize()
 	{
 		editMode = false;
 		return LoadScene();
@@ -41,23 +43,19 @@ namespace CG
 	{
 		if (!editMode)
 		{
-			animator.animate(dt);
+			animator->animate(dt);
 		}
 	}
 
 	void MainScene::Render()
 	{
 		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-		GLCall(glPolygonMode(GL_FRONT_AND_BACK, mode));
-
-		program.use(); 
+		// GLCall(glPolygonMode(GL_FRONT_AND_BACK, mode));
 
 		matVPUbo.fillInData(0, sizeof(glm::mat4), camera->GetViewMatrix());
 		matVPUbo.fillInData(sizeof(glm::mat4), sizeof(glm::mat4), camera->GetProjectionMatrix());
 
-		light->bind(program.getId());
-		robot.render(program.getId(), camera);
-
+		robot.render(program->getId(), camera);
 		GLCall(glFlush());
 	}
 
@@ -66,34 +64,14 @@ namespace CG
 		editMode = isEditMode;
 	}
 	
-	auto MainScene::LoadScene() -> bool
+	bool MainScene::LoadScene()
 	{
-		ShaderInfo shaders[] = {
-			{ GL_VERTEX_SHADER, "../res/shaders/Phong_Vertex.vp" },
-			{ GL_FRAGMENT_SHADER, "../res/shaders/Phong_Fragment.fp" }, 
-			{ GL_NONE, NULL } };
-		program.load(shaders); 
-
-		program.use(); 
-
-		/*
-		ModelID = glGetUniformLocation(program.getId(), "Model");
-		M_KaID = glGetUniformLocation(program.getId(), "Material.Ka");
-		M_KdID = glGetUniformLocation(program.getId(), "Material.Kd");
-		M_KsID = glGetUniformLocation(program.getId(), "Material.Ks");
-		TextureID = glGetUniformLocation(program.getId(), "Texture");
-
-		// use debug
-		if (TextureID == -1) std::cout << "Error! Couldn't find this uniform in shader" << std::endl;
-		else std::cout << "This uniform is successfully found in shader" << std::endl;
-		*/
-
 		LoadModel();
 		loadAnimation();
 
 		//UBO
 		matVPUbo.initialize(sizeof(glm::mat4) * 2);
-		matVPUbo.associateWithShaderBlock(program.getId(), "u_MatVP", 0);
+		matVPUbo.associateWithShaderBlock(program->getId(), "u_MatVP", 0);
 
 		return true;
 	}
@@ -165,7 +143,7 @@ namespace CG
 		robot.setPartsRelationship(relationship);
 		robot.gatherPartsData();
 
-		animator.target(&robot);
+		animator->target(&robot);
 	}
 
 	void MainScene::loadAnimation()
@@ -193,16 +171,16 @@ namespace CG
 		keyFrameBuffer[RIGHT_CALF].emplace_back(KeyFrame{ glm::vec3(-3.350000, -10.000000, 1.150000) ,		glm::quat(1.0f, 0.0f, 0.0f, 0.0f) });
 		keyFrameBuffer[RIGHT_FOOT].emplace_back(KeyFrame{ glm::vec3(-1.350000, -16.500000, -1.550000) ,		glm::quat(1.0f, 0.0f, 0.0f, 0.0f) });
 
-		animator.addClip("Stand", keyFrameBuffer);
-		animator.setCurrentClip("Stand");
+		animator->addClip("Stand", keyFrameBuffer);
+		animator->setCurrentClip("Stand");
 
 		// Add animation here
-		animator.addClip("Walk", "../res/animation/walk.anim");	
-		animator.addClip("Sit-Up", "../res/animation/sit-up.anim");
-		animator.addClip("Push-Up", "../res/animation/push-up.anim");
-		animator.addClip("Hopak", "../res/animation/hopak.anim");
-		animator.addClip("APT", "../res/animation/apt.anim");
-		animator.addClip("Shadow_Clone_Jutsu", "../res/animation/shadow_clone_jutsu.anim",
+		animator->addClip("Walk", "../res/animation/walk.anim");	
+		animator->addClip("Sit-Up", "../res/animation/sit-up.anim");
+		animator->addClip("Push-Up", "../res/animation/push-up.anim");
+		animator->addClip("Hopak", "../res/animation/hopak.anim");
+		animator->addClip("APT", "../res/animation/apt.anim");
+		animator->addClip("Shadow_Clone_Jutsu", "../res/animation/shadow_clone_jutsu.anim",
 			{
 				AnimationEvent{1, [=]() { robot.modifyInstance(1); }},
 				AnimationEvent{8, [=]() { robot.modifyInstance(3); }}

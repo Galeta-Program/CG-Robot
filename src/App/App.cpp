@@ -218,8 +218,15 @@ namespace CG
 		camera.LookAt(glm::vec3(0, -20, 40), glm::vec3(0, -20, 0), glm::vec3(0, 1, 0));
 		light.initialize();
 
+		ShaderInfo shaders[] = {
+			{ GL_VERTEX_SHADER, "../res/shaders/Phong_Vertex.vp" },
+			{ GL_FRAGMENT_SHADER, "../res/shaders/Phong_Fragment.fp" },
+			{ GL_NONE, NULL } };
+		program.load(shaders);
 
-		mainScene = new MainScene(camera, light);
+		program.use();
+
+		mainScene = new MainScene(camera, light, animator, program);
 		mainScene->Initialize();
 
 		gui.init(mainWindow, mainScene);
@@ -274,6 +281,9 @@ namespace CG
 		int display_w, display_h;
 		glfwGetFramebufferSize(mainWindow, &display_w, &display_h);
 		glViewport(0, 0, display_w, display_h);
+
+		program.use();
+		light.bind(program.getId());
 
 		mainScene->Render();
 	}
