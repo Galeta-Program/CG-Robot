@@ -166,12 +166,6 @@ namespace CG
 		light()
 	{
 		mainWindow = nullptr;
-
-		/*
-		controlWindow = nullptr;
-		showControlWindow = true;
-		*/
-
 		mainScene = nullptr;
 	}
 
@@ -247,12 +241,6 @@ namespace CG
 			render();
 			gui.render();
 
-			/*
-			if (showControlWindow)
-			{
-				controlWindow->Display();
-			}
-			*/
 			
 			ImGuiIO& io = ImGui::GetIO();
 			(void)io;

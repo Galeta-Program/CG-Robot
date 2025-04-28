@@ -41,7 +41,7 @@ namespace CG
 		auto LoadScene() -> bool;
 		void LoadModel();
 		void loadAnimation();
-	private:
+
 		Model robot;
 		Camera* camera;
 		Light* light;
@@ -51,20 +51,6 @@ namespace CG
 		UBO matVPUbo;
 
 		bool editMode;
-
-		int action = 0; // idle
-		GLenum mode = GL_FILL; 
-
-		GLfloat movex, movey;
-
-		/* unused
-		int materialCount[PARTSNUM];
-		GLuint ModelID;
-		GLuint M_KaID;
-		GLuint M_KdID;
-		GLuint M_KsID;
-		GLuint TextureID;
-		*/
 	};
 }
 
