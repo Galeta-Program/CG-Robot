@@ -161,6 +161,13 @@ namespace CG {
             ImGui::End();
 
             ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 320, 100), ImGuiCond_Always);
+            ImGui::SetNextWindowSize(ImVec2(320, 100), ImGuiCond_Always);
+
+            ImGui::Begin("Instance", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+            instancePanel();
+            ImGui::End();
+
+            ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 320, 200), ImGuiCond_Always);
             ImGui::SetNextWindowSize(ImVec2(320, 450), ImGuiCond_Always);
 
             ImGui::Begin("Light", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
@@ -195,6 +202,18 @@ namespace CG {
         importPanel();
         exportPanel();
 
+    }
+
+    void GUI::instancePanel()
+    {
+        ImGui::SeparatorText("Usage");
+        ImGui::Text("Set the number of instances.\n");
+
+        int instancingCount = robot->getInstancingCount();
+        if (ImGui::DragInt("    ", &instancingCount, 0.5f, 0, 10000, "%d"))
+        {
+            robot->modifyInstance(instancingCount);
+        }
     }
 
     void GUI::speedPanel()
