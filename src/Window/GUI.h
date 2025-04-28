@@ -7,14 +7,17 @@
 
 
 namespace CG {
+
 	class GUI
 	{
 	private:
+		Animator* animator;
 		MainScene* scene; // Point to the scene that GUI is currently binding with
 		Model* robot;
 		Node* selectedNode;
 
 		bool editmodeFlag;
+		bool previousMode;
 		char outFileName[128];
 		char inFileName[128];
 		char animationName[128];
@@ -34,10 +37,10 @@ namespace CG {
 		void _render();
 
 	public:
-		GUI(GLFWwindow* window, MainScene* _scene);
+		GUI(GLFWwindow* window, MainScene* _scene, Animator* _animator);
 		~GUI();
 
-		void init(GLFWwindow* window, MainScene* _scene);
+		void init(GLFWwindow* window, MainScene* _scene, Animator* _animator);
 		void bindScene(MainScene* _scene);
 		void render();
 		void terminate();

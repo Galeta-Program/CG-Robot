@@ -4,6 +4,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 
 #include "glm/gtx/string_cast.hpp"
+#include "../App/App.h"
 
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -29,19 +30,19 @@
 
 namespace CG {
 
-    GUI::GUI(GLFWwindow* window, MainScene* _scene) : partSelected(0)
+    GUI::GUI(GLFWwindow* window, MainScene* _scene, Animator* _animator) : partSelected(0)
     {
         if (window == nullptr)
         {
             return;
         }
-        init(window, _scene);
+        init(window, _scene, _animator);
     }
 
     GUI::~GUI()
     {}
 
-    void GUI::init(GLFWwindow* window, MainScene* _scene)
+    void GUI::init(GLFWwindow* window, MainScene* _scene, Animator* _animator)
     {
         const char* glsl_version = "#version 460";
 
@@ -57,10 +58,13 @@ namespace CG {
         ImGui_ImplGlfw_InitForOpenGL(window, false); // Disable this because we have manually handle the glfwSetMouseButtonCallback
         ImGui_ImplOpenGL3_Init(glsl_version);
 
+        animator = _animator;
+
         bindScene(_scene);
         robot = scene->getModel();
         selectedNode = &(robot->getPart(HEAD));
         editmodeFlag = false;
+        previousMode = false;
 
         animationSelected = 0;
     }
@@ -106,14 +110,30 @@ namespace CG {
             if (ImGui::BeginTabItem("Animation"))
             {
                 editmodeFlag = false;
-                scene->setMode(editmodeFlag);
+
+                if (previousMode != editmodeFlag)
+                {
+                    previousMode = editmodeFlag;
+                    App::setMode(editmodeFlag);
+                }
+
                 animationPanel();
                 ImGui::EndTabItem();
             }
             if (ImGui::BeginTabItem("Edit"))
             {
                 editmodeFlag = true;
-                scene->setMode(editmodeFlag);
+
+                if (previousMode != editmodeFlag)
+                {
+                    previousMode = editmodeFlag;
+                    App::setMode(editmodeFlag);
+                    for (int i = 0; i < robot->getPartsAmount(); i++)
+                    {
+                        robot->getPart(i).updateEuler();
+                    }
+                }
+
                 editPanel();
                 ImGui::EndTabItem();
             }
@@ -158,7 +178,7 @@ namespace CG {
         ImGui::PushItemWidth(-1);  // Make ListBox fill available width
 
         std::vector<const char*> animationNames;
-        for (const auto& str : scene->getAnimator()->getClipNames()) {
+        for (const auto& str : animator->getClipNames()) {
             animationNames.push_back(str.c_str());
         }
         
@@ -168,7 +188,7 @@ namespace CG {
             (int)(animationNames.size()),
             (int)(animationNames.size())))
         {
-            scene->getAnimator()->setCurrentClip(std::string(animationNames[animationSelected]));
+            animator->setCurrentClip(std::string(animationNames[animationSelected]));
         }
         ImGui::PopItemWidth();
 
@@ -182,10 +202,10 @@ namespace CG {
         ImGui::SeparatorText("Usage");
         ImGui::Text("Configure the speed of the animation.\n");
 
-        float speed = scene->getAnimator()->getCurrentClipSpeed();
+        float speed = animator->getCurrentClipSpeed();
         if (ImGui::DragFloat("    ", &speed, 0.005f, -0.1f, 10.0f, "%.3f"))
         {
-            scene->getAnimator()->setCurrentClipSpeed(speed);
+            animator->setCurrentClipSpeed(speed);
         }
     }
 
@@ -350,7 +370,7 @@ everytime you press the button.\n");
 
         if (ImGui::Button("Import"))
         {
-            scene->getAnimator()->addClip(std::string(animationName), ("../res/animation/" + std::string(inFileName)).c_str());
+            animator->addClip(std::string(animationName), ("../res/animation/" + std::string(inFileName)).c_str());
         }
 
     }
@@ -416,10 +436,10 @@ everytime you press the button.\n");
     {
         // set output file
         std::ofstream outFile((std::string("../res/animation/") + std::string(outFileName)).c_str()); // overwrite
-        const std::vector<Track>& tracks = scene->getAnimator()->getCurrentClipTrack();
+        const std::vector<Track>& tracks = animator->getCurrentClipTrack();
 
         // Output the speed
-        outFile << "speed " << scene->getAnimator()->getCurrentClipSpeed() << std::endl; 
+        outFile << "speed " << animator->getCurrentClipSpeed() << std::endl;
 
         // write the local coord of each node
         for (int frame = 0; frame < tracks[0].keyFrames.size(); frame++){

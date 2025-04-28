@@ -28,10 +28,7 @@ namespace CG
 		~MainScene();
 
 		bool Initialize();
-		void Update(double dt);
 		void Render();
-
-		void setMode(bool isEditMode);
 
 		inline Model* getModel() { return &robot; }
 		inline Animator* getAnimator() { return animator; }
@@ -48,10 +45,7 @@ namespace CG
 		Animator* animator;
 		ShaderProgram* program;
 
-		UBO matVPUbo;
-
-		bool editMode;
-		
+		UBO matVPUbo;		
 		//GLenum mode = GL_FILL;
 	};
 }

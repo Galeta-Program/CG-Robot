@@ -161,8 +161,10 @@ namespace CG
 		}
 	}
 
+	bool App::editMode = false;
+
 	App::App():
-		gui(nullptr, nullptr),
+		gui(nullptr, nullptr, nullptr),
 		light()
 	{
 		mainWindow = nullptr;
@@ -174,7 +176,7 @@ namespace CG
 
 	}
 
-	auto App::initialize() -> bool
+	bool App::initialize()
 	{
 		// Set error callback
 		glfwSetErrorCallback([](int error, const char* description)
@@ -223,13 +225,14 @@ namespace CG
 			{ GL_FRAGMENT_SHADER, "../res/shaders/Phong_Fragment.fp" },
 			{ GL_NONE, NULL } };
 		program.load(shaders);
-
 		program.use();
+
+		editMode = false;
 
 		mainScene = new MainScene(camera, light, animator, program);
 		mainScene->Initialize();
 
-		gui.init(mainWindow, mainScene);
+		gui.init(mainWindow, mainScene, &animator);
 
 		return true;
 	}
@@ -273,7 +276,15 @@ namespace CG
 
 	void App::update(double dt)
 	{
-		mainScene->Update(dt);
+		if (!editMode)
+		{
+			animator.animate(dt);
+		}
+	}
+
+	void App::setMode(bool isEditMode)
+	{
+		editMode = isEditMode;
 	}
 
 	void App::render()

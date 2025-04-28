@@ -35,16 +35,7 @@ namespace CG
 
 	bool MainScene::Initialize()
 	{
-		editMode = false;
 		return LoadScene();
-	}
-
-	void MainScene::Update(double dt)
-	{
-		if (!editMode)
-		{
-			animator->animate(dt);
-		}
 	}
 
 	void MainScene::Render()
@@ -57,11 +48,6 @@ namespace CG
 
 		robot.render(program->getId(), camera);
 		GLCall(glFlush());
-	}
-
-	void MainScene::setMode(bool isEditMode)
-	{
-		editMode = isEditMode;
 	}
 	
 	bool MainScene::LoadScene()

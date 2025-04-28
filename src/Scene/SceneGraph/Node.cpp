@@ -98,3 +98,8 @@ void Node::setRotate(glm::quat quaternion)
 	dirty = true;
 	updateModelMatrix();
 }
+
+void Node::updateEuler()
+{
+	rotateOffsetInEuler = glm::degrees(glm::eulerAngles(glm::normalize(rotateOffset)));
+}

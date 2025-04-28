@@ -24,10 +24,11 @@ namespace CG
         App();
         ~App();
 
-        auto initialize() -> bool;
+        bool initialize();
         void loop();
         void terminate();
 
+        static void setMode(bool isEditMode);
         inline Camera& getCamera() { return camera; }
 
     private:
@@ -46,10 +47,11 @@ namespace CG
         ShaderProgram program;
         MainScene* mainScene;
 
-
         double timeNow = 0;
         double timeLast = 0;
         double timeDelta = 0;
+
+        static bool editMode;
 	};
 }
 

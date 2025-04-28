@@ -35,6 +35,7 @@ public:
 	void setTranslate(glm::vec3 trans);
 	void setRotate(glm::vec3 eular);
 	void setRotate(glm::quat quaternion);
+	void updateEuler();
 
 	void updateModelMatrix();
 
