@@ -35,7 +35,7 @@ namespace CG
 
 	bool MainScene::Initialize()
 	{
-		return LoadScene();
+		return loadScene();
 	}
 
 	void MainScene::Render()
@@ -50,9 +50,9 @@ namespace CG
 		GLCall(glFlush());
 	}
 	
-	bool MainScene::LoadScene()
+	bool MainScene::loadScene()
 	{
-		LoadModel();
+		loadModel();
 		loadAnimation();
 
 		//UBO
@@ -62,7 +62,7 @@ namespace CG
 		return true;
 	}
 
-	void MainScene::LoadModel()
+	void MainScene::loadModel()
 	{
 		std::vector<std::string> mtlPaths({
 			"../res/models2/top_body.mtl",

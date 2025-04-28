@@ -35,8 +35,8 @@ namespace CG
 		inline Light* getLight() { return light; }
 
 	private:
-		bool LoadScene();
-		void LoadModel();
+		bool loadScene();
+		void loadModel();
 		void loadAnimation();
 
 		Model robot;

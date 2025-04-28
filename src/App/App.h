@@ -37,7 +37,6 @@ namespace CG
 
         void GLInit();
 
-    private:
         GLFWwindow* mainWindow;
 
         GUI gui;
