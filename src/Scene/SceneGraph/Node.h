@@ -31,13 +31,13 @@ public:
 
 	void addChildren(const std::vector<Node*> _childern);
 	void updateParentMatrix(const glm::mat4 parent);
+	void updateModelMatrix();
 
 	void setTranslate(glm::vec3 trans);
 	void setRotate(glm::vec3 eular);
 	void setRotate(glm::quat quaternion);
 	void updateEuler();
 
-	void updateModelMatrix();
 
 	inline bool isDirty() { return dirty; }
 	inline Part& getPart() { return part; }
