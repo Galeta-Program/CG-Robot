@@ -9,7 +9,7 @@ template class VBO<glm::vec2>;
 
 Part::Part(const char* obj, const char* mtl)
 {
-	LoadToBuffer(obj);
+	loadToBuffer(obj);
 
 	MaterialManager& manager = MaterialManager::getInstance();
 	manager.registerMaterial(mtl, "../res/models2/");
@@ -25,9 +25,7 @@ Part::Part(Part&& other) noexcept :
 {}
 
 Part::~Part()
-{
-
-}
+{}
 
 Part& Part::operator=(Part&& other) noexcept
 {
@@ -45,9 +43,9 @@ Part& Part::operator=(Part&& other) noexcept
 }
 
 
-void Part::LoadToBuffer(const char* obj)
+void Part::loadToBuffer(const char* obj)
 {
-	bool res = LoadOBJ(obj, faces, mtlNames, arrangedVertex, elementIndex);
+	bool res = loadOBJ(obj);
 	if (!res) printf("load failed\n");
 
 	vbo.initialize(arrangedVertex);
@@ -57,13 +55,7 @@ void Part::LoadToBuffer(const char* obj)
 	elementSize = elementIndex.size();
 }
 
-bool Part::LoadOBJ(
-	const char* path,
-	std::vector<unsigned int>& outMaterialIndices,
-	std::vector<std::string>& outMtls,
-	std::vector<Vertex>& outArrangedVertex,
-	std::vector<unsigned int>& outElementIndex
-)
+bool Part::loadOBJ(const char* path)
 {
 	printf("Loading OBJ file %s...\n", path);
 
@@ -132,21 +124,21 @@ bool Part::LoadOBJ(
 
 				if (faceToIndex.find(keys[i]) == faceToIndex.end())
 				{
-					outArrangedVertex.emplace_back(tmpVertex[i]);
-					faceToIndex[keys[i]] = outArrangedVertex.size() - 1;
+					arrangedVertex.emplace_back(tmpVertex[i]);
+					faceToIndex[keys[i]] = arrangedVertex.size() - 1;
 				}
 
-				outElementIndex.emplace_back(faceToIndex[keys[i]]);
+				elementIndex.emplace_back(faceToIndex[keys[i]]);
 			}
 
 			fcount++;
 		}
 		else if (strcmp(lineHeader, "usemtl") == 0)
 		{
-			outMaterialIndices.push_back(fcount);
+			faces.push_back(fcount);
 			char material[50];
 			fscanf(file, "%s", material);
-			outMtls.push_back(material);
+			mtlNames.push_back(material);
 			fcount = 0;
 		}
 		else
@@ -156,7 +148,7 @@ bool Part::LoadOBJ(
 		}
 	}
 
-	outMaterialIndices.push_back(fcount);
+	faces.push_back(fcount);
 
 	return true;
 }

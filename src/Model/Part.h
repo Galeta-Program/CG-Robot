@@ -38,14 +38,8 @@ public:
 	Part& operator=(Part&& other) noexcept;
 	Part& operator=(const Part& other) = delete;
 
-	void LoadToBuffer(const char* obj);
-	bool LoadOBJ(
-		const char* path,
-		std::vector<unsigned int>& outMaterialIndices,
-		std::vector<std::string>& outMtls,
-		std::vector<Vertex>& outArrangedVertex,
-		std::vector<unsigned int>& outElementIndex
-	);
+	void loadToBuffer(const char* obj);
+	bool loadOBJ(const char* path);
 
 	inline GLuint vboId() const { return vbo.getId(); }
 	inline GLuint eboId() const { return ebo.getId(); }
