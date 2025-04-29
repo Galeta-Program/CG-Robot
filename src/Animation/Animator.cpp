@@ -1,6 +1,12 @@
 #include "Animator.h"
 
-Animator::Animator(): currentFrame(0.0), model(nullptr)
+Animator::Animator(): 
+	currentFrame(0.0), 
+	model(nullptr), 
+	currentClipName(""), 
+	currentClip(nullptr), 
+	currentFrameClipName(""),
+	currentFrameClip(nullptr)
 {}
 
 Animator::~Animator()
@@ -109,8 +115,23 @@ void Animator::addClip(std::string clipName, const char* fileName, std::vector<A
 
 void Animator::animate(double dt)
 {
-	currentFrame += dt * currentClip->getSpeed();
-	unsigned totalFrames = currentClip->getAmountOfFrame();
+	AnimationClip* clip;
+	if (currentFrameClip != nullptr)
+	{
+		clip = currentFrameClip;
+	}
+	else
+	{
+		clip = currentClip;
+	}
+
+	if (clip == nullptr)
+	{
+		return;
+	}
+
+	currentFrame += dt * clip->getSpeed();
+	unsigned totalFrames = clip->getAmountOfFrame();
 
 	if (totalFrames == 0)
 	{
@@ -126,7 +147,7 @@ void Animator::animate(double dt)
 
 	for (int i = 0; i < model->getPartsAmount(); i++)
 	{
-		Track& currentTrack = currentClip->getTrack(i);
+		Track& currentTrack = clip->getTrack(i);
 
 		KeyFrame& lastKeyFrame = currentTrack.keyFrames[frame0];
 		KeyFrame& nextKeyFrame = currentTrack.keyFrames[frame1];
@@ -139,7 +160,7 @@ void Animator::animate(double dt)
 		model->getPart(i).setRotate(rotate);
 	}
 
-	for (const auto& animationEvent : currentClip->getAnimationEvents())
+	for (const auto& animationEvent : clip->getAnimationEvents())
 	{
 		if (frame0 == animationEvent.frameNum)
 			animationEvent.onTrigger();
@@ -149,6 +170,12 @@ void Animator::animate(double dt)
 
 void Animator::setCurrentClip(std::string clipName)
 {
+	if (clips.find(clipName) == clips.end())
+	{
+		return;
+	}
+
+	currentClipName = clipName;
 	currentClip = &clips[clipName];
 }
 
@@ -160,4 +187,42 @@ void Animator::setCurrentClipSpeed(float _speed)
 	}
 
 	currentClip->setSpeed(_speed);
+}
+
+void Animator::makeFrameToClip(unsigned int frameIndex, AnimationClip* _currentClip /* = nullptr */)
+{
+	if (_currentClip == nullptr)
+	{
+		std::string frameClipName = currentClipName + "frame" + std::to_string(frameIndex);
+		if (clips.find(frameClipName) != clips.end())
+		{
+			return;
+		}
+
+		std::vector<Track> tmpTrack;
+
+		for (int i = 0; i < model->getPartsAmount(); i++)
+		{
+			std::vector<KeyFrame> frames;
+			frames.emplace_back(currentClip->getFrame(i, frameIndex));
+			tmpTrack.emplace_back(Track{&(model->getPart(i)), frames });
+		}
+
+		clips[frameClipName] = AnimationClip();
+		clips[frameClipName].updateTracks(tmpTrack);
+
+		deleteCurrentFrameClip();
+
+		currentFrameClipName = frameClipName;
+		currentFrameClip = &clips[frameClipName];
+	}
+}
+
+void Animator::deleteCurrentFrameClip()
+{
+	if (currentFrameClip != nullptr)
+	{
+		clips.erase(currentFrameClipName);
+		currentFrameClip = nullptr;
+	}
 }

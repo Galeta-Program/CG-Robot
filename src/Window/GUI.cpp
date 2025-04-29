@@ -63,10 +63,19 @@ namespace CG {
         bindScene(_scene);
         robot = scene->getModel();
         selectedNode = &(robot->getPart(HEAD));
-        editmodeFlag = false;
-        previousMode = false;
+        currentMode = 0;
+        previousMode = 0;
 
         animationSelected = 0;
+        frameSelected = 0;
+
+        for (int i = 0; i < animator->getFrameAmount(); i++)
+        {
+            frameNamesInStr.emplace_back(std::to_string(i));
+        }
+
+        editFrame = false;
+        haveSelectFrame = false;
     }
 
     void GUI::bindScene(MainScene* _scene)
@@ -107,14 +116,28 @@ namespace CG {
 
         if (ImGui::BeginTabBar("Mode"))
         {
+            if (ImGui::BeginTabItem("Showcase"))
+            {
+                haveSelectFrame = false;
+                currentMode = 0;
+
+                if (previousMode != currentMode)
+                {
+                    previousMode = currentMode;
+                    App::setMode(currentMode);
+                }
+
+                showcasePanel();
+                ImGui::EndTabItem();
+            }
             if (ImGui::BeginTabItem("Animation"))
             {
-                editmodeFlag = false;
+                currentMode = 1;
 
-                if (previousMode != editmodeFlag)
+                if (previousMode != currentMode)
                 {
-                    previousMode = editmodeFlag;
-                    App::setMode(editmodeFlag);
+                    previousMode = currentMode;
+                    App::setMode(currentMode);
                 }
 
                 animationPanel();
@@ -122,12 +145,12 @@ namespace CG {
             }
             if (ImGui::BeginTabItem("Edit"))
             {
-                editmodeFlag = true;
+                currentMode = 2;
 
-                if (previousMode != editmodeFlag)
+                if (previousMode != currentMode)
                 {
-                    previousMode = editmodeFlag;
-                    App::setMode(editmodeFlag);
+                    previousMode = currentMode;
+                    App::setMode(currentMode);
                     for (int i = 0; i < robot->getPartsAmount(); i++)
                     {
                         robot->getPart(i).updateEuler();
@@ -142,7 +165,7 @@ namespace CG {
         }
         ImGui::End();
 
-        if (editmodeFlag)
+        if (currentMode == 2)
         {
             ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 320, 0), ImGuiCond_Always);
             ImGui::SetNextWindowSize(ImVec2(320, 250), ImGuiCond_Always);
@@ -154,29 +177,41 @@ namespace CG {
         else
         {
             ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 320, 0), ImGuiCond_Always);
-            ImGui::SetNextWindowSize(ImVec2(320, 100), ImGuiCond_Always);
+            ImGui::SetNextWindowSize(ImVec2(320, ImGui::GetIO().DisplaySize.y), ImGuiCond_Always);
 
-            ImGui::Begin("Speed", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
-            speedPanel();
-            ImGui::End();
+            ImGui::Begin("Configurations", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
-            ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 320, 100), ImGuiCond_Always);
-            ImGui::SetNextWindowSize(ImVec2(320, 100), ImGuiCond_Always);
+            if (ImGui::CollapsingHeader("Speed", ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                speedPanel();
+            }
+            if (ImGui::CollapsingHeader("Instance", ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                instancePanel();
+            }
+            if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                lightPanel();
+            }
 
-            ImGui::Begin("Instance", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
-            instancePanel();
-            ImGui::End();
-
-            ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 320, 200), ImGuiCond_Always);
-            ImGui::SetNextWindowSize(ImVec2(320, 450), ImGuiCond_Always);
-
-            ImGui::Begin("Light", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
-            lightPanel();
+            if (currentMode == 1)
+            {
+                if (ImGui::CollapsingHeader("Select Frame", ImGuiTreeNodeFlags_DefaultOpen))
+                {
+                    chooseFramePannel();
+                }
+            }
             ImGui::End();
         }
     }
 
-    void GUI::animationPanel()
+    void GUI::showcasePanel()
+    {
+        animationClipPanel();
+        importPanel();
+    }
+
+    void GUI::animationClipPanel()
     {
         ImGui::SeparatorText("Usage");
         ImGui::Text("Select an animation to play.");
@@ -188,20 +223,68 @@ namespace CG {
         for (const auto& str : animator->getClipNames()) {
             animationNames.push_back(str.c_str());
         }
-        
-        if (ImGui::ListBox("##AnimationList", 
-            &animationSelected, 
-            animationNames.data(), 
+
+        if (ImGui::ListBox("##AnimationList",
+            &animationSelected,
+            animationNames.data(),
             (int)(animationNames.size()),
             (int)(animationNames.size())))
         {
-            animator->setCurrentClip(std::string(animationNames[animationSelected]));
+            animator->deleteCurrentFrameClip();
+
+            if (animationNames.size() > animationSelected)
+            {
+                animator->setCurrentClip(std::string(animationNames[animationSelected]));
+            }
+
+            frameNamesInStr.clear();
+            for (int i = 0; i < animator->getFrameAmount(); i++)
+            {
+                frameNamesInStr.emplace_back(std::to_string(i));
+            }
+
+            frameSelected = 0;
+            haveSelectFrame = false;
         }
         ImGui::PopItemWidth();
+    }
 
+    void GUI::chooseFramePannel()
+    {
+        ImGui::SeparatorText("Usage");
+        ImGui::Text("Select an frame to play.");
+        ImGui::SeparatorText("Frames");
+
+        ImGui::PushItemWidth(-1);  // Make ListBox fill available width
+
+        std::vector<const char*> frameNames;
+        for (int i = 0; i < frameNamesInStr.size(); i++)
+        {
+            frameNames.emplace_back(frameNamesInStr[i].c_str());
+        }
+
+        if (ImGui::ListBox("##FrameList",
+            &frameSelected,
+            frameNames.data(),
+            (int)(frameNames.size()),
+            (int)(frameNames.size())))
+        {
+            haveSelectFrame = true;
+            if (frameSelected >= (int)frameNames.size())
+            {
+                frameSelected = 0;
+            }
+
+            animator->makeFrameToClip((int)(std::stoi(std::string(frameNames[frameSelected]))));
+        }
+        ImGui::PopItemWidth();
+    }
+
+    void GUI::animationPanel()
+    {
+        animationClipPanel();
         importPanel();
         exportPanel();
-
     }
 
     void GUI::instancePanel()
@@ -344,7 +427,7 @@ the light source.\n");
     {
         ImGui::SeparatorText("Export current motion");
 
-        if (editmodeFlag)
+        if (currentMode == 2)
         {
             ImGui::Text("(1) The file will be put under \n\
 \"res/animation/\" directory.\n\
@@ -362,13 +445,25 @@ everytime you press the button.\n");
 
         ImGui::InputTextWithHint(" ", "ex. report.txt", outFileName, IM_ARRAYSIZE(outFileName));
         ImGui::Text("");
+        if (haveSelectFrame && currentMode == 2)
+        {
+            ImGui::Checkbox("Edit frame only", &editFrame);
+        }
+
         if (ImGui::Button("Export"))
         {
-            if (editmodeFlag)
+            if (currentMode == 2)
             {
-                exportFromEditor();
+                if (haveSelectFrame && editFrame)
+                {
+                    exportFrame();
+                }
+                else
+                {
+                    exportFromEditor();
+                }
             }
-            else
+            else if (currentMode == 1)
             {
                 exportFromAnimator();
             }
@@ -434,9 +529,72 @@ everytime you press the button.\n");
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
 
+    void GUI::exportFrame()
+    {
+        std::string filePath = std::string("../res/animation/") + std::string(outFileName);
+        
+        // First read the file
+        std::ifstream inFile(filePath);
+        if (!inFile.is_open()) {
+            return; // Handle error appropriately
+        }
+
+        std::vector<std::string> fileLines;
+        std::string line;
+        while (std::getline(inFile, line)) 
+        {
+            fileLines.emplace_back(line);
+        }
+        inFile.close();
+
+        unsigned int startLine = 30 * frameSelected;
+        unsigned int endLine = startLine + 30; // 15 * 2
+
+        if (startLine >= fileLines.size()) 
+        {
+            return; 
+        }
+
+        fileLines.erase(fileLines.begin() + startLine, fileLines.begin() + endLine);
+
+        std::vector<std::string> modifiedFrame;
+        for (int i = 0; i < 15; i++)
+        {
+            Node* node = &(robot->getPart(i));
+            glm::vec3 trans = node->getTranslateOffset();
+            glm::vec3 rotate = node->getEulerRotateAngle();
+
+            modifiedFrame.emplace_back(
+                std::to_string(trans[0]) + " " +
+                std::to_string(trans[1]) + " " +
+                std::to_string(trans[2])
+            );
+            modifiedFrame.emplace_back(
+                std::to_string(rotate[0]) + " " +
+                std::to_string(rotate[1]) + " " +
+                std::to_string(rotate[2]) 
+            );
+        }
+
+        fileLines.insert(fileLines.begin() + startLine, 
+                        modifiedFrame.begin(), 
+                        modifiedFrame.end());
+
+        std::ofstream outFile(filePath);
+        if (!outFile.is_open()) 
+        {
+            return; 
+        }
+
+        for (const auto& _line : fileLines) 
+        {
+            outFile << _line << '\n';
+        }
+        outFile.close();
+    }
+
     void GUI::exportFromEditor()
     {
-        // set output file
         std::ofstream outFile((std::string("../res/animation/") + std::string(outFileName)).c_str(), std::ios_base::app); // append
 
         // write the local coord of each node
@@ -453,12 +611,8 @@ everytime you press the button.\n");
 
     void GUI::exportFromAnimator()
     {
-        // set output file
         std::ofstream outFile((std::string("../res/animation/") + std::string(outFileName)).c_str()); // overwrite
         const std::vector<Track>& tracks = animator->getCurrentClipTrack();
-
-        // Output the speed
-        outFile << "speed " << animator->getCurrentClipSpeed() << std::endl;
 
         // write the local coord of each node
         for (int frame = 0; frame < tracks[0].keyFrames.size(); frame++){
@@ -472,6 +626,10 @@ everytime you press the button.\n");
                     rotate[0] << " " << rotate[1] << " " << rotate[2] << std::endl;
             }
         }
+
+        // Output the speed
+        outFile << "speed " << animator->getCurrentClipSpeed() << std::endl;
+
     }
 
 }

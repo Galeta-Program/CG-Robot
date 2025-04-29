@@ -16,18 +16,27 @@ namespace CG {
 		Model* robot;
 		Node* selectedNode;
 
-		bool editmodeFlag;
-		bool previousMode;
+		int currentMode; // 0: showcase, 1: animation, 2: edit
+		int previousMode;
 		char outFileName[128];
 		char inFileName[128];
 		char animationName[128];
 
 		int partSelected;
 		int animationSelected;
+		int frameSelected; // which frame is selected
+
+		std::vector<std::string> frameNamesInStr;
+
+		bool editFrame;
+		bool haveSelectFrame; // whether a frame is selected
 
 		void startFrame();
 		void mainPanel();
+		void showcasePanel();
 		void animationPanel();
+		void animationClipPanel();
+		void chooseFramePannel();
 		void speedPanel();
 		void instancePanel();
 		void lightPanel();
@@ -46,8 +55,8 @@ namespace CG {
 		void render();
 		void terminate();
 
+		void exportFrame();
 		void exportFromEditor();
 		void exportFromAnimator();
 	};
-
 }
