@@ -30,7 +30,7 @@ void main(void)
 
     vec4 texColor = texture(u_Texture, v_TexCoord);
     
-    vec3 ambient = 1.0 * u_LightColor;
+    vec3 ambient = u_Material.Ka * u_LightColor;
 
     float diff = max(dot(normal, lightDir), 0.0);
     vec3 diffuse = diff * u_Material.Kd * u_LightColor;
