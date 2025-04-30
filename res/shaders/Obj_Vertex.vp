@@ -1,0 +1,38 @@
+#version 460
+
+layout (location = 0) in vec3 Position;
+layout (location = 1) in vec3 Color;
+layout (location = 2) in vec3 Normal;
+layout (location = 3) in mat4 in_InstOffest;
+
+uniform mat4 ModelMatrix;
+uniform vec3 u_LightPosition;
+
+uniform u_MatVP {
+    mat4 u_View;
+    mat4 u_Projection;
+};
+
+out vec3 VertexColor;
+out vec3 v_LightDir;
+out vec3 v_ViewDir;
+out vec3 v_Normal;
+
+void main()
+{
+    mat4 M = ModelMatrix * in_InstOffest;
+    mat4 MV = u_View * M;
+    vec4 pos4 = MV * vec4(Position, 1.0);
+    vec3 pos3 = pos4.xyz / pos4.w;
+
+    vec4 lightPos4 = u_View * vec4(u_LightPosition, 1.0);
+    vec3 lightPos = lightPos4.xyz / lightPos4.w;
+    v_LightDir = normalize(lightPos - pos3);
+    v_ViewDir = normalize(-pos3);
+
+    mat3 normalMatrix = transpose(inverse(mat3(M)));
+    v_Normal = normalize(normalMatrix * Normal);
+
+    gl_Position = u_Projection * pos4;
+    VertexColor = Color;
+}

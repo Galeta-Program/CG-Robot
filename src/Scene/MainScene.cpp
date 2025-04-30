@@ -46,7 +46,15 @@ namespace CG
 		matVPUbo.fillInData(0, sizeof(glm::mat4), camera->GetViewMatrix());
 		matVPUbo.fillInData(sizeof(glm::mat4), sizeof(glm::mat4), camera->GetProjectionMatrix());
 
+		skyBox.render(camera, GL_QUADS);
+
+		ground.getShaderProgram().use();
+		light->bind(ground.getShaderProgram().getId());
+		ground.render(camera, GL_QUADS);
+		
+		program->use();
 		robot.render(program->getId(), camera);
+		
 		GLCall(glFlush());
 	}
 	
@@ -58,6 +66,8 @@ namespace CG
 		//UBO
 		matVPUbo.initialize(sizeof(glm::mat4) * 2);
 		matVPUbo.associateWithShaderBlock(program->getId(), "u_MatVP", 0);
+		matVPUbo.associateWithShaderBlock(ground.getShaderProgram().getId(), "u_MatVP", 0);
+		matVPUbo.associateWithShaderBlock(skyBox.getObject().getShaderProgram().getId(), "u_MatVP", 0);
 
 		return true;
 	}
@@ -66,26 +76,26 @@ namespace CG
 	{
 		std::vector<std::string> mtlPaths({
 			"../res/models2/top_body.mtl",
-			 
+
 			"../res/models2/left_upper_arm.mtl",
 			"../res/models2/left_lower_arm.mtl",
 			"../res/models2/left_hand.mtl",
-			 
+
 			"../res/models2/head.mtl",
-			 
+
 			"../res/models2/right_upper_arm.mtl",
 			"../res/models2/right_lower_arm.mtl",
 			"../res/models2/right_hand.mtl",
-			 
+
 			"../res/models2/bottom_body.mtl",
-			 
-			"../res/models2/left_thigh.mtl", 
-			"../res/models2/left_calf.mtl", 
+
+			"../res/models2/left_thigh.mtl",
+			"../res/models2/left_calf.mtl",
 			"../res/models2/left_foot.mtl",
-			 
+
 			"../res/models2/right_thigh.mtl",
-			"../res/models2/right_calf.mtl", 
-			"../res/models2/right_foot.mtl", 
+			"../res/models2/right_calf.mtl",
+			"../res/models2/right_foot.mtl",
 			});
 
 		std::vector<std::string> objPaths({
@@ -128,6 +138,40 @@ namespace CG
 		robot.initialize(mtlPaths, objPaths);
 		robot.setPartsRelationship(relationship);
 		robot.gatherPartsData();
+
+		float size = 100;
+		float thick = size / 100.0;
+		std::vector<glm::vec3> points({
+			{-size,  thick,  size}, {-size, -thick,  size}, { size, -thick,  size}, { size,  thick,  size},
+			{-size,  thick, -size}, {-size, -thick, -size}, {-size, -thick,  size}, {-size,  thick,  size},
+			{ size,  thick,  size}, { size, -thick,  size}, { size, -thick, -size}, { size,  thick, -size},
+			{ size,  thick, -size}, { size, -thick, -size}, {-size, -thick, -size}, {-size,  thick, -size},
+			{-size,  thick, -size}, {-size,  thick,  size}, { size,  thick,  size}, { size,  thick, -size},
+			{ size, -thick,  size}, {-size, -thick,  size}, {-size, -thick, -size}, { size, -thick, -size},
+			});
+
+		std::vector<glm::vec3> colors(points.size(), glm::vec3(0.3, 0.3, 0.3));
+
+		ground.setShader("../res/shaders/Obj_Vertex.vp", "../res/shaders/Obj_Fragment.fp");
+		ground.initialize(points, colors);
+		ground.computeNormal(GL_QUADS);
+		ground.gatherData();
+		ground.setTranslate({0, -42, 0});
+		/*std::vector<glm::vec3> instancingOffests = ground.getInstancingOffests();
+		instancingOffests.push_back({100, 0, 0});
+		ground.setInstancingOffests(instancingOffests);*/
+		
+
+		skyBox.getObject().setShader("../res/shaders/SkyBox_Vertex.vp", "../res/shaders/SkyBox_Fragment.fp");
+		skyBox.loadFaces({ // need follow the order
+			"../res/skyBox/skyBox1_right.png",
+			"../res/skyBox/skyBox1_left.png",
+			"../res/skyBox/skyBox1_up.png",
+			"../res/skyBox/skyBox1_down.png",
+			"../res/skyBox/skyBox1_front.png",
+			"../res/skyBox/skyBox1_back.png"
+			});
+		skyBox.updateDate();
 
 		animator->target(&robot);
 	}

@@ -35,7 +35,7 @@ Texture& Texture::operator=(Texture&& other) noexcept
 	return *this;
 }
 
-void Texture::bind(unsigned int textureUnit /* = 0 */) const
+void Texture::bind(unsigned int textureUnit /* = 0 */, GLint bindType) const
 {
 	if (textureUnit >= 32)
 	{
@@ -43,7 +43,7 @@ void Texture::bind(unsigned int textureUnit /* = 0 */) const
 	}
 
 	GLCall(glActiveTexture(GL_TEXTURE0 + textureUnit));
-	GLCall(glBindTexture(GL_TEXTURE_2D, id));
+	GLCall(glBindTexture(bindType, id));
 }
 
 GLuint Texture::LoadTexture(std::string filename)
@@ -68,4 +68,37 @@ GLuint Texture::LoadTexture(std::string filename)
 	stbi_image_free(data);
 
 	return id;
+}
+
+GLuint Texture::LoadCubeMap(std::vector<std::string> faces)
+{
+	GLCall(glGenTextures(1, &id));
+	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, id));
+
+	int width, height, channels;
+	for (GLuint i = 0; i < faces.size(); i++)
+	{
+		unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &channels, 0);
+		if (data)
+		{
+			GLenum format = (channels == 4) ? GL_RGBA : GL_RGB;
+			GLCall(glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data));
+			stbi_image_free(data);
+		}
+		else
+		{
+			std::cout << "failed to load at path: " << faces[i] << std::endl;
+			stbi_image_free(data);
+			return 0;
+		}
+	}
+
+	GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+	GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+	GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+	GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+	GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE));
+
+	return id;
+
 }

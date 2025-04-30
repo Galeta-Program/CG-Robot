@@ -2,6 +2,7 @@
 
 #include <GL/glew.h>
 #include <string>
+#include <vector>
 
 class Texture
 {
@@ -19,8 +20,9 @@ public:
 	Texture& operator=(const Texture& other) = delete;
 
 	GLuint LoadTexture(std::string filename);
+	GLuint LoadCubeMap(std::vector<std::string> faces);
 
-	void bind(unsigned int textureUnit = 0) const;
+	void bind(unsigned int textureUnit = 0, GLint bindType = GL_TEXTURE_2D) const;
 
 	inline GLuint getId() { return id; }
 };
