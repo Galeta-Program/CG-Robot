@@ -28,7 +28,7 @@ private:
 	std::string clipName;
 	std::vector<Track> tracks; // all nodes
 
-	// I suppose that every track have the same amount of keyframe
+	// Suppose that every track have the same amount of keyframe
 	unsigned int frameAmount;
 	float speed;
 
@@ -48,6 +48,7 @@ public:
 	inline float getSpeed() const { return speed; }
 	inline unsigned int getAmountOfFrame() { return frameAmount; }
 	inline Track& getTrack(unsigned int index) { return tracks[index]; }
+	inline KeyFrame& getFrame(unsigned int trackIndex, unsigned int frameIndex) { return tracks[trackIndex].keyFrames[frameIndex]; }
 	inline const std::vector<Track>& getTracks() { return tracks; }
 	inline const std::vector<AnimationEvent>& getAnimationEvents() { return animationEvents; }
 };

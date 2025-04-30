@@ -28,7 +28,7 @@ namespace CG
         void loop();
         void terminate();
 
-        static void setMode(bool isEditMode);
+        static void setMode(int isEditMode);
         inline Camera& getCamera() { return camera; }
 
     private:
@@ -50,7 +50,7 @@ namespace CG
         double timeLast = 0;
         double timeDelta = 0;
 
-        static bool editMode;
+        static int mode; // 0: showcase, 1: animation, 2: edit
 	};
 }
 

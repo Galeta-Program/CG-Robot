@@ -14,7 +14,10 @@ private:
 	std::vector<std::string> clipNames;
 
 	double currentFrame;
+	std::string currentClipName;
 	AnimationClip* currentClip;
+	std::string currentFrameClipName;
+	AnimationClip* currentFrameClip; // for editing frame
 
 public:
 	Animator();
@@ -29,11 +32,16 @@ public:
 	void setCurrentClip(std::string clipName);
 	void setCurrentClipSpeed(float _speed);
 
+	void makeFrameToClip(unsigned int frameIndex, AnimationClip* _currentClip = nullptr);
+	void deleteCurrentFrameClip();
+
 	void resetTime() { currentFrame = 0; }
 
 	inline std::vector<std::string>& getClipNames() { return clipNames; }
+	inline std::string getCurrentClipName() const { return currentClipName; }
 	inline float getCurrentClipSpeed() const { return currentClip->getSpeed(); };
 	inline const std::vector<Track>& getCurrentClipTrack() const { return currentClip->getTracks(); };
+	inline unsigned int getFrameAmount() const { return currentClip->getAmountOfFrame(); }
 
 };
 

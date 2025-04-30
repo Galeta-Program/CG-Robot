@@ -161,7 +161,7 @@ namespace CG
 		}
 	}
 
-	bool App::editMode = false;
+	int App::mode = 0;
 
 	App::App():
 		gui(nullptr, nullptr, nullptr),
@@ -227,7 +227,7 @@ namespace CG
 		program.load(shaders);
 		program.use();
 
-		editMode = false;
+		mode = 0;
 
 		mainScene = new MainScene(camera, light, animator, program);
 		mainScene->Initialize();
@@ -276,15 +276,15 @@ namespace CG
 
 	void App::update(double dt)
 	{
-		if (!editMode)
+		if (mode != 2)
 		{
 			animator.animate(dt);
 		}
 	}
 
-	void App::setMode(bool isEditMode)
+	void App::setMode(int ismode)
 	{
-		editMode = isEditMode;
+		mode = ismode;
 	}
 
 	void App::render()
