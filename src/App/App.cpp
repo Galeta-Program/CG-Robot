@@ -172,9 +172,7 @@ namespace CG
 	}
 
 	App::~App()
-	{
-
-	}
+	{}
 
 	bool App::initialize()
 	{
@@ -251,7 +249,6 @@ namespace CG
 			render();
 			gui.render();
 
-			
 			ImGuiIO& io = ImGui::GetIO();
 			(void)io;
 			if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -269,6 +266,11 @@ namespace CG
 	void App::terminate()
 	{
 		gui.terminate();
+
+		if (mainScene != nullptr) {
+			delete mainScene;
+			mainScene = nullptr;
+		}
 
 		glfwDestroyWindow(mainWindow);
 		glfwTerminate();

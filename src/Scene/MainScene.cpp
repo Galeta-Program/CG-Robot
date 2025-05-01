@@ -30,8 +30,7 @@ namespace CG
 	}
 
 	MainScene::~MainScene()
-	{
-	}
+	{}
 
 	bool MainScene::Initialize()
 	{
