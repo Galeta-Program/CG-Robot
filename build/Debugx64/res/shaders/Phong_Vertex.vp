@@ -22,7 +22,7 @@ out vec2 v_TexCoord;
 
 void main(void) 
 { 
-    vec4 modelPos = u_Model * in_InstOffest * vec4(in_Position, 1.0);
+    vec4 modelPos = in_InstOffest * u_Model * vec4(in_Position, 1.0);
     vec4 viewPos  = u_View * modelPos;
     vec3 pos3     = viewPos.xyz / viewPos.w;
 

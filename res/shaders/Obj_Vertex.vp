@@ -20,7 +20,7 @@ out vec3 v_Normal;
 
 void main()
 {
-    mat4 M = ModelMatrix * in_InstOffest;
+    mat4 M = in_InstOffest * ModelMatrix;
     mat4 MV = u_View * M;
     vec4 pos4 = MV * vec4(Position, 1.0);
     vec3 pos3 = pos4.xyz / pos4.w;
