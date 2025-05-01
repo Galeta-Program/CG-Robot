@@ -77,6 +77,18 @@
     <ClCompile Include="..\src\Graphic\Material\MaterialManager.cpp">
       <Filter>Graphic\Material</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Model\Object.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Model\LoadedObject.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Model\ManualObject.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Model\SkyBox.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="App">
@@ -196,12 +208,36 @@
     <ClInclude Include="..\src\Graphic\Material\MaterialManager.h">
       <Filter>Graphic\Material</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\Model\Object.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Model\LoadedObject.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Model\ManualObject.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Model\SkyBox.h">
+      <Filter>Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\res\shaders\Phong_Vertex.vp">
       <Filter>Shader</Filter>
     </None>
     <None Include="..\res\shaders\Phong_Fragment.fp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\Obj_Fragment.fp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\Obj_Vertex.vp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\SkyBox_Fragment.fp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\SkyBox_Vertex.vp">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

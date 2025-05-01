@@ -16,6 +16,9 @@
 #include "../Graphic/UBO.h"
 #include "../Animation/Animator.h"
 #include "../Scene/Light.h"
+#include "../Model/LoadedObject.h"
+#include "../Model/ManualObject.h"
+#include "../Model/SkyBox.h"
 
 constexpr auto PARTSNUM = 15;
 
@@ -44,6 +47,8 @@ namespace CG
 		Light* light;
 		Animator* animator;
 		ShaderProgram* program;
+		ManualObject ground;
+		SkyBox skyBox;
 
 		UBO matVPUbo;		
 		//GLenum mode = GL_FILL;

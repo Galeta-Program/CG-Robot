@@ -167,7 +167,7 @@ void Model::render( GLuint program, CG::Camera* camera )
 		GLCall( GLuint NormalMatID = glGetUniformLocation( program, "u_NormalMatrix" ) );
 		glm::mat3 normalMatrix = glm::transpose( glm::inverse( glm::mat3( *(camera->GetViewMatrix()) * modelMat ) ) );
 		GLCall( glUniformMatrix3fv( NormalMatID, 1, GL_FALSE, &normalMatrix[0][0] ) );
-
+	
 		GLuint drawSize = currentPart.getElementSize();
 
 		std::string mtlname;
@@ -187,6 +187,7 @@ void Model::render( GLuint program, CG::Camera* camera )
 
 void Model::modifyInstance(unsigned int count)
 {
+	vao.bind();
 	instancingCount = count;
 	instancingVbo.bind();
 	instancingVbo.initialize(instancingCount * sizeof(glm::mat4), GL_DYNAMIC_DRAW);
