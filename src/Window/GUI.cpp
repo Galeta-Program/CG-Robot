@@ -305,7 +305,7 @@ namespace CG {
         ImGui::Text("Configure the speed of the animation.\n");
 
         float speed = animator->getCurrentClipSpeed();
-        if (ImGui::DragFloat("     ", &speed, 0.005f, -0.1f, 10.0f, "%.3f"))
+        if (ImGui::DragFloat("     ", &speed, 0.005f, -0.1f, 20.0f, "%.3f"))
         {
             animator->setCurrentClipSpeed(speed);
         }
