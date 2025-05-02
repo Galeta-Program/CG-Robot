@@ -1,0 +1,26 @@
+# Blender 4.3.2 MTL File: 'Robot拆解(更2).blend'
+# www.blender.org
+
+newmtl Robot
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ni 1.500000
+illum 2
+map_Kd Robot_Base_color 7.png
+map_Ns Robot_Roughness.png
+map_refl Robot_Metallic.png
+map_Ke Robot_Emissive.png
+map_d Robot_Opacity.png
+map_Bump -bm 1.000000 Robot_Normal_OpenGL.png
+
+newmtl Robot.005
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ni 1.500000
+illum 2
+map_Kd Robot_Base_color 7.png
+map_Ns Robot_Roughness.png
+map_refl Robot_Metallic.png
+map_Ke Robot_Emissive.png
+map_d Robot_Opacity.png
+map_Bump -bm 1.000000 Robot_Normal_OpenGL.png
