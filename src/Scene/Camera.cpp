@@ -47,6 +47,10 @@ namespace CG
 
     void Camera::rotateAround(float angle, glm::vec3 axis)
     {
+        if (axis == glm::vec3(1, 0, 0)) {
+            axis = glm::normalize(glm::cross((target - pos), up));
+
+        }
         glm::quat deltaOrientation = glm::angleAxis(glm::radians(angle), axis);
 
         updateVectors(deltaOrientation);
