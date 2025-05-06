@@ -11,6 +11,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Camera.h"
+#include "../Graphic/ShaderProgram/shaderProgram.h"
+#include "../Model/Model.h"
+#include "../Graphic/UBO.h"
+#include "../Animation/Animator.h"
+#include "../Scene/Light.h"
+#include "../Model/LoadedObject.h"
+#include "../Model/ManualObject.h"
+#include "../Model/SkyBox.h"
 
 constexpr auto PARTSNUM = 15;
 
@@ -19,76 +27,31 @@ namespace CG
 	class MainScene
 	{
 	public:
-		MainScene();
+		MainScene(Camera& _camera, Light& _light, Animator& _animator, ShaderProgram& _program);
 		~MainScene();
 
-		auto Initialize() -> bool;
-		void Update(double dt);
+		bool Initialize();
 		void Render();
 
-		void OnResize(int width, int height);
-		void OnKeyboard(int key, int action);
-
-		void ResetAction();
-		void SetAction(int action);
-
-		void SetMode(int mode);
+		inline Model* getModel() { return &robot; }
+		inline Animator* getAnimator() { return animator; }
+		inline Light* getLight() { return light; }
 
 	private:
-		auto LoadScene() -> bool;
+		bool loadScene();
+		void loadModel();
+		void loadAnimation();
 
-		void LoadModel();
-		void Load2Buffer(const char* obj, int i);
-		GLuint LoadTexture(std::string filename);
+		Model robot;
+		Camera* camera;
+		Light* light;
+		Animator* animator;
+		ShaderProgram* program;
+		ManualObject ground;
+		SkyBox skyBox;
 
-		void UpdateAction(double dt);
-		void UpdateModel();
-
-	private:
-		Camera camera;
-
-		GLuint VAO;
-		GLuint VBO;
-		GLuint uVBO;
-		GLuint nVBO;
-		GLuint mVBO;
-		GLuint UBO;
-		std::array<GLuint, PARTSNUM> VBOs;
-		std::array<GLuint, PARTSNUM> uVBOs;
-		std::array<GLuint, PARTSNUM> nVBOs;
-		GLuint program;
-
-		int action = 0; // idle
-		GLenum mode = 0; // fill
-
-		float angles[PARTSNUM];
-		float position = 0.0;
-		float angle = 0.0;
-		float eyeAngley = 0.0;
-		float eyedistance = 40.0;
-		float size = 1;
-		GLfloat movex, movey;
-		GLint MatricesIdx;
-		GLuint ModelID;
-
-		int vertices_size[PARTSNUM];
-		int uvs_size[PARTSNUM];
-		int normals_size[PARTSNUM];
-		int materialCount[PARTSNUM];
-
-		GLuint M_KaID;
-		GLuint M_KdID;
-		GLuint M_KsID;
-		GLuint TextureID;
-
-		std::vector<std::string> mtls[PARTSNUM];//use material
-		std::vector<unsigned int> faces[PARTSNUM];//face count
-		std::map<std::string, glm::vec3> KDs;//mtl-name&Kd
-		std::map<std::string, glm::vec3> KSs;//mtl-name&Ks
-		GLuint Texture;
-
-		glm::mat4 Model;
-		glm::mat4 Models[PARTSNUM];
+		UBO matVPUbo;		
+		//GLenum mode = GL_FILL;
 	};
 }
 

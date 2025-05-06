@@ -121,7 +121,7 @@
       <AdditionalDependencies>opengl32.lib;glu32.lib;GLFW\glfw3.lib;glew\glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>robocopy "$(ProjectDir)..\res" "$(OutDir)res" /MIR</Command>
+      <Command>robocopy "$(ProjectDir)..\res" "$(OutDir)res" /MIR || exit 0</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -149,11 +149,28 @@
     <ClCompile Include="..\include\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\include\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\include\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\src\Animation\AnimationClip.cpp" />
+    <ClCompile Include="..\src\Animation\Animator.cpp" />
     <ClCompile Include="..\src\App\App.cpp" />
+    <ClCompile Include="..\src\Graphic\EBO.cpp" />
+    <ClCompile Include="..\src\Graphic\Material\Material.cpp" />
+    <ClCompile Include="..\src\Graphic\Material\MaterialManager.cpp" />
+    <ClCompile Include="..\src\Graphic\Material\Texture.cpp" />
+    <ClCompile Include="..\src\Graphic\ShaderProgram\ShaderProgram.cpp" />
+    <ClCompile Include="..\src\Graphic\UBO.cpp" />
+    <ClCompile Include="..\src\Graphic\VAO.cpp" />
+    <ClCompile Include="..\src\Model\LoadedObject.cpp" />
+    <ClCompile Include="..\src\Model\ManualObject.cpp" />
+    <ClCompile Include="..\src\Model\Model.cpp" />
+    <ClCompile Include="..\src\Model\Object.cpp" />
+    <ClCompile Include="..\src\Model\Part.cpp" />
+    <ClCompile Include="..\src\Model\SkyBox.cpp" />
     <ClCompile Include="..\src\Scene\Camera.cpp" />
+    <ClCompile Include="..\src\Scene\Light.cpp" />
     <ClCompile Include="..\src\Scene\MainScene.cpp" />
-    <ClCompile Include="..\src\Utilty\OBJLoader.cpp" />
-    <ClCompile Include="..\src\Window\ControlWindow.cpp" />
+    <ClCompile Include="..\src\Scene\SceneGraph\Node.cpp" />
+    <ClCompile Include="..\src\Utilty\Error.cpp" />
+    <ClCompile Include="..\src\Window\GUI.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -163,17 +180,38 @@
     <ClInclude Include="..\include\imgui\imconfig.h" />
     <ClInclude Include="..\include\imgui\imgui.h" />
     <ClInclude Include="..\include\imgui\imgui_internal.h" />
+    <ClInclude Include="..\src\Animation\Animator.h" />
+    <ClInclude Include="..\src\Animation\AnimationClip.h" />
     <ClInclude Include="..\src\App\App.h" />
+    <ClInclude Include="..\src\Graphic\EBO.h" />
+    <ClInclude Include="..\src\Graphic\Material\Material.h" />
+    <ClInclude Include="..\src\Graphic\Material\MaterialManager.h" />
+    <ClInclude Include="..\src\Graphic\Material\Texture.h" />
+    <ClInclude Include="..\src\Graphic\ShaderProgram\ShaderProgram.h" />
+    <ClInclude Include="..\src\Graphic\UBO.h" />
+    <ClInclude Include="..\src\Graphic\VAO.h" />
+    <ClInclude Include="..\src\Graphic\VBO.h" />
+    <ClInclude Include="..\src\Model\LoadedObject.h" />
+    <ClInclude Include="..\src\Model\ManualObject.h" />
+    <ClInclude Include="..\src\Model\Model.h" />
+    <ClInclude Include="..\src\Model\Object.h" />
+    <ClInclude Include="..\src\Model\Part.h" />
+    <ClInclude Include="..\src\Model\SkyBox.h" />
     <ClInclude Include="..\src\Scene\Camera.h" />
+    <ClInclude Include="..\src\Scene\Light.h" />
     <ClInclude Include="..\src\Scene\MainScene.h" />
+    <ClInclude Include="..\src\Scene\SceneGraph\Node.h" />
     <ClInclude Include="..\src\stb_image.h" />
-    <ClInclude Include="..\src\Utilty\LoadShaders.h" />
-    <ClInclude Include="..\src\Utilty\OBJLoader.hpp" />
-    <ClInclude Include="..\src\Window\ControlWindow.h" />
+    <ClInclude Include="..\src\Utilty\Error.h" />
+    <ClInclude Include="..\src\Window\GUI.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\res\shaders\DSPhong_Material.fp" />
-    <None Include="..\res\shaders\DSPhong_Material.vp" />
+    <None Include="..\res\shaders\Obj_Fragment.fp" />
+    <None Include="..\res\shaders\Obj_Vertex.vp" />
+    <None Include="..\res\shaders\Phong_Fragment.fp" />
+    <None Include="..\res\shaders\Phong_Vertex.vp" />
+    <None Include="..\res\shaders\SkyBox_Fragment.fp" />
+    <None Include="..\res\shaders\SkyBox_Vertex.vp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

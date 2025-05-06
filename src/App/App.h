@@ -8,8 +8,13 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "Window/ControlWindow.h"
 #include "Scene/MainScene.h"
+#include "../Window/GUI.h"
+#include "../Scene/Camera.h"
+#include "../Scene/Light.h"
+#include "../Graphic/ShaderProgram/shaderProgram.h"
+#include "../Animation/Animator.h"
+
 
 namespace CG
 {
@@ -19,31 +24,33 @@ namespace CG
         App();
         ~App();
 
-        auto Initialize() -> bool;
-        void Loop();
-        void Terminate();
+        bool initialize();
+        void loop();
+        void terminate();
+
+        static void setMode(int isEditMode);
+        inline Camera& getCamera() { return camera; }
 
     private:
-        void Update(double dt);
-        void Render();
+        void update(double dt);
+        void render();
 
-    private:
+        void GLInit();
+
         GLFWwindow* mainWindow;
 
-        ControlWindow* controlWindow;
-        bool showControlWindow;
-
+        GUI gui;
+        Camera camera;
+        Light light;
+        Animator animator;
+        ShaderProgram program;
         MainScene* mainScene;
 
         double timeNow = 0;
         double timeLast = 0;
         double timeDelta = 0;
 
-    public:
-        MainScene* GetMainScene() const
-        {
-            return mainScene;
-        }
+        static int mode; // 0: showcase, 1: animation, 2: edit
 	};
 }
 

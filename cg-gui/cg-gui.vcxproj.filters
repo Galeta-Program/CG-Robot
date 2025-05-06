@@ -26,17 +26,68 @@
     <ClCompile Include="..\include\imgui\backends\imgui_impl_opengl3.cpp">
       <Filter>ImGUI\backends</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Utilty\OBJLoader.cpp">
-      <Filter>Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Window\ControlWindow.cpp">
-      <Filter>Window</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Scene\MainScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Scene\Camera.cpp">
       <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Graphic\ShaderProgram\ShaderProgram.cpp">
+      <Filter>Graphic\ShaderProgram</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Graphic\UBO.cpp">
+      <Filter>Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Graphic\VAO.cpp">
+      <Filter>Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Model\Model.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Model\Part.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Scene\SceneGraph\Node.cpp">
+      <Filter>Scene\SceneGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Utilty\Error.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Animation\AnimationClip.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Animation\Animator.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Window\GUI.cpp">
+      <Filter>Window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Scene\Light.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Graphic\EBO.cpp">
+      <Filter>Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Graphic\Material\Texture.cpp">
+      <Filter>Graphic\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Graphic\Material\Material.cpp">
+      <Filter>Graphic\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Graphic\Material\MaterialManager.cpp">
+      <Filter>Graphic\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Model\Object.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Model\LoadedObject.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Model\ManualObject.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Model\SkyBox.cpp">
+      <Filter>Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -61,6 +112,24 @@
     <Filter Include="Shader">
       <UniqueIdentifier>{f42179a4-6f25-421f-922b-7a6516fe0c86}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Model">
+      <UniqueIdentifier>{240d0fbe-958b-47c9-95c6-5fc1630323e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphic">
+      <UniqueIdentifier>{87bbac04-954d-47f0-843d-bc3066adb7dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphic\ShaderProgram">
+      <UniqueIdentifier>{d8f5c8a1-e9f2-4506-bae0-0139a89dd406}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\SceneGraph">
+      <UniqueIdentifier>{e7f04319-b11d-4eff-914c-b63954d951be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Animation">
+      <UniqueIdentifier>{1fe2ccf8-63d2-42d5-bad6-27ca5250cef5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphic\Material">
+      <UniqueIdentifier>{0cd95dbd-ef08-4102-973b-5336672eb4c4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\App\App.h">
@@ -84,15 +153,6 @@
     <ClInclude Include="..\include\imgui\backends\imgui_impl_opengl3_loader.h">
       <Filter>ImGUI\backends</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Utilty\LoadShaders.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\Utilty\OBJLoader.hpp">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\Window\ControlWindow.h">
-      <Filter>Window</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\Scene\MainScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
@@ -100,12 +160,84 @@
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="..\src\stb_image.h" />
+    <ClInclude Include="..\src\Graphic\ShaderProgram\ShaderProgram.h">
+      <Filter>Graphic\ShaderProgram</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Graphic\UBO.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Graphic\VAO.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Graphic\VBO.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Model\Model.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Model\Part.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Scene\SceneGraph\Node.h">
+      <Filter>Scene\SceneGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Utilty\Error.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Animation\Animator.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Animation\AnimationClip.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Window\GUI.h">
+      <Filter>Window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Scene\Light.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Graphic\EBO.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Graphic\Material\Texture.h">
+      <Filter>Graphic\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Graphic\Material\Material.h">
+      <Filter>Graphic\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Graphic\Material\MaterialManager.h">
+      <Filter>Graphic\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Model\Object.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Model\LoadedObject.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Model\ManualObject.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Model\SkyBox.h">
+      <Filter>Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\res\shaders\DSPhong_Material.vp">
+    <None Include="..\res\shaders\Phong_Vertex.vp">
       <Filter>Shader</Filter>
     </None>
-    <None Include="..\res\shaders\DSPhong_Material.fp">
+    <None Include="..\res\shaders\Phong_Fragment.fp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\Obj_Fragment.fp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\Obj_Vertex.vp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\SkyBox_Fragment.fp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\SkyBox_Vertex.vp">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

@@ -1,0 +1,14 @@
+# Blender 4.3.2 MTL File: 'Robot.blend'
+# www.blender.org
+
+newmtl Robot
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ni 1.500000
+illum 2
+map_Kd C:/Robot_Base_color 7.png
+map_Ns C:/Robot_Roughness.png
+map_refl C:/Robot_Metallic.png
+map_Ke C:/Robot_Emissive.png
+map_d C:/Robot_Opacity.png
+map_Bump -bm 1.000000 C:/Robot_Normal_OpenGL.png
