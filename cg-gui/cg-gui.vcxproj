@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -152,7 +152,10 @@
     <ClCompile Include="..\src\Animation\AnimationClip.cpp" />
     <ClCompile Include="..\src\Animation\Animator.cpp" />
     <ClCompile Include="..\src\App\App.cpp" />
+    <ClCompile Include="..\src\Effect\Effect.cpp" />
+    <ClCompile Include="..\src\Effect\Particle.cpp" />
     <ClCompile Include="..\src\Graphic\EBO.cpp" />
+    <ClCompile Include="..\src\Graphic\FBO.cpp" />
     <ClCompile Include="..\src\Graphic\Material\Material.cpp" />
     <ClCompile Include="..\src\Graphic\Material\MaterialManager.cpp" />
     <ClCompile Include="..\src\Graphic\Material\Texture.cpp" />
@@ -183,7 +186,10 @@
     <ClInclude Include="..\src\Animation\Animator.h" />
     <ClInclude Include="..\src\Animation\AnimationClip.h" />
     <ClInclude Include="..\src\App\App.h" />
+    <ClInclude Include="..\src\Effect\Effect.h" />
+    <ClInclude Include="..\src\Effect\Particle.h" />
     <ClInclude Include="..\src\Graphic\EBO.h" />
+    <ClInclude Include="..\src\Graphic\FBO.h" />
     <ClInclude Include="..\src\Graphic\Material\Material.h" />
     <ClInclude Include="..\src\Graphic\Material\MaterialManager.h" />
     <ClInclude Include="..\src\Graphic\Material\Texture.h" />
