@@ -20,8 +20,6 @@ struct Particle
 class Emitter
 {
 private:
-	std::vector<Particle> particles;
-
 	glm::vec3 location;
 
 	glm::vec3 directionRangeA; // emitted particle initial direction will be inside the triangular pyramid constructed by directionRangeABC
@@ -42,9 +40,6 @@ private:
 	double lifetimeMin;
 	double lifetimeMax;
 
-
-	unsigned int particleAmount;
-
 	std::mt19937 randomEngine;
 
 	template <typename T>
@@ -55,7 +50,7 @@ public:
 	Emitter();
 	~Emitter() {}
 
-	void init(unsigned int amount, 
+	void init(
 		glm::vec3 _location, 
 		glm::vec3 dirA,
 		glm::vec3 dirB,
@@ -70,10 +65,9 @@ public:
 		double lMin,
 		double lMax
 		);
-	void emit();
+	void emit(std::vector<Particle>& particles, unsigned int rangeFrom, unsigned int rangeTo);
 	void clear();
 
-	void setParticleAmount(unsigned int amount);
 	void setLocation(glm::vec3 _location);
 	void setVelocityRange(double min, double max);
 	void setAccelerationRange(double min, double max);

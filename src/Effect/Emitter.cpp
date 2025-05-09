@@ -6,9 +6,21 @@ Emitter::Emitter()
 	randomEngine.seed(seed);
 }
 
-void Emitter::init(unsigned int amount, glm::vec3 _location, glm::vec3 dirA, glm::vec3 dirB, glm::vec3 dirC, glm::vec3 _color, double vMin, double vMax, double aMin, double aMax, double sMin, double sMax, double lMin, double lMax)
+void Emitter::init(
+	glm::vec3 _location, 
+	glm::vec3 dirA, 
+	glm::vec3 dirB, 
+	glm::vec3 dirC, 
+	glm::vec3 _color, 
+	double vMin, 
+	double vMax, 
+	double aMin,
+	double aMax,
+	double sMin, 
+	double sMax, 
+	double lMin,
+	double lMax)
 {
-	setParticleAmount(amount);
 	setLocation(_location);
 	setDirectionRange(dirA, dirB, dirC);
 	setColor(_color);
@@ -18,22 +30,23 @@ void Emitter::init(unsigned int amount, glm::vec3 _location, glm::vec3 dirA, glm
 	setLifetimeRange(lMin, lMax);
 }
 
-void Emitter::emit()
+void Emitter::emit(std::vector<Particle>& particles, unsigned int rangeFrom, unsigned int rangeTo)
 {
+	for (unsigned int i = rangeFrom; i <= rangeTo; i++)
+	{
+		// Init particle states
+		// particles[i].
+	}
 }
 
 void Emitter::clear()
 {
+
 }
 
 void Emitter::setLocation(glm::vec3 _location)
 {
 	location = _location;
-}
-
-void Emitter::setParticleAmount(unsigned int amount)
-{
-	particleAmount = amount;
 }
 
 void Emitter::setVelocityRange(double min, double max)
