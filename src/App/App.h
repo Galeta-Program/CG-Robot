@@ -12,7 +12,8 @@
 #include "../Window/GUI.h"
 #include "../Scene/Camera.h"
 #include "../Scene/Light.h"
-#include "../Graphic/ShaderProgram/shaderProgram.h"
+#include "../Graphic/ShaderProgram/GraphicShader.h"
+#include "../Graphic/ShaderProgram/ComputeShader.h"
 #include "../Animation/Animator.h"
 
 
@@ -43,7 +44,9 @@ namespace CG
         Camera camera;
         Light light;
         Animator animator;
-        ShaderProgram program;
+        GraphicShader program;
+        ComputeShader particleSystemProgram;
+
         MainScene* mainScene;
 
         double timeNow = 0;

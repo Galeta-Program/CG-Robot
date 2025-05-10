@@ -11,7 +11,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Camera.h"
-#include "../Graphic/ShaderProgram/shaderProgram.h"
+#include "../Graphic/ShaderProgram/ComputeShader.h"
+#include "../Graphic/ShaderProgram/GraphicShader.h"
 #include "../Model/Model.h"
 #include "../Graphic/UBO.h"
 #include "../Animation/Animator.h"
@@ -27,7 +28,7 @@ namespace CG
 	class MainScene
 	{
 	public:
-		MainScene(Camera& _camera, Light& _light, Animator& _animator, ShaderProgram& _program);
+		MainScene(Camera& _camera, Light& _light, Animator& _animator, GraphicShader& _program);
 		~MainScene();
 
 		bool Initialize();
@@ -46,7 +47,8 @@ namespace CG
 		Camera* camera;
 		Light* light;
 		Animator* animator;
-		ShaderProgram* program;
+		GraphicShader* program;
+		ComputeShader* computeProgram;
 		ManualObject ground;
 		SkyBox skyBox;
 

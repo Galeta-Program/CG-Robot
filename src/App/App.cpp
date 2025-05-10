@@ -218,11 +218,15 @@ namespace CG
 		camera.LookAt(glm::vec3(0, -20, 40), glm::vec3(0, -20, 0), glm::vec3(0, 1, 0));
 		light.initialize();
 
-		ShaderInfo shaders[] = {
+		// Initialize programs
+		ShaderInfo normalShaders[] = {
 			{ GL_VERTEX_SHADER, "../res/shaders/Phong_Vertex.vp" },
 			{ GL_FRAGMENT_SHADER, "../res/shaders/Phong_Fragment.fp" },
 			{ GL_NONE, NULL } };
-		program.load(shaders);
+		program.load(normalShaders);
+
+		particleSystemProgram.load("../res/shaders/Fire.cp");
+
 		program.use();
 
 		mode = 0;

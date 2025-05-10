@@ -1,5 +1,4 @@
 #pragma once
-
 #include <string>
 #include <GL/glew.h>
 
@@ -14,15 +13,16 @@ class ShaderProgram
 private:
 	unsigned int program;
 
-	const GLchar* ReadShader(const char* filename);
-
 public:
-	ShaderProgram() : program(0) {}
-	~ShaderProgram();
+	ShaderProgram(): program(0) {}
+	~ShaderProgram() {}
 
-	GLuint load(ShaderInfo* shaders);
+	const GLchar* ReadShader(const char* filename);
+	
+	virtual GLuint load(ShaderInfo* shaders) { return 0; }
+	virtual GLuint load(const char* shaderFile) { return 0; }
 
-	void use() const;
+	virtual void use() const = 0;
 	void unUse() const;
 
 	inline unsigned int getId() const { return program; }
