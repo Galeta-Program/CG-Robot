@@ -6,15 +6,12 @@
 
 struct Particle
 {
-	glm::vec3 pos;
-	glm::vec3 direction;
-	double velocity;
-	double acceleration;
 	double size;
-	glm::vec4 color;
-
-	double age;
 	double lifetime;
+	vec4 velocity;     // xyz for direction, w for speed
+	vec4 acceleration; // xyz for direction, w for magnitude
+	vec4 color;
+	vec3 pos;
 };
 
 class Emitter
