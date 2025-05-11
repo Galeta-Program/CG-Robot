@@ -8,24 +8,39 @@ ParticleSystem::~ParticleSystem()
 {
 }
 
-void ParticleSystem::init(unsigned int _particleAmount)
+void ParticleSystem::init(std::vector<int> particlesInEmitter)
 {
-	for (unsigned int i = 0; i < _particleAmount; i++)
+	for (unsigned int i = 0; i < particlesInEmitter.size(); i++)
 	{
-		particles.emplace_back(Particle());
+		emitters.emplace_back(Emitter());
+		particleAmount += particlesInEmitter[i];
+		particlesPerEmmitter.emplace_back(particlesInEmitter[i]);
 	}
 
-	ssbo.initialize(particles, GL_DYNAMIC_DRAW);
+	ssbo.initialize(particleAmount * sizeof(Particle), GL_DYNAMIC_DRAW);
 }
 
 void ParticleSystem::emit()
 {
+	unsigned int currentOffset = 0;
 	for (int i = 0; i < emitters.size(); i++)
 	{
-		emitters[i].emit(particles, particlesPerEmmitter[i], particlesPerEmmitter[i + 1]);
+		emitters[i].emit(ssbo, currentOffset, currentOffset + particlesPerEmmitter[i] - 1);
+		currentOffset += particlesPerEmmitter[i];
 	}
+}
 
+void ParticleSystem::update()
+{
+	ssbo.bind();
+	// Dispatch compute shader
+	// TODO: Add compute shader dispatch code here
+	ssbo.unbind();
+}
 
+void ParticleSystem::render()
+{
+	// TODO: Implement rendering using the SSBO data
 }
 
 void ParticleSystem::setParticleAmount(unsigned int amount)

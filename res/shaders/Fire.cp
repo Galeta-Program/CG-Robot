@@ -17,6 +17,8 @@ layout (binding = 0, std430) buffer ParticleBuffer
     Particle ssbo_Particles[];
 };
 
+uniform float deltaTime;
+
 void main()
 {
     uint index = gl_GlobalInvocationID.x;

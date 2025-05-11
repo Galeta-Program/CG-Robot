@@ -23,6 +23,8 @@ public:
 	void initialize(unsigned int _size, GLuint usageMode = GL_STATIC_DRAW);
 	void initialize(const std::vector<T>& v, GLuint usageMode = GL_STATIC_DRAW);
 
+	void writeRange(std::vector<T> vec, unsigned int start, unsigned int count);
+
 	void bind() const;
 	void unbind() const;
 };
@@ -76,6 +78,14 @@ void SSBO<T>::initialize(const std::vector<T>& v, GLuint usageMode)
 	GLCall(glBindBuffer(GL_SHADER_STORAGE_BUFFER, id));
 	GLCall(glBufferData(GL_SHADER_STORAGE_BUFFER, v.size() * sizeof(T), &v[0], usageMode));
 	size = v.size();
+}
+
+template<class T>
+void SSBO<T>::writeRange(std::vector<T> vec, unsigned int startIndex, unsigned int count)
+{
+	bind();
+	GLCall(glBufferSubData(GL_SHADER_STORAGE_BUFFER, start * sizeof(T), count * sizeof(T), vec.data()));
+	unbind();
 }
 
 template<class T>

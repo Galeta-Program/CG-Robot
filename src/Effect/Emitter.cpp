@@ -1,4 +1,21 @@
 # include "Emitter.h"
+# include <glm/gtc/random.hpp>
+
+glm::vec3 Emitter::rand(glm::vec3 first, glm::vec3 second, glm::vec3 third)
+{
+	float weight1, weight2;
+
+	weight1 = rand(0.0, 1.0);
+	weight2 = rand(0.0, 1.0);
+
+	if (weight1 + weight2 > 1)
+	{
+		weight1 = 1 - weight1;
+		weight2 = 1 - weight2;
+	}
+
+	return weight1 * first + weight2 * second + (1 - weight1 - weight2) * third;
+}
 
 Emitter::Emitter()
 {
@@ -7,22 +24,26 @@ Emitter::Emitter()
 }
 
 void Emitter::init(
-	glm::vec3 _location, 
-	glm::vec3 dirA, 
-	glm::vec3 dirB, 
-	glm::vec3 dirC, 
-	glm::vec3 _color, 
-	double vMin, 
-	double vMax, 
+	glm::vec3 _location,
+	glm::vec3 vDirA,
+	glm::vec3 vDirB,
+	glm::vec3 vDirC,
+	glm::vec3 aDirA,
+	glm::vec3 aDirB,
+	glm::vec3 aDirC,
+	glm::vec3 _color,
+	double vMin,
+	double vMax,
 	double aMin,
 	double aMax,
-	double sMin, 
-	double sMax, 
+	double sMin,
+	double sMax,
 	double lMin,
-	double lMax)
-{
+	double lMax
+){
 	setLocation(_location);
-	setDirectionRange(dirA, dirB, dirC);
+	setVelocityDirectionRange(vDirA, vDirB, vDirC);
+	setAccelerationDirectionRange(aDirA, aDirB, aDirC);
 	setColor(_color);
 	setVelocityRange(vMin, vMax);
 	setAccelerationRange(aMin, aMax);
@@ -30,18 +51,36 @@ void Emitter::init(
 	setLifetimeRange(lMin, lMax);
 }
 
-void Emitter::emit(std::vector<Particle>& particles, unsigned int rangeFrom, unsigned int rangeTo)
+void Emitter::emit(SSBO<Particle>& ssbo, unsigned int rangeFrom, unsigned int rangeTo)
 {
-	for (unsigned int i = rangeFrom; i <= rangeTo; i++)
+	std::vector<Particle> particles(rangeTo - rangeFrom + 1);
+	
+	for (unsigned int i = 0; i < particles.size(); i++)
 	{
-		// Init particle states
-		// particles[i].
+		Particle& p = particles[i];
+
+		p.pos = location;
+		p.size = rand(sizeMin, sizeMax);
+		p.lifetime = rand(lifetimeMin, lifetimeMax);
+
+		glm::vec3 velocityDir = rand(vDirectionRangeA, vDirectionRangeB, vDirectionRangeC);
+		velocityDir = glm::normalize(velocityDir);
+		p.velocity.x = velocityDir.x;
+		p.velocity.y = velocityDir.y;
+		p.velocity.z = velocityDir.z;
+		p.velocity.w = rand(velocityValMin, velocityValMax);
+
+		glm::vec3 accelerationDir = rand(aDirectionRangeA, aDirectionRangeB, aDirectionRangeC);
+		accelerationDir = glm::normalize(accelerationDir);
+		p.acceleration.x = accelerationDir.x;
+		p.acceleration.z = accelerationDir.y;
+		p.acceleration.x = accelerationDir.z;
+		p.acceleration.w = rand(accelerationValMin, accelerationValMax);
+
+		p.color = glm::vec4(color, 1);
 	}
-}
 
-void Emitter::clear()
-{
-
+	ssbo.writeRange(particles, rangeFrom, rangeTo - rangeFrom + 1);
 }
 
 void Emitter::setLocation(glm::vec3 _location)
@@ -51,14 +90,14 @@ void Emitter::setLocation(glm::vec3 _location)
 
 void Emitter::setVelocityRange(double min, double max)
 {
-	velocityMin = min; 
-	velocityMax = max;
+	velocityValMin = min; 
+	velocityValMax = max;
 }
 
 void Emitter::setAccelerationRange(double min, double max)
 {
-	accelerationMin = min; 
-	accelerationMax = max;
+	accelerationValMin = min;
+	accelerationValMax = max;
 }
 
 void Emitter::setSizeRange(double min, double max)
@@ -82,7 +121,7 @@ void Emitter::setLifetimeRange(double min, double max)
 	lifetimeMax = max;
 }
 
-void Emitter::setDirectionRange(glm::vec3 dirA, glm::vec3 dirB, glm::vec3 dirC)
+void Emitter::setVelocityDirectionRange(glm::vec3 dirA, glm::vec3 dirB, glm::vec3 dirC)
 {
 	if (dirA == glm::vec3(0, 0, 0) ||
 		dirB == glm::vec3(0, 0, 0) ||
@@ -91,9 +130,23 @@ void Emitter::setDirectionRange(glm::vec3 dirA, glm::vec3 dirB, glm::vec3 dirC)
 		return;
 	}
 
-	directionRangeA = glm::normalize(dirA);
-	directionRangeB = glm::normalize(dirB);
-	directionRangeC = glm::normalize(dirC);
+	vDirectionRangeA = glm::normalize(dirA);
+	vDirectionRangeB = glm::normalize(dirB);
+	vDirectionRangeC = glm::normalize(dirC);
+}
+
+void Emitter::setAccelerationDirectionRange(glm::vec3 dirA, glm::vec3 dirB, glm::vec3 dirC)
+{
+	if (dirA == glm::vec3(0, 0, 0) ||
+		dirB == glm::vec3(0, 0, 0) ||
+		dirC == glm::vec3(0, 0, 0))
+	{
+		return;
+	}
+
+	aDirectionRangeA = glm::normalize(dirA);
+	aDirectionRangeB = glm::normalize(dirB);
+	aDirectionRangeC = glm::normalize(dirC);
 }
 
 void Emitter::setColor(glm::vec3 _color)
