@@ -4,7 +4,7 @@
 #include "../Graphic/VAO.h"
 #include "../Graphic/Material/Texture.h"
 #include "../Scene/Camera.h"
-#include "../Graphic/ShaderProgram/shaderProgram.h"
+#include "../Graphic/ShaderProgram/GraphicShader.h"
 
 #include <string>
 #include <Vector>
@@ -13,7 +13,7 @@
 class Object
 {
 protected:
-	ShaderProgram program;
+	GraphicShader program;
 
 	VAO vao;
 	EBO ebo;

@@ -45,7 +45,6 @@ namespace CG
         Light light;
         Animator animator;
         GraphicShader program;
-        ComputeShader particleSystemProgram;
 
         MainScene* mainScene;
 

@@ -18,6 +18,7 @@ void ParticleSystem::init(std::vector<int> particlesInEmitter)
 	}
 
 	ssbo.initialize(particleAmount * sizeof(Particle), GL_DYNAMIC_DRAW);
+	computeShader.load("../res/shaders/Fire.cp");
 }
 
 void ParticleSystem::emit()
@@ -28,14 +29,6 @@ void ParticleSystem::emit()
 		emitters[i].emit(ssbo, currentOffset, currentOffset + particlesPerEmmitter[i] - 1);
 		currentOffset += particlesPerEmmitter[i];
 	}
-}
-
-void ParticleSystem::update()
-{
-	ssbo.bind();
-	// Dispatch compute shader
-	// TODO: Add compute shader dispatch code here
-	ssbo.unbind();
 }
 
 void ParticleSystem::render()

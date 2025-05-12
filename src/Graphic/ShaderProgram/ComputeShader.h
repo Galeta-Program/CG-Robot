@@ -2,7 +2,7 @@
 #include "ShaderProgram.h"
 #include <GL/glew.h>
 
-class ComputeShader: ShaderProgram
+class ComputeShader: public ShaderProgram
 {
 private:
 	unsigned int program;  

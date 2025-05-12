@@ -98,7 +98,13 @@
     <ClCompile Include="..\src\Effect\Emitter.cpp">
       <Filter>Effect</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Effect\ParticleSyetem.cpp">
+    <ClCompile Include="..\src\Graphic\ShaderProgram\ComputeShader.cpp">
+      <Filter>Graphic\ShaderProgram</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Graphic\ShaderProgram\GraphicShader.cpp">
+      <Filter>Graphic\ShaderProgram</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Effect\ParticleSystem.cpp">
       <Filter>Effect</Filter>
     </ClCompile>
   </ItemGroup>
@@ -244,8 +250,20 @@
     <ClInclude Include="..\src\Effect\Emitter.h">
       <Filter>Effect</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Effect\ParticleSyetem.h">
+    <ClInclude Include="..\src\Graphic\SSBO.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Graphic\ShaderProgram\ComputeShader.h">
+      <Filter>Graphic\ShaderProgram</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Graphic\ShaderProgram\GraphicShader.h">
+      <Filter>Graphic\ShaderProgram</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Effect\ParticleSystem.h">
       <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Graphic\StorageBuffer.h">
+      <Filter>Graphic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -265,6 +283,15 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="..\res\shaders\SkyBox_Vertex.vp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\Fire.cp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\ParticleSystem.fp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\ParticleSystem.vp">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

@@ -4,13 +4,10 @@
 #include <GL/glew.h>
 
 
-class GraphicShader: ShaderProgram
+class GraphicShader: public ShaderProgram
 {
-private:
-	unsigned int program;
-
 public:
-	GraphicShader() : program(0) {}
+	GraphicShader() : ShaderProgram() {}
 	~GraphicShader();
 
 	GLuint load(ShaderInfo* shaders) override;

@@ -4,6 +4,7 @@
 #include "../Graphic/VAO.h"
 #include "../Graphic/Material/Texture.h"
 #include "../Scene/Camera.h"
+#include "../Model/Part.h"
 
 #include <string>
 #include <Vector>

@@ -225,8 +225,6 @@ namespace CG
 			{ GL_NONE, NULL } };
 		program.load(normalShaders);
 
-		particleSystemProgram.load("../res/shaders/Fire.cp");
-
 		program.use();
 
 		mode = 0;

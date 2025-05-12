@@ -56,10 +56,10 @@ VBO<T>& VBO<T>::operator=(VBO<T>&& other) noexcept
 template<class T>
 void VBO<T>::initialize(unsigned int _size, GLuint usageMode)
 {
-	GLCall(glGenBuffers(1, &id));
-	GLCall(glBindBuffer(GL_ARRAY_BUFFER, id));
+	GLCall(glGenBuffers(1, &this->id));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, this->id));
 	GLCall(glBufferData(GL_ARRAY_BUFFER, _size, NULL, usageMode));
-	size = _size;
+	this->size = _size;
 }
 
 template<class T>
@@ -71,16 +71,16 @@ void VBO<T>::initialize(const std::vector<T>& v, GLuint usageMode)
 		return;
 	}
 
-	GLCall(glGenBuffers(1, &id));
-	GLCall(glBindBuffer(GL_ARRAY_BUFFER, id));
-	GLCall(glBufferData(GL_ARRAY_BUFFER, v.size() * sizeof(T), &v[0], usageMode));
-	size = v.size();
+	GLCall(glGenBuffers(1, &this->id));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, this->id));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, v.size() * sizeof(T), v.data(), usageMode));
+	this->size = v.size();
 }
 
 template<class T>
 void VBO<T>::bind() const
 {
-	GLCall(glBindBuffer(GL_ARRAY_BUFFER, id));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, this->id));
 }
 
 template<class T>

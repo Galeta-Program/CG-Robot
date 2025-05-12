@@ -88,7 +88,7 @@ void Model::gatherPartsData()
 		unsigned int currentVertexSize = currentPart.getVertexSize();
 		unsigned int currentElementSize = currentPart.getElementSize();
 
-		VBO<void>::copyAndWrite( currentPart.vboId(), vbo.getId(), 0, vertexSizeOffset, currentVertexSize * sizeof(Vertex) );
+		StorageBuffer<int>::copyAndWrite( currentPart.vboId(), vbo.getId(), 0, vertexSizeOffset, currentVertexSize * sizeof(Vertex) );
 		vertexSizeOffset += currentVertexSize * sizeof(Vertex);
 
 		if (i == 0) 

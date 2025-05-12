@@ -7,41 +7,11 @@
 
 GraphicShader::~GraphicShader()
 {
-	GLCall(glDeleteProgram(program));
 }
 
 void GraphicShader::use() const
 {
 	GLCall(glUseProgram(program));
-}
-
-void GraphicShader::unUse() const
-{
-	GLCall(glUseProgram(0));
-
-}
-
-const GLchar* GraphicShader::ReadShader(const char* filename)
-{
-	FILE* in = fopen(filename, "rb");
-
-	if (!in) {
-		std::cout << "Shader file: " << filename << " cannot be opened." << std::endl;
-		return NULL;
-	}
-
-	fseek(in, 0, SEEK_END);
-	int length = ftell(in);
-	rewind(in);
-
-	GLchar* shaderSource = new GLchar[length + 1];
-
-	fread(shaderSource, 1, length, in);
-	fclose(in);
-
-	shaderSource[length] = '\0';
-
-	return shaderSource;
 }
 
 GLuint GraphicShader::load(ShaderInfo* shaders)

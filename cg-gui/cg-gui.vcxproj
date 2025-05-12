@@ -154,12 +154,14 @@
     <ClCompile Include="..\src\App\App.cpp" />
     <ClCompile Include="..\src\Effect\Effect.cpp" />
     <ClCompile Include="..\src\Effect\Emitter.cpp" />
-    <ClCompile Include="..\src\Effect\ParticleSyetem.cpp" />
+    <ClCompile Include="..\src\Effect\ParticleSystem.cpp" />
     <ClCompile Include="..\src\Graphic\EBO.cpp" />
     <ClCompile Include="..\src\Graphic\FBO.cpp" />
     <ClCompile Include="..\src\Graphic\Material\Material.cpp" />
     <ClCompile Include="..\src\Graphic\Material\MaterialManager.cpp" />
     <ClCompile Include="..\src\Graphic\Material\Texture.cpp" />
+    <ClCompile Include="..\src\Graphic\ShaderProgram\ComputeShader.cpp" />
+    <ClCompile Include="..\src\Graphic\ShaderProgram\GraphicShader.cpp" />
     <ClCompile Include="..\src\Graphic\ShaderProgram\ShaderProgram.cpp" />
     <ClCompile Include="..\src\Graphic\UBO.cpp" />
     <ClCompile Include="..\src\Graphic\VAO.cpp" />
@@ -189,13 +191,17 @@
     <ClInclude Include="..\src\App\App.h" />
     <ClInclude Include="..\src\Effect\Effect.h" />
     <ClInclude Include="..\src\Effect\Emitter.h" />
-    <ClInclude Include="..\src\Effect\ParticleSyetem.h" />
+    <ClInclude Include="..\src\Effect\ParticleSystem.h" />
     <ClInclude Include="..\src\Graphic\EBO.h" />
     <ClInclude Include="..\src\Graphic\FBO.h" />
     <ClInclude Include="..\src\Graphic\Material\Material.h" />
     <ClInclude Include="..\src\Graphic\Material\MaterialManager.h" />
     <ClInclude Include="..\src\Graphic\Material\Texture.h" />
+    <ClInclude Include="..\src\Graphic\ShaderProgram\ComputeShader.h" />
+    <ClInclude Include="..\src\Graphic\ShaderProgram\GraphicShader.h" />
     <ClInclude Include="..\src\Graphic\ShaderProgram\ShaderProgram.h" />
+    <ClInclude Include="..\src\Graphic\SSBO.h" />
+    <ClInclude Include="..\src\Graphic\StorageBuffer.h" />
     <ClInclude Include="..\src\Graphic\UBO.h" />
     <ClInclude Include="..\src\Graphic\VAO.h" />
     <ClInclude Include="..\src\Graphic\VBO.h" />
@@ -214,8 +220,11 @@
     <ClInclude Include="..\src\Window\GUI.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\res\shaders\Fire.cp" />
     <None Include="..\res\shaders\Obj_Fragment.fp" />
     <None Include="..\res\shaders\Obj_Vertex.vp" />
+    <None Include="..\res\shaders\ParticleSystem.fp" />
+    <None Include="..\res\shaders\ParticleSystem.vp" />
     <None Include="..\res\shaders\Phong_Fragment.fp" />
     <None Include="..\res\shaders\Phong_Vertex.vp" />
     <None Include="..\res\shaders\SkyBox_Fragment.fp" />

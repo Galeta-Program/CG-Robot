@@ -62,6 +62,14 @@
         "xtree": "cpp",
         "xutility": "cpp",
         "format": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "charconv": "cpp",
+        "chrono": "cpp",
+        "forward_list": "cpp",
+        "mutex": "cpp",
+        "optional": "cpp",
+        "ratio": "cpp",
+        "stop_token": "cpp",
+        "thread": "cpp"
     }
 }

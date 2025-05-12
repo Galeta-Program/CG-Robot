@@ -13,7 +13,6 @@ ShaderProgram::~ShaderProgram()
 void ShaderProgram::unUse() const
 {
 	GLCall(glUseProgram(0));
-
 }
 
 const GLchar* ShaderProgram::ReadShader(const char* filename)

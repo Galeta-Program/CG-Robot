@@ -21,7 +21,7 @@
 
 namespace CG
 {
-	MainScene::MainScene(Camera& _camera, Light& _light, Animator& _animator, ShaderProgram& _program)
+	MainScene::MainScene(Camera& _camera, Light& _light, Animator& _animator, GraphicShader& _program)
 	{
 		camera = &_camera;
 		light = &_light;

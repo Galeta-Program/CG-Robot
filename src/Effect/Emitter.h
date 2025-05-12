@@ -83,10 +83,10 @@ public:
 	void setAccelerationDirectionRange(glm::vec3 dirA, glm::vec3 dirB, glm::vec3 dirC);
 	void setColor(glm::vec3 _color);
 };
-
 template<typename T>
 inline T Emitter::rand(T _min, T _max)
 {
-	std::uniform_int_distribution<T> dist(_min, _max);
-	return dist(engine);
+	std::uniform_real_distribution<T> dist(_min, _max);
+	return dist(randomEngine);
 }
+

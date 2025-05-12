@@ -48,7 +48,6 @@ namespace CG
 		Light* light;
 		Animator* animator;
 		GraphicShader* program;
-		ComputeShader* computeProgram;
 		ManualObject ground;
 		SkyBox skyBox;
 

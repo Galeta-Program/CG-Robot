@@ -10,12 +10,12 @@ struct ShaderInfo
 
 class ShaderProgram
 {
-private:
+protected:
 	unsigned int program;
 
 public:
 	ShaderProgram(): program(0) {}
-	~ShaderProgram() {}
+	~ShaderProgram();
 
 	const GLchar* ReadShader(const char* filename);
 	

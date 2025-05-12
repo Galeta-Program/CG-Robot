@@ -5,6 +5,7 @@
 #include "../Graphic/Material/Texture.h"
 #include "../Scene/Camera.h"
 #include "../Model/Object.h"
+#include "../Model/Part.h"
 
 #include <string>
 #include <Vector>

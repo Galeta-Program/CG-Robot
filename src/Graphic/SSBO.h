@@ -20,13 +20,14 @@ public:
 	SSBO& operator=(const SSBO& other) = delete;
 	SSBO& operator=(SSBO&& other) noexcept;
 
-	void initialize(unsigned int _size, GLuint usageMode = GL_STATIC_DRAW);
-	void initialize(const std::vector<T>& v, GLuint usageMode = GL_STATIC_DRAW);
+	void initialize(unsigned int _size, GLuint usageMode = GL_STATIC_DRAW) override;
+	void initialize(const std::vector<T>& v, GLuint usageMode = GL_STATIC_DRAW) override;
 
 	void writeRange(std::vector<T> vec, unsigned int start, unsigned int count);
 
-	void bind() const;
-	void unbind() const;
+	void bind() const override;
+	void bind(unsigned int bindingPoint) const;
+	void unbind() const override;
 };
 
 template<class T>
@@ -59,10 +60,10 @@ SSBO<T>& SSBO<T>::operator=(SSBO<T>&& other) noexcept
 template<class T>
 void SSBO<T>::initialize(unsigned int _size, GLuint usageMode)
 {
-	GLCall(glGenBuffers(1, &id));
-	GLCall(glBindBuffer(GL_SHADER_STORAGE_BUFFER, id));
+	GLCall(glGenBuffers(1, &this->id));
+	GLCall(glBindBuffer(GL_SHADER_STORAGE_BUFFER, this->id));
 	GLCall(glBufferData(GL_SHADER_STORAGE_BUFFER, _size, NULL, usageMode));
-	size = _size;
+	this->size = _size;
 }
 
 template<class T>
@@ -74,24 +75,30 @@ void SSBO<T>::initialize(const std::vector<T>& v, GLuint usageMode)
 		return;
 	}
 
-	GLCall(glGenBuffers(1, &id));
-	GLCall(glBindBuffer(GL_SHADER_STORAGE_BUFFER, id));
+	GLCall(glGenBuffers(1, &this->id));
+	GLCall(glBindBuffer(GL_SHADER_STORAGE_BUFFER, this->id));
 	GLCall(glBufferData(GL_SHADER_STORAGE_BUFFER, v.size() * sizeof(T), &v[0], usageMode));
-	size = v.size();
+	this->size = v.size();
 }
 
 template<class T>
 void SSBO<T>::writeRange(std::vector<T> vec, unsigned int startIndex, unsigned int count)
 {
 	bind();
-	GLCall(glBufferSubData(GL_SHADER_STORAGE_BUFFER, start * sizeof(T), count * sizeof(T), vec.data()));
+	GLCall(glBufferSubData(GL_SHADER_STORAGE_BUFFER, startIndex * sizeof(T), count * sizeof(T), vec.data()));
 	unbind();
 }
 
 template<class T>
-void SSBO<T>::bind() const
+inline void SSBO<T>::bind() const
 {
-	GLCall(glBindBuffer(GL_SHADER_STORAGE_BUFFER, id));
+	GLCall(glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, this->id));
+}
+
+template<class T>
+void SSBO<T>::bind(unsigned int bindingPoint) const
+{
+	GLCall(glBindBufferBase(GL_SHADER_STORAGE_BUFFER, bindingPoint,  this->id));
 }
 
 template<class T>
