@@ -3,17 +3,26 @@
 #include "../Graphic/ShaderProgram/ComputeShader.h"
 #include "ParticleSystem.h"
 
-// TODO: normal is also a effect
+/*
+struct effectResource
+{
+	GraphicShader* gs;
+	ComputeShader* cs;
+	ParticleSystem* ps;
+};
+
+
 class Effect
 {
 private:
 	GraphicShader* program;
 	ComputeShader* computeProgram;
-	ParticleSystem particleSystem;
+	ParticleSystem* particleSystem;
 	
 public:
-	Effect();
-	~Effect();
+	Effect(effectResource resources);
+	~Effect() {}
 
-	void use();
+	void render();
 };
+*/

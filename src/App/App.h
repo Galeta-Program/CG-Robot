@@ -14,6 +14,7 @@
 #include "../Scene/Light.h"
 #include "../Graphic/ShaderProgram/GraphicShader.h"
 #include "../Graphic/ShaderProgram/ComputeShader.h"
+#include "../Effect/ParticleSystem.h"
 #include "../Animation/Animator.h"
 
 
@@ -45,6 +46,7 @@ namespace CG
         Light light;
         Animator animator;
         GraphicShader program;
+        ParticleSystem fireSystem;
 
         MainScene* mainScene;
 

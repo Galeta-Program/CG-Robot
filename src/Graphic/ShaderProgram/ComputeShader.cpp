@@ -32,6 +32,13 @@ ComputeShader::ComputeShader(const char* shaderFile, unsigned int x, unsigned in
 	load(shaderFile);
 }
 
+void ComputeShader::setGroupAmount(unsigned int x, unsigned int y, unsigned int z)
+{
+	numGroupsX = x;
+	numGroupsY = y;
+	numGroupsZ = z;
+}
+
 GLuint ComputeShader::load(const char* shaderFile)
 {
 	if (shaderFile == nullptr)

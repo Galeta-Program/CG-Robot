@@ -7,8 +7,8 @@
 
 struct Particle
 {
-	double size;
-	double lifetime;
+	float size;
+	float lifetime;
 	glm::vec4 velocity;     // xyz for direction, w for speed
 	glm::vec4 acceleration; // xyz for direction, w for magnitude
 	glm::vec4 color;
@@ -34,13 +34,13 @@ private:
 	float accelerationValMin;
 	float accelerationValMax;
 
-	double sizeMin;
-	double sizeMax;
+	float sizeMin;
+	float sizeMax;
 
 	glm::vec3 color;
 
-	double lifetimeMin;
-	double lifetimeMax;
+	float lifetimeMin;
+	float lifetimeMax;
 
 	std::mt19937 randomEngine;
 
@@ -62,26 +62,28 @@ public:
 		glm::vec3 aDirB,
 		glm::vec3 aDirC,
 		glm::vec3 _color,
-		double vMin,
-		double vMax,
-		double aMin,
-		double aMax,
-		double sMin,
-		double sMax,
-		double lMin,
-		double lMax
+		float vMin,
+		float vMax,
+		float aMin,
+		float aMax,
+		float sMin,
+		float sMax,
+		float lMin,
+		float lMax
 		);
 
 	void emit(SSBO<Particle>& ssbo, unsigned int rangeFrom, unsigned int rangeTo);
 
 	void setLocation(glm::vec3 _location);
-	void setVelocityRange(double min, double max);
-	void setAccelerationRange(double min, double max);
-	void setSizeRange(double min, double max);
-	void setLifetimeRange(double min, double max);
+	void setVelocityRange(float min, float max);
+	void setAccelerationRange(float min, float max);
+	void setSizeRange(float min, float max);
+	void setLifetimeRange(float min, float max);
 	void setVelocityDirectionRange(glm::vec3 dirA, glm::vec3 dirB, glm::vec3 dirC);
 	void setAccelerationDirectionRange(glm::vec3 dirA, glm::vec3 dirB, glm::vec3 dirC);
 	void setColor(glm::vec3 _color);
+
+	inline glm::vec3 getPos() const { return location; }
 };
 template<typename T>
 inline T Emitter::rand(T _min, T _max)

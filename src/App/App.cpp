@@ -229,7 +229,30 @@ namespace CG
 
 		mode = 0;
 
-		mainScene = new MainScene(camera, light, animator, program);
+		std::vector<int> particlesPerEmitter;
+		particlesPerEmitter.emplace_back(100000);
+		fireSystem.init(particlesPerEmitter);
+		fireSystem.setupEmitter(
+			0, 
+			glm::vec3(0, 10.0f, 10),             
+			glm::vec3(0.0f, 1.0f, 0.0f),        
+			glm::vec3(0.3f, 1.0f, 0.0f),        
+			glm::vec3(0.0f, 1.0f, 0.3f),        
+
+			glm::vec3(0.0f, 0.2f, 0.0f),        
+			glm::vec3(0.1f, 0.2f, 0.0f),        
+			glm::vec3(0.0f, 0.2f, 0.1f),        
+
+			glm::vec3(1.0f, 0.4f, 0.05f),      
+
+			10.0f, 25.0f,                       
+			0.1f, 0.3f,                         
+			10.0f, 20.0f,                       
+			5.0f, 6.0f                          
+		);
+		fireSystem.emit();
+
+		mainScene = new MainScene(camera, light, animator, program, fireSystem);
 		mainScene->Initialize();
 
 		gui.init(mainWindow, mainScene, &animator);
@@ -249,6 +272,7 @@ namespace CG
 			update(timeDelta);
 
 			render();
+
 			gui.render();
 
 			ImGuiIO& io = ImGui::GetIO();
@@ -300,7 +324,7 @@ namespace CG
 		program.use();
 		light.bind(program.getId());
 
-		mainScene->Render();
+		mainScene->Render(timeDelta);
 	}
 	void App::GLInit()
 	{

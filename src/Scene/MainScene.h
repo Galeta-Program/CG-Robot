@@ -20,6 +20,7 @@
 #include "../Model/LoadedObject.h"
 #include "../Model/ManualObject.h"
 #include "../Model/SkyBox.h"
+#include "../Effect/ParticleSystem.h"
 
 constexpr auto PARTSNUM = 15;
 
@@ -28,11 +29,11 @@ namespace CG
 	class MainScene
 	{
 	public:
-		MainScene(Camera& _camera, Light& _light, Animator& _animator, GraphicShader& _program);
+		MainScene(Camera& _camera, Light& _light, Animator& _animator, GraphicShader& _program, ParticleSystem& ps);
 		~MainScene();
 
 		bool Initialize();
-		void Render();
+		void Render(double timeDelta);
 
 		inline Model* getModel() { return &robot; }
 		inline Animator* getAnimator() { return animator; }
@@ -48,10 +49,11 @@ namespace CG
 		Light* light;
 		Animator* animator;
 		GraphicShader* program;
+		ParticleSystem* firePS;
 		ManualObject ground;
 		SkyBox skyBox;
 
-		UBO matVPUbo;		
+		UBO matVPUbo;	
 		//GLenum mode = GL_FILL;
 	};
 }

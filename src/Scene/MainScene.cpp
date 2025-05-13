@@ -21,12 +21,13 @@
 
 namespace CG
 {
-	MainScene::MainScene(Camera& _camera, Light& _light, Animator& _animator, GraphicShader& _program)
+	MainScene::MainScene(Camera& _camera, Light& _light, Animator& _animator, GraphicShader& _program, ParticleSystem& ps)
 	{
 		camera = &_camera;
 		light = &_light;
 		animator = &_animator;
 		program = &_program;
+		firePS = &ps;
 	}
 
 	MainScene::~MainScene()
@@ -34,10 +35,12 @@ namespace CG
 
 	bool MainScene::Initialize()
 	{
+		std::cout << "hey\n";
+
 		return loadScene();
 	}
 
-	void MainScene::Render()
+	void MainScene::Render(double timeDelta)
 	{
 		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 		// GLCall(glPolygonMode(GL_FRONT_AND_BACK, mode));
@@ -54,6 +57,7 @@ namespace CG
 		program->use();
 		robot.render(program->getId(), camera);
 		
+		firePS->render(timeDelta, *camera->GetViewMatrix(), *camera->GetProjectionMatrix());
 		GLCall(glFlush());
 	}
 	

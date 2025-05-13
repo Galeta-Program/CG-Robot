@@ -7,6 +7,7 @@
 
 ShaderProgram::~ShaderProgram()
 {
+	std::cout << "Program " << program << " has been deleted.\n";
 	GLCall(glDeleteProgram(program));
 }
 

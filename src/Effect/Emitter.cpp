@@ -32,14 +32,14 @@ void Emitter::init(
 	glm::vec3 aDirB,
 	glm::vec3 aDirC,
 	glm::vec3 _color,
-	double vMin,
-	double vMax,
-	double aMin,
-	double aMax,
-	double sMin,
-	double sMax,
-	double lMin,
-	double lMax
+	float vMin,
+	float vMax,
+	float aMin,
+	float aMax,
+	float sMin,
+	float sMax,
+	float lMin,
+	float lMax
 ){
 	setLocation(_location);
 	setVelocityDirectionRange(vDirA, vDirB, vDirC);
@@ -53,7 +53,7 @@ void Emitter::init(
 
 void Emitter::emit(SSBO<Particle>& ssbo, unsigned int rangeFrom, unsigned int rangeTo)
 {
-	std::vector<Particle> particles(rangeTo - rangeFrom + 1);
+	std::vector<Particle> particles(rangeTo - rangeFrom + (unsigned int)(1));
 	
 	for (unsigned int i = 0; i < particles.size(); i++)
 	{
@@ -73,14 +73,14 @@ void Emitter::emit(SSBO<Particle>& ssbo, unsigned int rangeFrom, unsigned int ra
 		glm::vec3 accelerationDir = rand(aDirectionRangeA, aDirectionRangeB, aDirectionRangeC);
 		accelerationDir = glm::normalize(accelerationDir);
 		p.acceleration.x = accelerationDir.x;
-		p.acceleration.z = accelerationDir.y;
-		p.acceleration.x = accelerationDir.z;
+		p.acceleration.y = accelerationDir.y;
+		p.acceleration.z = accelerationDir.z;
 		p.acceleration.w = rand(accelerationValMin, accelerationValMax);
 
 		p.color = glm::vec4(color, 1);
 	}
 
-	ssbo.writeRange(particles, rangeFrom, rangeTo - rangeFrom + 1);
+	ssbo.writeRange(particles, rangeFrom, particles.size());
 }
 
 void Emitter::setLocation(glm::vec3 _location)
@@ -88,19 +88,19 @@ void Emitter::setLocation(glm::vec3 _location)
 	location = _location;
 }
 
-void Emitter::setVelocityRange(double min, double max)
+void Emitter::setVelocityRange(float min, float max)
 {
 	velocityValMin = min; 
 	velocityValMax = max;
 }
 
-void Emitter::setAccelerationRange(double min, double max)
+void Emitter::setAccelerationRange(float min, float max)
 {
 	accelerationValMin = min;
 	accelerationValMax = max;
 }
 
-void Emitter::setSizeRange(double min, double max)
+void Emitter::setSizeRange(float min, float max)
 {
 	if (min <= 0 || max <= 0)
 	{
@@ -111,7 +111,7 @@ void Emitter::setSizeRange(double min, double max)
 	sizeMax = max;
 }
 
-void Emitter::setLifetimeRange(double min, double max)
+void Emitter::setLifetimeRange(float min, float max)
 {
 	if (min <= 0 || max <= 0)
 	{
@@ -151,7 +151,7 @@ void Emitter::setAccelerationDirectionRange(glm::vec3 dirA, glm::vec3 dirB, glm:
 
 void Emitter::setColor(glm::vec3 _color)
 {
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		if (_color[i] > 1 || _color[i] < 0)
 		{
