@@ -90,5 +90,9 @@ GLuint ComputeShader::load(const char* shaderFile)
 void ComputeShader::use() const
 {
 	GLCall(glUseProgram(program));
+}
+
+void ComputeShader::compute()
+{
 	GLCall(glDispatchCompute(numGroupsX, numGroupsY, numGroupsZ));
 }

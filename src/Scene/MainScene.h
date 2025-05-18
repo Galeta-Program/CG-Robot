@@ -22,6 +22,10 @@
 #include "../Model/SkyBox.h"
 #include "../Effect/ParticleSystem.h"
 
+#include "../Graphic/VAO.h"
+#include "../Graphic/VBO.h"
+#include "../Graphic/Material/Texture.h"
+
 constexpr auto PARTSNUM = 15;
 
 namespace CG
@@ -33,7 +37,7 @@ namespace CG
 		~MainScene();
 
 		bool Initialize();
-		void Render(double timeDelta);
+		void Render(double timeNow, double timeDelta);
 
 		inline Model* getModel() { return &robot; }
 		inline Animator* getAnimator() { return animator; }
@@ -52,6 +56,14 @@ namespace CG
 		ParticleSystem* firePS;
 		ManualObject ground;
 		SkyBox skyBox;
+
+		/*
+		* debug use
+		VAO vao;
+		VBO<float> vbo;
+		Texture texture;
+		GraphicShader testQuadShader;
+		*/
 
 		UBO matVPUbo;	
 		//GLenum mode = GL_FILL;

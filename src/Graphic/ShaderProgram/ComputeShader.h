@@ -20,4 +20,5 @@ public:
 	GLuint load(const char* shaderFile) override;
 
 	void use() const override;
+	void compute();
 };

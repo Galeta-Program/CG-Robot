@@ -4,6 +4,7 @@
 #include "../Graphic/ShaderProgram/GraphicShader.h"
 #include "../Graphic/SSBO.h"
 #include "../Graphic/UBO.h"
+#include "../Graphic/Material/Texture.h"
 
 #include <map>
 
@@ -20,7 +21,10 @@ private:
 	std::vector<int> particlesPerEmmitter; // how many particles an emmitter have, [0] = 0
 	unsigned int particleAmount;
 
+	bool haveTexture;
+
 	UBO ubo;
+	Texture texture;
 
 public:
 	ParticleSystem();
@@ -28,28 +32,18 @@ public:
 
 	void init(std::vector<int> particlesInEmitter);
 	void emit(); // All emitter emits
-	void render(float deltaTime, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
+	void render(float timeNow, float deltaTime, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
 	
 	void setupEmitter(
-		unsigned int idx,
+		unsigned int idx, 
 		glm::vec3 _location,
-		glm::vec3 vDirA,
-		glm::vec3 vDirB,
-		glm::vec3 vDirC,
-		glm::vec3 aDirA,
-		glm::vec3 aDirB,
-		glm::vec3 aDirC,
-		glm::vec3 _color,
-		float vMin,
-		float vMax,
-		float aMin,
-		float aMax,
-		float sMin,
-		float sMax,
-		float lMin,
-		float lMax
+		glm::vec3 vDir, 
+		glm::vec3 aDir, 
+		float v, 
+		float a, 
+		float s
 	);
 
-
+	void setTexture(std::string path);
 	void setParticleAmount(unsigned int amount);
 };

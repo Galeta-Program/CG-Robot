@@ -59,13 +59,17 @@ GLuint Texture::LoadTexture(std::string filename)
 		GLenum format = (channels == 4) ? GL_RGBA : GL_RGB;
 		GLCall(glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data));
 		GLCall(glGenerateMipmap(GL_TEXTURE_2D));
+
+		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+		stbi_image_free(data);
 	}
 	else
 	{
 		std::cout << "load failed: " << filename << std::endl;
+		glDeleteTextures(1, &id);
+		id = 0;
 	}
-
-	stbi_image_free(data);
 
 	return id;
 }
@@ -88,7 +92,8 @@ GLuint Texture::LoadCubeMap(std::vector<std::string> faces)
 		else
 		{
 			std::cout << "failed to load at path: " << faces[i] << std::endl;
-			stbi_image_free(data);
+			glDeleteTextures(1, &id);
+			id = 0;
 			return 0;
 		}
 	}
@@ -100,5 +105,4 @@ GLuint Texture::LoadCubeMap(std::vector<std::string> faces)
 	GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE));
 
 	return id;
-
 }

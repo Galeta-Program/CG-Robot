@@ -4,7 +4,7 @@
 #include <iostream>
 #include <glm/gtc/type_ptr.hpp>
 
-ParticleSystem::ParticleSystem(): particleAmount(0), ssboBindingPoint(0), ssbo(0)
+ParticleSystem::ParticleSystem(): particleAmount(0), ssboBindingPoint(0), ssbo(0), haveTexture(false)
 {
 }
 
@@ -29,6 +29,7 @@ void ParticleSystem::init(std::vector<int> particlesInEmitter)
 	graphicShader.load(shaders);
 
 	computeShader.load("../res/shaders/Fire.cp");
+
 	computeShader.setGroupAmount(std::floor(particleAmount / 256.0) + 1, 1, 1);
 
     ubo.initialize(sizeof(glm::mat4) * 2);
@@ -45,16 +46,34 @@ void ParticleSystem::emit()
 	}
 }
 
-void ParticleSystem::render(float deltaTime, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
+void ParticleSystem::render(float timeNow, float deltaTime, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
 {
     if (particleAmount == 0) return;
 
-    computeShader.use(); 
+    computeShader.use();
 
-    GLCall(int location = glGetUniformLocation(computeShader.getId(), "u_DeltaTime")); 
+    GLCall(int location = glGetUniformLocation(computeShader.getId(), "u_EmitterParticleSize"));
+    if (location != -1)
+    {
+        GLCall(glUniform1f(location, emitters[0].getSize()));
+    }
+
+    GLCall(location = glGetUniformLocation(computeShader.getId(), "u_DeltaTime")); 
     if (location != -1)
     {
         GLCall(glUniform1f(location, deltaTime));
+    }
+
+    GLCall(location = glGetUniformLocation(computeShader.getId(), "u_Velocity"));
+    if (location != -1)
+    {
+        GLCall(glUniform1f(location, emitters[0].getVelocity()));
+    }
+
+    GLCall(location = glGetUniformLocation(computeShader.getId(), "u_VelocityDir"));
+    if (location != -1)
+    {
+        GLCall(glUniform3fv(location, 1, glm::value_ptr(emitters[0].getVDir())));
     }
 
     GLCall(location = glGetUniformLocation(computeShader.getId(), "u_EmitterPos"));
@@ -63,7 +82,15 @@ void ParticleSystem::render(float deltaTime, const glm::mat4& viewMatrix, const 
         GLCall(glUniform3fv(location, 1, glm::value_ptr(emitters[0].getPos())));
     }
 
+    GLCall(location = glGetUniformLocation(computeShader.getId(), "u_Time"));
+    if (location != -1)
+    {
+        GLCall(glUniform1f(location, timeNow));
+    }
+    
     ssbo.bind(ssboBindingPoint); 
+
+    computeShader.compute();
 
     GLCall(glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT));
 
@@ -74,35 +101,29 @@ void ParticleSystem::render(float deltaTime, const glm::mat4& viewMatrix, const 
 
     ubo.bind();
 
-    glm::mat4 modelMatrix = glm::mat4(1.0f); 
-    
+    if (haveTexture)
+    {
+        texture.bind(20);
+        GLint tex_loc = glGetUniformLocation(graphicShader.getId(), "u_Texture");
+    }
 
-    glEnable(GL_BLEND | GL_VERTEX_PROGRAM_POINT_SIZE);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE); 
-    glDepthMask(GL_FALSE);            
-    // glEnable(GL_DEPTH_TEST); // Keep depth test if they should be occluded
-
-    // If your vertex shader uses gl_PointSize:
+    glEnable(GL_POINT_SPRITE);
+    glEnable(GL_BLEND);
     glEnable(GL_PROGRAM_POINT_SIZE);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    glDepthMask(GL_FALSE);            
 
-    // Bind the SSBO for the graphics shader to read from (vertex shader)
-    // The SSBO is already bound from the compute pass, but explicit binding for clarity
-    // or if you unbound it is fine. It should be bound to the same binding point
-    // as declared in the vertex shader (e.g., binding = 0).
     ssbo.bind(ssboBindingPoint);
 
 
-    // Issue Draw Call
     glDrawArrays(GL_POINTS, 0, particleAmount);
 
-    // Restore OpenGL States
-    glBindVertexArray(0); // Unbind VAO
     glDisable(GL_PROGRAM_POINT_SIZE);
     glDepthMask(GL_TRUE);
     glDisable(GL_BLEND);
 }
 
-void ParticleSystem::setupEmitter(unsigned int idx, glm::vec3 _location, glm::vec3 vDirA, glm::vec3 vDirB, glm::vec3 vDirC, glm::vec3 aDirA, glm::vec3 aDirB, glm::vec3 aDirC, glm::vec3 _color, float vMin, float vMax, float aMin, float aMax, float sMin, float sMax, float lMin, float lMax)
+void ParticleSystem::setupEmitter(unsigned int idx, glm::vec3 _location, glm::vec3 vDir, glm::vec3 aDir, float v, float a, float s)
 {
 	if (idx >= emitters.size())
 	{
@@ -110,7 +131,18 @@ void ParticleSystem::setupEmitter(unsigned int idx, glm::vec3 _location, glm::ve
 		return;
 	}
 
-	emitters[idx].init(_location, vDirA, vDirB, vDirC, aDirA, aDirB, aDirC, _color, vMin, vMax, aMin, aMax, sMin, sMax, lMin, lMax);
+	emitters[idx].init(_location, vDir, aDir, v, a, s);
+}
+
+void ParticleSystem::setTexture(std::string path)
+{
+    GLuint texID = texture.LoadTexture(path);
+    if (texID != 0) {
+        haveTexture = true;
+    } else {
+        haveTexture = false;
+        std::cerr << "Error: Failed to load texture: " << path << std::endl;
+    }
 }
 
 void ParticleSystem::setParticleAmount(unsigned int amount)

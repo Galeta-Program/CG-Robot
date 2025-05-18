@@ -232,25 +232,9 @@ namespace CG
 		std::vector<int> particlesPerEmitter;
 		particlesPerEmitter.emplace_back(100000);
 		fireSystem.init(particlesPerEmitter);
-		fireSystem.setupEmitter(
-			0, 
-			glm::vec3(0, 10.0f, 10),             
-			glm::vec3(0.0f, 1.0f, 0.0f),        
-			glm::vec3(0.3f, 1.0f, 0.0f),        
-			glm::vec3(0.0f, 1.0f, 0.3f),        
-
-			glm::vec3(0.0f, 0.2f, 0.0f),        
-			glm::vec3(0.1f, 0.2f, 0.0f),        
-			glm::vec3(0.0f, 0.2f, 0.1f),        
-
-			glm::vec3(1.0f, 0.4f, 0.05f),      
-
-			10.0f, 25.0f,                       
-			0.1f, 0.3f,                         
-			10.0f, 20.0f,                       
-			5.0f, 6.0f                          
-		);
+		fireSystem.setupEmitter(0, glm::vec3(0, 0.0f, 5), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f), 15.0f, 2.0f, 8.0f);
 		fireSystem.emit();
+		fireSystem.setTexture("../res/pointSprites/fire.png");
 
 		mainScene = new MainScene(camera, light, animator, program, fireSystem);
 		mainScene->Initialize();
@@ -324,7 +308,7 @@ namespace CG
 		program.use();
 		light.bind(program.getId());
 
-		mainScene->Render(timeDelta);
+		mainScene->Render(timeNow, timeDelta);
 	}
 	void App::GLInit()
 	{

@@ -35,16 +35,74 @@ namespace CG
 
 	bool MainScene::Initialize()
 	{
-		std::cout << "hey\n";
+		/* debug use
+		std::vector<float> v = {
+			-1.0f, -1.0f, 0.0f,  0.0f, 0.0f,
+			 1.0f, -1.0f, 0.0f,  1.0f, 0.0f,
+			 1.0f,  1.0f, 0.0f,  1.0f, 1.0f,
 
-		return loadScene();
+			-1.0f, -1.0f, 0.0f,  0.0f, 0.0f,
+			 1.0f,  1.0f, 0.0f,  1.0f, 1.0f,
+			-1.0f,  1.0f, 0.0f,  0.0f, 1.0f
+		};
+		
+		vao.bind(); // Assuming this VAO is dedicated to the test quad
+		vbo.initialize(v); // Assuming this VBO is dedicated to the test quad
+		
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, 0);                         // aPos (vec3)
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)(sizeof(float) * 3)); // aTexCoord (vec2)
+		
+		// Load the texture you want to test (e.g., fire.png)
+		// texture.LoadTexture("../res/models2/Robot_Base_color 2.png"); 
+		texture.LoadTexture("../res/pointSprites/fire.png"); // Let's test fire.png
+
+		// Load shaders for the test quad
+		ShaderInfo testShaders[] = {
+			{ GL_VERTEX_SHADER, "../res/shaders/TestTexture.vp" },
+			{ GL_FRAGMENT_SHADER, "../res/shaders/TestTexture.fp" },
+			{ GL_NONE, NULL } };
+		testQuadShader.load(testShaders);
+		
+		// Unbind VAO to avoid accidental modification by loadScene() if it uses VAO 0
+		glBindVertexArray(0); 
+		*/
+		return loadScene(); // Be cautious if loadScene reuses vao, vbo, or texture members
 	}
 
-	void MainScene::Render(double timeDelta)
+	void MainScene::Render(double timeNow, double timeDelta)
 	{
 		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-		// GLCall(glPolygonMode(GL_FRONT_AND_BACK, mode));
+		
+		/* debug use
+		// Disable depth test for 2D quad to ensure it's drawn over anything else
+		glDisable(GL_DEPTH_TEST);
+        // Disable blending for raw texture view, or enable if testing alpha
+        // glEnable(GL_BLEND);
+        // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Typical alpha blending
 
+		testQuadShader.use();
+		
+		GLint texSamplerLoc = glGetUniformLocation(testQuadShader.getId(), "testTextureSampler");
+		if (texSamplerLoc != -1) {
+			glUniform1i(texSamplerLoc, 0); // Tell sampler to use texture unit 0
+		} else {
+			std::cerr << "Uniform 'testTextureSampler' not found in TestTexture shader!" << std::endl;
+		}
+
+		texture.bind(0); // Bind the loaded texture to texture unit 0
+		
+		vao.bind(); // Bind the quad's VAO
+		GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
+
+        // Re-enable depth test if other parts of your scene need it
+        glEnable(GL_DEPTH_TEST);
+        // glDisable(GL_BLEND);
+
+		*/
+		
 		matVPUbo.fillInData(0, sizeof(glm::mat4), camera->GetViewMatrix());
 		matVPUbo.fillInData(sizeof(glm::mat4), sizeof(glm::mat4), camera->GetProjectionMatrix());
 
@@ -57,7 +115,8 @@ namespace CG
 		program->use();
 		robot.render(program->getId(), camera);
 		
-		firePS->render(timeDelta, *camera->GetViewMatrix(), *camera->GetProjectionMatrix());
+		firePS->render(timeNow, timeDelta, *camera->GetViewMatrix(), *camera->GetProjectionMatrix());
+		
 		GLCall(glFlush());
 	}
 	
