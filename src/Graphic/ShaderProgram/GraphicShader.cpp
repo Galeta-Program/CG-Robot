@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <vector>
 
 GraphicShader::~GraphicShader()
 {
@@ -41,7 +42,19 @@ GLuint GraphicShader::load(ShaderInfo* shaders)
 		GLCall(glGetShaderiv(shader, GL_COMPILE_STATUS, &compileResult));
 		if (compileResult == GL_FALSE)
 		{
-			std::cout << "Shader: \"" << shaders->filename << "\" compile failed." << std::endl;
+			GLint infoLogLength;
+			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+			if (infoLogLength > 0) {
+				std::vector<char> infoLog(infoLogLength);
+				glGetShaderInfoLog(shader, infoLogLength, NULL, infoLog.data());
+				std::cerr << "Shader compilation error (Type: " << shaderInfo->type << "):\n" << infoLog.data() << std::endl;
+			}
+			else {
+				std::cerr << "Shader compilation failed for unknown reason (Type: " << shaderInfo->type << ").\n";
+			}
+			glDeleteShader(shader); // Don't leak the shader object
+			return 0; // Return 0 to indicate failure
 		}
 
 		GLCall(glAttachShader(program, shader));

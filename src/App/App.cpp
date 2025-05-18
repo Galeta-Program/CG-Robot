@@ -232,7 +232,7 @@ namespace CG
 		std::vector<int> particlesPerEmitter;
 		particlesPerEmitter.emplace_back(100000);
 		fireSystem.init(particlesPerEmitter);
-		fireSystem.setupEmitter(0, glm::vec3(0, 0.0f, 5), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f), 15.0f, 2.0f, 8.0f);
+		fireSystem.setupEmitter(0, glm::vec3(0, 0.0f, 5), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f), 200.0f, 5.0f, 8.0f);
 		fireSystem.emit();
 		fireSystem.setTexture("../res/pointSprites/fire.png");
 
