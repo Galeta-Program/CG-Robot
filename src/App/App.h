@@ -46,7 +46,10 @@ namespace CG
         Light light;
         Animator animator;
         GraphicShader program;
+
         ParticleSystem fireSystem;
+        ParticleSystem lightningSystem;
+        ParticleSystem firework;
 
         MainScene* mainScene;
 

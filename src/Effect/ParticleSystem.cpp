@@ -8,11 +8,45 @@ ParticleSystem::ParticleSystem(): particleAmount(0), ssboBindingPoint(0), ssbo(0
 {
 }
 
+ParticleSystem::ParticleSystem(ParticleSystem&& other) noexcept:
+    ssbo(std::move(other.ssbo)),
+    graphicShader(std::move(other.graphicShader)),
+    computeShader(std::move(other.computeShader)),
+    ubo(std::move(other.ubo)),
+    texture(std::move(other.texture)),
+    ssboBindingPoint(other.ssboBindingPoint),
+    emitters(other.emitters),
+    particlesPerEmmitter(other.particlesPerEmmitter),
+    particleAmount(other.particleAmount),
+    haveTexture(other.haveTexture)
+{
+}
+
 ParticleSystem::~ParticleSystem()
 {
 }
 
-void ParticleSystem::init(std::vector<int> particlesInEmitter)
+ParticleSystem& ParticleSystem::operator=(ParticleSystem&& other) noexcept
+{
+    if (this != &other)
+    {
+        ssbo = std::move(other.ssbo);
+        graphicShader = std::move(other.graphicShader);
+        computeShader = std::move(other.computeShader);
+        ubo = std::move(other.ubo);
+        texture = std::move(other.texture);
+        ssboBindingPoint = other.ssboBindingPoint;
+        emitters = other.emitters;
+        particlesPerEmmitter = other.particlesPerEmmitter;
+        particleAmount = other.particleAmount;
+        haveTexture = other.haveTexture;
+    }
+    
+    return *this;
+}
+
+
+void ParticleSystem::init(std::vector<int> particlesInEmitter, const char* vs, const char* fs, const char* cs)
 {
 	for (unsigned int i = 0; i < particlesInEmitter.size(); i++)
 	{
@@ -22,15 +56,16 @@ void ParticleSystem::init(std::vector<int> particlesInEmitter)
 	}
 	ssbo.initialize(particleAmount * sizeof(Particle), GL_DYNAMIC_DRAW);
 
-	ShaderInfo shaders[] = {
-			{ GL_VERTEX_SHADER, "../res/shaders/ParticleSystem.vp" },
-			{ GL_FRAGMENT_SHADER, "../res/shaders/ParticleSystem.fp" },
-			{ GL_NONE, NULL } };
-	graphicShader.load(shaders);
+    ShaderInfo shaders[] = {
+            { GL_VERTEX_SHADER, vs },
+            { GL_FRAGMENT_SHADER, fs },
+            { GL_NONE, NULL } };
+    graphicShader.load(shaders);
 
-	computeShader.load("../res/shaders/Fire.cp");
+    computeShader.load(cs);
 
-	computeShader.setGroupAmount(std::floor(particleAmount / 256.0) + 1, 1, 1);
+    computeShader.setGroupAmount(std::floor(particleAmount / 256.0) + 1, 1, 1);
+
 
     ubo.initialize(sizeof(glm::mat4) * 2);
     ubo.associateWithShaderBlock(graphicShader.getId(), "u_MatVP", 0);
@@ -46,7 +81,7 @@ void ParticleSystem::emit()
 	}
 }
 
-void ParticleSystem::render(float timeNow, float deltaTime, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
+void ParticleSystem::render(float timeNow, float deltaTime, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, unsigned int emitter /*= -1*/)
 {
     if (particleAmount == 0) return;
 
@@ -87,6 +122,54 @@ void ParticleSystem::render(float timeNow, float deltaTime, const glm::mat4& vie
     {
         GLCall(glUniform1f(location, timeNow));
     }
+
+    GLCall(location = glGetUniformLocation(computeShader.getId(), "u_FromIndex"));
+    if (location != -1)
+    {
+        if (emitter == -1)
+        {
+            GLCall(glUniform1ui(location, 0));
+        }
+        else
+        {
+            if (emitter >= particlesPerEmmitter.size())
+            {
+                return;
+            }
+
+            unsigned int count = 0;
+            for (unsigned int i = 0; i < emitter; i++)
+            {
+                count += particlesPerEmmitter[i];
+            }
+
+            GLCall(glUniform1ui(location, count));
+        }
+    }
+
+    GLCall(location = glGetUniformLocation(computeShader.getId(), "u_Size"));
+    if (location != -1)
+    {
+        unsigned int count = 0;
+        if (emitter == -1)
+        {
+            for (unsigned int i = 0; i < particlesPerEmmitter.size(); i++)
+            {
+                count += particlesPerEmmitter[i];
+            }
+            GLCall(glUniform1ui(location, count));
+        }
+        else
+        {
+            if (emitter >= particlesPerEmmitter.size())
+            {
+                return;
+            }
+
+            GLCall(glUniform1ui(location, particlesPerEmmitter[emitter]));
+        }
+    }
+
     
     ssbo.bind(ssboBindingPoint); 
 
@@ -95,6 +178,20 @@ void ParticleSystem::render(float timeNow, float deltaTime, const glm::mat4& vie
     GLCall(glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT));
 
     graphicShader.use(); 
+
+    GLCall(location = glGetUniformLocation(computeShader.getId(), "u_UseTexture"));
+    if (location != -1)
+    {
+        if (haveTexture)
+        {
+            GLCall(glUniform1i(location, 1));
+        }
+        else
+        {
+            GLCall(glUniform1i(location, 0));
+        }
+    }
+    
 
     ubo.fillInData(0, sizeof(glm::mat4), glm::value_ptr(viewMatrix));
     ubo.fillInData(sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(projectionMatrix));
@@ -123,15 +220,19 @@ void ParticleSystem::render(float timeNow, float deltaTime, const glm::mat4& vie
     glDisable(GL_BLEND);
 }
 
-void ParticleSystem::setupEmitter(unsigned int idx, glm::vec3 _location, glm::vec3 vDir, glm::vec3 aDir, float v, float a, float s)
+void ParticleSystem::setupEmitter(std::vector<EmitterSettings> settings)
 {
-	if (idx >= emitters.size())
-	{
-		std::cout << "Emitter index out of range.\n";
-		return;
-	}
+    for (int i = 0; i < settings.size(); i++)
+    {
+        if (settings[i].idx >= emitters.size())
+        {
+            std::cout << "Emitter index out of range.\n";
+            return;
+        }
 
-	emitters[idx].init(_location, vDir, aDir, v, a, s);
+        emitters[settings[i].idx].init(settings[i]._location, settings[i].vDir, settings[i].aDir, settings[i].v, settings[i].a, settings[i].s);
+    }
+	
 }
 
 void ParticleSystem::setTexture(std::string path)

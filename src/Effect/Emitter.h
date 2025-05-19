@@ -29,6 +29,7 @@ private:
 	float acceleration;
 
 	float size; // ideal particle size
+	float lifetime;
 
 	std::mt19937 randomEngine;
 

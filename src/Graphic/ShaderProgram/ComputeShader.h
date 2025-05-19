@@ -7,7 +7,7 @@ class ComputeShader: public ShaderProgram
 private:
 	unsigned int numGroupsX;
 	unsigned int numGroupsY;
-	unsigned int numGroupsZ;
+	unsigned int numGroupsZ; 
 
 	const GLchar* ReadShader(const char* filename);
 
@@ -20,5 +20,5 @@ public:
 	GLuint load(const char* shaderFile) override;
 
 	void use() const override;
-	void compute();
+	void compute(unsigned int particleAmount = -1);
 };

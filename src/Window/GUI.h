@@ -42,6 +42,7 @@ namespace CG {
 		void lightPanel();
 		void editPanel();
 		void transformPanel(Node* node);
+		void effectPannel();
 		void exportPanel();
 		void importPanel();
 		void _render();

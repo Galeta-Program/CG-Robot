@@ -89,9 +89,6 @@
     <ClCompile Include="..\src\Model\SkyBox.cpp">
       <Filter>Model</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Effect\Effect.cpp">
-      <Filter>Effect</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Graphic\FBO.cpp">
       <Filter>Graphic</Filter>
     </ClCompile>
@@ -150,6 +147,9 @@
     </Filter>
     <Filter Include="Effect">
       <UniqueIdentifier>{802d4a75-50fc-4545-a8f0-3ac4603b2ef1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OBJs">
+      <UniqueIdentifier>{26d54a9e-47df-4f2c-9471-c5f1ed8840aa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -241,9 +241,6 @@
     <ClInclude Include="..\src\Model\SkyBox.h">
       <Filter>Model</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Effect\Effect.h">
-      <Filter>Effect</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\Graphic\FBO.h">
       <Filter>Graphic</Filter>
     </ClInclude>
@@ -292,6 +289,12 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="..\res\shaders\ParticleSystem.vp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\lightning.cp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\firework.cp">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

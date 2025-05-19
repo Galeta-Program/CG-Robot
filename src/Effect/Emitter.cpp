@@ -2,7 +2,7 @@
 # include <glm/gtc/random.hpp>
 
 Emitter::Emitter()
-	: location(0.0f), vDirection(0.0f, 1.0f, 0.0f), aDirection(0.0f), velocity(0.0f), acceleration(0.0f), size(1.0f)
+	: location(0.0f), vDirection(0.0f, 1.0f, 0.0f), aDirection(0.0f), velocity(0.0f), acceleration(0.0f), size(1.0f), lifetime(0)
 {
 	unsigned seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
 	randomEngine.seed(seed);
@@ -37,7 +37,7 @@ void Emitter::emit(SSBO<Particle>& ssbo, unsigned int rangeFrom, unsigned int ra
 		p.pos = location;
 		p.size = size;
 		p.initialSize = size;
-		p.lifetime = 0;
+		p.lifetime = 6;
 		p.initialLifetime = 6;
 
 		glm::vec3 velocityDir = vDirection;

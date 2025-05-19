@@ -92,7 +92,15 @@ void ComputeShader::use() const
 	GLCall(glUseProgram(program));
 }
 
-void ComputeShader::compute()
+void ComputeShader::compute(unsigned int particleAmount /* = -1 */)
 {
-	GLCall(glDispatchCompute(numGroupsX, numGroupsY, numGroupsZ));
+	if (particleAmount == -1)
+	{
+		GLCall(glDispatchCompute(numGroupsX, numGroupsY, numGroupsZ));
+	}
+	else
+	{
+		GLCall(glDispatchCompute(std::floor(particleAmount / 256.0) + 1, 1, 1));
+	}
+
 }

@@ -379,16 +379,49 @@ the light source.\n");
             "Lower Body",
             "Right Upper Arm",
             "Right Lower Arm",
-            "Right Hand",
+            "Right Paw",
             "Left Upper Arm",
             "Left Lower Arm",
-            "Left Hand",
+            "Left Paw",
             "Right Thigh",
             "Right Calf",
             "Right Foot",
             "Left Thigh",
             "Left Calf",
-            "Left Foot"
+            "Left Foot",
+            
+            "Left Thumb 1",
+            "Left Thumb 2",
+            "Left Thumb 3",
+            "Left Index 1",
+            "Left Index 2",
+            "Left Index 3",
+            "Left Middle 1",
+            "Left Middle 2",
+            "Left Middle 3",
+            "Left Ring 1",
+            "Left Ring 2",
+            "Left Ring 3",
+            "Left Little 1",
+            "Left Little 2",
+            "Left Little 3",
+
+            "Right Thumb 1",
+            "Right Thumb 2",
+            "Right Thumb 3",
+            "Right Index 1",
+            "Right Index 2",
+            "Right Index 3",
+            "Right Middle 1",
+            "Right Middle 2",
+            "Right Middle 3",
+            "Right Ring 1",
+            "Right Ring 2",
+            "Right Ring 3",
+            "Right Little 1",
+            "Right Little 2",
+            "Right Little 3",
+
         };
 
         ImGui::PushItemWidth(-1);  // Make ListBox fill available width
@@ -412,6 +445,37 @@ the light source.\n");
             case 12: index = 9; break;
             case 13: index = 10; break;
             case 14: index = 11; break;
+            case 15: index = 15; break;
+            case 16: index = 16; break;
+            case 17: index = 17; break;
+            case 18: index = 18; break;
+            case 19: index = 19; break;
+            case 20: index = 20; break;
+            case 21: index = 21; break;
+            case 22: index = 22; break;
+            case 23: index = 23; break;
+            case 24: index = 24; break;
+            case 25: index = 25; break;
+            case 26: index = 26; break;
+            case 27: index = 27; break;
+            case 28: index = 28; break;
+            case 29: index = 29; break;
+            case 30: index = 30; break;
+            case 31: index = 31; break;
+            case 32: index = 32; break;
+            case 33: index = 33; break;
+            case 34: index = 34; break;
+            case 35: index = 35; break;
+            case 36: index = 36; break;
+            case 37: index = 37; break;
+            case 38: index = 38; break;
+            case 39: index = 39; break;
+            case 40: index = 40; break;
+            case 41: index = 41; break;
+            case 42: index = 42; break;
+            case 43: index = 43; break;
+            case 44: index = 44; break;
+
             }
 
             Model* robot = scene->getModel();
@@ -523,6 +587,18 @@ everytime you press the button.\n");
         }
     }
 
+    void GUI::effectPannel()
+    {
+        ImGui::SeparatorText("Add Effect");
+
+        ImGui::Text("(1) The file will be put under \n\
+\"res/animation/\" directory.\n\
+(2) Will append current motion to the file\n\
+everytime you press the button.");
+        
+       
+    }
+
     void GUI::_render()
     {
         ImGui::Render();
@@ -614,19 +690,20 @@ everytime you press the button.\n");
         std::ofstream outFile((std::string("../res/animation/") + std::string(outFileName)).c_str()); // overwrite
         const std::vector<Track>& tracks = animator->getCurrentClipTrack();
 
+        outFile << "{\n" << "    \"motion\" : {\n";
         // write the local coord of each node
         for (int frame = 0; frame < tracks[0].keyFrames.size(); frame++){
        
-            for (int i = 0; i < 15; i++) // 15 nodes
+            for (int i = 0; i < 45; i++) // 45 nodes
             {
                 Node* node = &(robot->getPart(i));
                 glm::vec3 trans = tracks[i].keyFrames[frame].transOffset;
                 glm::vec3 rotate = glm::degrees(glm::eulerAngles(tracks[i].keyFrames[frame].rotatOffset));
-                outFile << trans[0] << " " << trans[1] << " " << trans[2] << std::endl <<
-                    rotate[0] << " " << rotate[1] << " " << rotate[2] << std::endl;
+                outFile << "        " << trans[0] << " " << trans[1] << " " << trans[2] << "\n" <<
+                    "       " << rotate[0] << " " << rotate[1] << " " << rotate[2] << "\n";
             }
         }
-
+        outFile << "    " << "}\n" << "    \"effect\" : {\n";
         // Output the speed
         outFile << "speed " << animator->getCurrentClipSpeed() << std::endl;
 
