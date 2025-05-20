@@ -7,7 +7,7 @@
 #include <imgui_impl_glfw.h>
 
 #include "App.h"
-
+#include "../Effect/EffectManager.h"
 
 namespace CG
 {
@@ -231,12 +231,40 @@ namespace CG
 
 		mode = 0;
 
+		EffectManager& efManager = EffectManager::getInstance();
+		std::vector<EmitterSettings> emitterSettings;
+		emitterSettings.emplace_back(
+			EmitterSettings({
+				0, 
+				glm::vec3(0, 0.0f, 5), 
+				glm::vec3(0.0f, 0.0f, 1.0f), 
+				glm::vec3(0.0f, 0.0f, 0.0f), 
+				200.0f, 
+				5.0f, 
+				8.0f 
+			})
+		);
+		std::vector<bool> mask = { true, true };
+		// Fire effect
+		efManager.registerEffect(
+			"Fire",
+			100000,
+			"../res/shaders/ParticleSystem.vp",
+			"../res/shaders/ParticleSystem.fp",
+			"../res/shaders/fire.cp",
+			emitterSettings,
+			mask,
+			"../res/pointSprites/fire.png"
+		);
+
+		/*
 		std::vector<int> particlesPerEmitter;
 		particlesPerEmitter.emplace_back(100);
 		fireSystem.init(particlesPerEmitter, "../res/shaders/ParticleSystem.vp", "../res/shaders/ParticleSystem.fp", "../res/shaders/firework.cp");
 		fireSystem.setupEmitter(0, glm::vec3(0, 0.0f, 5), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 200.0f, 5.0f, 8.0f);
 		fireSystem.emit();
 		fireSystem.setTexture("../res/pointSprites/fire.png");
+		*/
 
 		/*
 		particlesPerEmitter.emplace_back(100000);
@@ -325,10 +353,17 @@ namespace CG
 		glfwGetFramebufferSize(mainWindow, &display_w, &display_h);
 		glViewport(0, 0, display_w, display_h);
 
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		program.use();
 		light.bind(program.getId());
-
+		
 		mainScene->Render(timeNow, timeDelta);
+
+		if (mode == 2)
+		{
+			gui.renderEffectIcon(*(camera.GetViewMatrix()), *(camera.GetProjectionMatrix()), 0);
+		}
 	}
 	void App::GLInit()
 	{

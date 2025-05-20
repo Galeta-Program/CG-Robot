@@ -16,7 +16,7 @@ void main(void)
     }
     else
     {
-        out_FragColor = v_Color
+        out_FragColor = v_Color;
     }
 }
 	

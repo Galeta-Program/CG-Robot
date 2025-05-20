@@ -35,7 +35,7 @@ void Animator::addClip(std::string clipName, std::vector<std::vector<KeyFrame>>&
 	}
 
 	clips[clipName].updateTracks(tracks);
-}
+} 
 
 void Animator::addClip(std::string clipName, const char* fileName, std::vector<AnimationEvent> animationEvents)
 {

@@ -28,7 +28,7 @@ private:
 
 	unsigned int vertexSize;
 	unsigned int elementSize; //v/t/n
-
+	
 public:
 	Part(const char* obj, const char* mtl);
 	Part(Part&& other) noexcept;
@@ -49,4 +49,3 @@ public:
 	inline unsigned int getFace(unsigned int index) const { return faces[index]; }
 	inline const std::vector<std::string>& getMtlNames() { return mtlNames; }
 };
-

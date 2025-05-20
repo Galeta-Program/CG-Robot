@@ -1,5 +1,6 @@
 #include "ParticleSystem.h"
 #include "../Utilty/Error.h" 
+#include "EffectManager.h"
 
 #include <iostream>
 #include <glm/gtc/type_ptr.hpp>
@@ -15,7 +16,7 @@ ParticleSystem::ParticleSystem(ParticleSystem&& other) noexcept:
     ubo(std::move(other.ubo)),
     texture(std::move(other.texture)),
     ssboBindingPoint(other.ssboBindingPoint),
-    emitters(other.emitters),
+    emitters(std::move(other.emitters)),
     particlesPerEmmitter(other.particlesPerEmmitter),
     particleAmount(other.particleAmount),
     haveTexture(other.haveTexture)
@@ -36,7 +37,7 @@ ParticleSystem& ParticleSystem::operator=(ParticleSystem&& other) noexcept
         ubo = std::move(other.ubo);
         texture = std::move(other.texture);
         ssboBindingPoint = other.ssboBindingPoint;
-        emitters = other.emitters;
+        emitters = std::move(other.emitters);
         particlesPerEmmitter = other.particlesPerEmmitter;
         particleAmount = other.particleAmount;
         haveTexture = other.haveTexture;
@@ -50,7 +51,7 @@ void ParticleSystem::init(std::vector<int> particlesInEmitter, const char* vs, c
 {
 	for (unsigned int i = 0; i < particlesInEmitter.size(); i++)
 	{
-		emitters.emplace_back(Emitter());
+		emitters.emplace_back(std::move(Emitter()));
 		particleAmount += particlesInEmitter[i];
 		particlesPerEmmitter.emplace_back(particlesInEmitter[i]);
 	}
@@ -63,9 +64,7 @@ void ParticleSystem::init(std::vector<int> particlesInEmitter, const char* vs, c
     graphicShader.load(shaders);
 
     computeShader.load(cs);
-
     computeShader.setGroupAmount(std::floor(particleAmount / 256.0) + 1, 1, 1);
-
 
     ubo.initialize(sizeof(glm::mat4) * 2);
     ubo.associateWithShaderBlock(graphicShader.getId(), "u_MatVP", 0);
@@ -220,6 +219,15 @@ void ParticleSystem::render(float timeNow, float deltaTime, const glm::mat4& vie
     glDisable(GL_BLEND);
 }
 
+void ParticleSystem::renderBoxIcon(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, unsigned int emitterIdx)
+{
+    if (emitterIdx >= emitters.size())
+    {
+        return;
+    }
+    emitters[emitterIdx].render();
+}
+
 void ParticleSystem::setupEmitter(std::vector<EmitterSettings> settings)
 {
     for (int i = 0; i < settings.size(); i++)
@@ -232,7 +240,29 @@ void ParticleSystem::setupEmitter(std::vector<EmitterSettings> settings)
 
         emitters[settings[i].idx].init(settings[i]._location, settings[i].vDir, settings[i].aDir, settings[i].v, settings[i].a, settings[i].s);
     }
-	
+}
+
+void ParticleSystem::setEmitterPos(unsigned int index, glm::vec3 pos)
+{
+    if (index >= emitters.size())
+    {
+        std::cout << "Failed to set emitter position.\n";
+        return;
+    }
+
+    emitters[index].setLocation(pos);
+}
+
+void ParticleSystem::setEmitterDir(unsigned int index, glm::vec3 dir)
+{
+    if (index >= emitters.size())
+    {
+        std::cout << "Failed to set emitter position.\n";
+        return;
+    }
+
+    emitters[index].setVelocityDirection(dir);
+    emitters[index].setAccelerationDirection(dir);
 }
 
 void ParticleSystem::setTexture(std::string path)
@@ -249,4 +279,24 @@ void ParticleSystem::setTexture(std::string path)
 void ParticleSystem::setParticleAmount(unsigned int amount)
 {
 	particleAmount = amount;
+}
+
+glm::vec3 ParticleSystem::getEmitterPos(unsigned int index)
+{
+    if (index >= emitters.size())
+    {
+        std::cout << "Cannot get emitter position: index out of range.\n";
+        return glm::vec3(0, 0, 0);
+    }
+    return emitters[index].getPos();
+}
+
+glm::vec3 ParticleSystem::getEmitterDir(unsigned int index)
+{
+    if (index >= emitters.size())
+    {
+        std::cout << "Cannot get emitter direction: index out of range.\n";
+        return glm::vec3(0, 0, 0);
+    }
+    return emitters[index].getVDir();
 }

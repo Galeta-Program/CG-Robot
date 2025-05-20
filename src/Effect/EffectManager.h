@@ -1,15 +1,31 @@
 #pragma once
-
 #include "ParticleSystem.h"
 
 #include <map>
 #include <string>
+#include <glm/glm.hpp>
+
+struct EffectParam
+{
+	glm::vec3 pos;
+	glm::vec3 dir;
+};
+
+struct Effect
+{
+	std::string name; // Can only use the effects that is defined beforehand. Like Fire, Firework
+	bool isStart; // emit()
+	bool isFinished; // cancel rendering
+	EffectParam param;
+};
 
 class EffectManager
 {
 private:
 	static EffectManager instance;
+	std::vector<std::string> effectNameList;
 	std::map<std::string, ParticleSystem> effects;
+	std::map<std::string, std::vector<bool>> effectParamMask;
 
 	EffectManager() {}
 	~EffectManager() {}
@@ -24,8 +40,11 @@ public:
 		const char* fs,
 		const char* cs,
 		std::vector<EmitterSettings> settings,
+		std::vector<bool> _effectParamMask,
 		const char* texturePath
 	);
+	void passParam(std::string name, EffectParam param);
 
-	inline unsigned int getSize() const { return effects.size(); }
+	inline std::vector<std::string>& getNameList() { return effectNameList; }
+	inline unsigned int getSize() { return effects.size(); }
 };

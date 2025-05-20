@@ -21,6 +21,7 @@ void EffectManager::registerEffect(
 	const char* fs,
 	const char* cs,
 	std::vector<EmitterSettings> settings,
+	std::vector<bool> _effectParamMask,
 	const char* texturePath
 	)
 {
@@ -28,6 +29,7 @@ void EffectManager::registerEffect(
 		return;
 	}
 	effects[name] = ParticleSystem();
+	effectNameList.emplace_back(name);
 
 	std::vector<int> particlesPerEmitter;
 	particlesPerEmitter.emplace_back(particleAmount);
@@ -35,8 +37,20 @@ void EffectManager::registerEffect(
 	effects[name].setupEmitter(settings);
 	effects[name].emit();
 
+	effectParamMask[name] = _effectParamMask;
+
 	if (texturePath != "")
 	{
 		effects[name].setTexture(texturePath);
 	}
+}
+
+void EffectManager::passParam(std::string name, EffectParam param)
+{
+	if (instance.effects.find(name) == instance.effects.end())
+	{
+		std::cout << "Effect not registered.\n";
+		return;
+	}
+
 }

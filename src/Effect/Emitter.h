@@ -4,6 +4,10 @@
 #include <chrono>
 #include <vector>
 #include "../Graphic/SSBO.h"
+#include "../Graphic/VAO.h"
+#include "../Graphic/VBO.h"
+#include "../Graphic/EBO.h"
+
 
 struct Particle
 {
@@ -20,14 +24,15 @@ struct Particle
 class Emitter
 {
 private:
-	glm::vec3 location;
+	VAO vao;
+	VBO<glm::vec3> vbo;
+	EBO ebo;
 
+	glm::vec3 location;
 	glm::vec3 vDirection;
 	glm::vec3 aDirection;
-
 	float velocity;
 	float acceleration;
-
 	float size; // ideal particle size
 	float lifetime;
 
@@ -35,7 +40,12 @@ private:
 
 public:
 	Emitter();
+	Emitter(Emitter&& other) noexcept;
+	Emitter(const Emitter&) = delete;
 	~Emitter() {}
+
+	Emitter& operator=(Emitter&& other) noexcept;
+	Emitter& operator=(const Emitter&) = delete;
 
 	void init(
 		glm::vec3 _location, 
@@ -54,6 +64,8 @@ public:
 	void setSize(float s);
 	void setVelocityDirection(glm::vec3 dir);
 	void setAccelerationDirection(glm::vec3 dir);
+
+	void render();
 
 	inline glm::vec3 getPos() const { return location; }
 	inline glm::vec3 getVDir() const { return vDirection; }

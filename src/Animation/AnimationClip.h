@@ -1,5 +1,7 @@
 #pragma once
 #include "../Scene/SceneGraph/Node.h"
+#include "../Effect/ParticleSystem.h"
+#include "../Effect/EffectManager.h"
 
 #include <vector>
 #include <functional>

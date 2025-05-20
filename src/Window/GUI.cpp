@@ -5,6 +5,9 @@
 
 #include "glm/gtx/string_cast.hpp"
 #include "../App/App.h"
+#include "../Effect/EffectManager.h"
+#include "../Utilty/Error.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -30,12 +33,20 @@
 
 namespace CG {
 
-    GUI::GUI(GLFWwindow* window, MainScene* _scene, Animator* _animator) : partSelected(0)
+    GUI::GUI(GLFWwindow* window, MainScene* _scene, Animator* _animator) :
+        partSelected(0),
+        haveEffect(false),
+        previousHaveEffect(false),
+        effectName(""),
+        effectPos(0, 0, 0),
+        effectDir(0, 0, 1),
+        gs()
     {
         if (window == nullptr)
         {
             return;
         }
+
         init(window, _scene, _animator);
     }
 
@@ -76,6 +87,12 @@ namespace CG {
 
         editFrame = false;
         haveSelectFrame = false;
+
+        ShaderInfo shaders[] = {
+            { GL_VERTEX_SHADER, "../res/shaders/guiIcon.vp" },
+            { GL_FRAGMENT_SHADER, "../res/shaders/guiIcon.fp" },
+            { GL_NONE, NULL } };
+        gs.load(shaders);
     }
 
     void GUI::bindScene(MainScene* _scene)
@@ -110,7 +127,7 @@ namespace CG {
     void GUI::mainPanel()
     {
         ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-        ImGui::SetNextWindowSize(ImVec2(320, ImGui::GetIO().DisplaySize.y), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x * 0.2, ImGui::GetIO().DisplaySize.y), ImGuiCond_Always);
 
         ImGui::Begin("Panel", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
@@ -167,17 +184,18 @@ namespace CG {
 
         if (currentMode == 2)
         {
-            ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 320, 0), ImGuiCond_Always);
-            ImGui::SetNextWindowSize(ImVec2(320, 250), ImGuiCond_Always);
+            ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x * 0.8, 0), ImGuiCond_Always);
+            ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x * 0.2, ImGui::GetIO().DisplaySize.y), ImGuiCond_Always);
 
             ImGui::Begin("Transform", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
             transformPanel(selectedNode);
+            effectPannel();
             ImGui::End();
         }
         else
         {
-            ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 320, 0), ImGuiCond_Always);
-            ImGui::SetNextWindowSize(ImVec2(320, ImGui::GetIO().DisplaySize.y), ImGuiCond_Always);
+            ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x * 0.8, 0), ImGuiCond_Always);
+            ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x * 0.2, ImGui::GetIO().DisplaySize.y), ImGuiCond_Always);
 
             ImGui::Begin("Configurations", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
@@ -589,14 +607,68 @@ everytime you press the button.\n");
 
     void GUI::effectPannel()
     {
-        ImGui::SeparatorText("Add Effect");
+        ImGui::SeparatorText("Usage");
+        ImGui::Text("Select an effect to apply.");
+        ImGui::SeparatorText("Effects");
 
-        ImGui::Text("(1) The file will be put under \n\
-\"res/animation/\" directory.\n\
-(2) Will append current motion to the file\n\
-everytime you press the button.");
-        
-       
+        ImGui::PushItemWidth(-1);  // Make ListBox fill available width
+
+        EffectManager& efm = EffectManager::getInstance();
+
+        std::vector<const char*> effectNames;
+        effectNames.push_back("None");
+        for (const auto& str : efm.getNameList()) {
+            effectNames.push_back(str.c_str());
+        }
+
+        if (ImGui::ListBox("##EffectList",
+            &effectSelected,
+            effectNames.data(),
+            (int)(effectNames.size()),
+            (int)(effectNames.size())))
+        {
+            if (effectSelected != 0)
+            {
+                effectName = effectNames[effectSelected];
+                haveEffect = true;
+            }
+            else
+            {
+                haveEffect = false;
+
+            }
+        }
+
+        if (haveEffect)
+        {
+            effectParamPanel();
+        }
+
+        ImGui::PopItemWidth();
+    }
+
+    void GUI::effectParamPanel()
+    {
+        ImGui::SeparatorText("Usage");
+        ImGui::Text("Modify the direction and position of the effect.");
+
+        EffectManager& efm = EffectManager::getInstance();
+
+        glm::vec3 trans = efm.getEffect(effectName).getEmitterPos(0);
+
+        ImGui::SeparatorText("Translation");
+        if (ImGui::DragFloat("x (Translate) ", &trans[0], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
+        {
+            efm.getEffect(effectName).setEmitterPos(0, trans);
+        }
+        if (ImGui::DragFloat("y (Translate) ", &trans[1], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
+        {
+            efm.getEffect(effectName).setEmitterPos(0, trans);
+        }
+        if (ImGui::DragFloat("z (Translate) ", &trans[2], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
+        {
+            efm.getEffect(effectName).setEmitterPos(0, trans);
+        }
     }
 
     void GUI::_render()
@@ -672,17 +744,57 @@ everytime you press the button.");
     void GUI::exportFromEditor()
     {
         std::ofstream outFile((std::string("../res/animation/") + std::string(outFileName)).c_str(), std::ios_base::app); // append
-
-        // write the local coord of each node
-        for (int i = 0; i < 15; i++)
+        
+        outFile << "{\n" << "    \"motion\" : [\n";
+        
+        for (int i = 0; i < 45; i++) // 45 nodes
         {
             Node* node = &(robot->getPart(i));
             glm::vec3 trans = node->getTranslateOffset();
             glm::vec3 rotate = node->getEulerRotateAngle();
-
-            outFile << trans[0] << " " << trans[1] << " " << trans[2] << std::endl <<
-                rotate[0] << " " << rotate[1] << " " << rotate[2] << std::endl;
+            outFile << "        [" << trans[0] << ", " << trans[1] << ", " << trans[2] << "],\n" <<
+                "        [" << rotate[0] << ", " << rotate[1] << ", " << rotate[2] << "],\n";
         }
+        
+        outFile << "    " << "],\n";
+        outFile << "    \"effect\" : {\n";
+        if (haveEffect == false && previousHaveEffect == false)
+        {
+            outFile << "        \"name\" : \"None\"\n";
+            outFile << "    }\n";
+        }
+        else
+        {
+            
+            outFile << "        \"name\" : \"" << effectName << "\",\n";
+            if (haveEffect != previousHaveEffect)
+            {
+                if (haveEffect)
+                {
+                    outFile << "        \"isStart\" : \"true\",\n";
+                    outFile << "        \"isFalse\" : \"false\",\n";
+                }
+                else
+                {
+                    outFile << "        \"isStart\" : \"false\",\n";
+                    outFile << "        \"isFalse\" : \"true\",\n";
+                }
+                previousHaveEffect = haveEffect;
+            }
+            else if (haveEffect)
+            {
+                outFile << "        \"isStart\" : \"false\",\n";
+                outFile << "        \"isFalse\" : \"false\",\n";
+            }
+
+            outFile << "        \"param\" : {\n";
+            outFile << "            \"pos\" : [" << effectPos[0] << ", " << effectPos[1] << ", " << effectPos[2] << "],\n";
+            outFile << "            \"dir\" : [" << effectDir[0] << ", " << effectDir[1] << ", " << effectDir[2] << "]\n";
+            outFile << "        }\n";
+            outFile << "    }\n";
+
+        }
+        outFile << "}\n";
     }
 
     void GUI::exportFromAnimator()
@@ -690,23 +802,55 @@ everytime you press the button.");
         std::ofstream outFile((std::string("../res/animation/") + std::string(outFileName)).c_str()); // overwrite
         const std::vector<Track>& tracks = animator->getCurrentClipTrack();
 
-        outFile << "{\n" << "    \"motion\" : {\n";
         // write the local coord of each node
         for (int frame = 0; frame < tracks[0].keyFrames.size(); frame++){
        
-            for (int i = 0; i < 45; i++) // 45 nodes
+            for (int i = 0; i < 15; i++) // 15 nodes
             {
                 Node* node = &(robot->getPart(i));
                 glm::vec3 trans = tracks[i].keyFrames[frame].transOffset;
                 glm::vec3 rotate = glm::degrees(glm::eulerAngles(tracks[i].keyFrames[frame].rotatOffset));
-                outFile << "        " << trans[0] << " " << trans[1] << " " << trans[2] << "\n" <<
-                    "       " << rotate[0] << " " << rotate[1] << " " << rotate[2] << "\n";
+                outFile << trans[0] << " " << trans[1] << " " << trans[2] << std::endl <<
+                    rotate[0] << " " << rotate[1] << " " << rotate[2] << std::endl;
             }
         }
-        outFile << "    " << "}\n" << "    \"effect\" : {\n";
+
         // Output the speed
         outFile << "speed " << animator->getCurrentClipSpeed() << std::endl;
 
     }
 
+    void GUI::renderEffectIcon(
+        const glm::mat4& viewMatrix,
+        const glm::mat4& projectionMatrix,
+        unsigned int emitter /* = -1 */)
+    {
+        if (haveEffect)
+        {
+            gs.use();
+            GLCall(GLuint ViewID = glGetUniformLocation(gs.getId(), "u_View"));
+            if (ViewID != -1)
+            {
+                GLCall(glUniformMatrix4fv(ViewID, 1, GL_FALSE, glm::value_ptr(viewMatrix)));
+            }
+            GLCall(GLuint ProjID = glGetUniformLocation(gs.getId(), "u_Projection"));
+            if (ProjID != -1)
+            {
+                GLCall(glUniformMatrix4fv(ProjID, 1, GL_FALSE, glm::value_ptr(projectionMatrix)));
+            }
+
+            EffectManager& efm = EffectManager::getInstance();
+            glm::vec3 emitterPos = efm.getEffect(effectName).getEmitterPos(emitter); 
+            glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), emitterPos);
+
+            GLCall(GLuint ModelID = glGetUniformLocation(gs.getId(), "u_Model"));
+            if (ModelID != -1)
+            {
+                GLCall(glUniformMatrix4fv(ModelID, 1, GL_FALSE, glm::value_ptr(modelMatrix)));
+            }
+
+            efm.getEffect(effectName).renderBoxIcon(viewMatrix, projectionMatrix, emitter);
+            gs.unUse();
+        }
+    }
 }

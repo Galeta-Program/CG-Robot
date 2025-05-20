@@ -104,6 +104,9 @@
     <ClCompile Include="..\src\Effect\ParticleSystem.cpp">
       <Filter>Effect</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Effect\EffectManager.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="App">
@@ -262,6 +265,9 @@
     <ClInclude Include="..\src\Graphic\StorageBuffer.h">
       <Filter>Graphic</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\Effect\EffectManager.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\res\shaders\Phong_Vertex.vp">
@@ -295,6 +301,12 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="..\res\shaders\firework.cp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\guiIcon.fp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\guiIcon.vp">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>
