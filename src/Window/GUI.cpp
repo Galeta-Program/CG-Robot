@@ -772,12 +772,12 @@ everytime you press the button.\n");
                 if (haveEffect)
                 {
                     outFile << "        \"isStart\" : \"true\",\n";
-                    outFile << "        \"isFalse\" : \"false\",\n";
+                    outFile << "        \"isFinished\" : \"false\",\n";
                 }
                 else
                 {
                     outFile << "        \"isStart\" : \"false\",\n";
-                    outFile << "        \"isFalse\" : \"true\",\n";
+                    outFile << "        \"isFinished\" : \"true\",\n";
                 }
                 previousHaveEffect = haveEffect;
             }
@@ -786,6 +786,10 @@ everytime you press the button.\n");
                 outFile << "        \"isStart\" : \"false\",\n";
                 outFile << "        \"isFalse\" : \"false\",\n";
             }
+
+            EffectManager& efm = EffectManager::getInstance();
+            effectPos = efm.getEffect(effectName).getEmitterPos(0);
+            effectDir = efm.getEffect(effectName).getEmitterDir(0);
 
             outFile << "        \"param\" : {\n";
             outFile << "            \"pos\" : [" << effectPos[0] << ", " << effectPos[1] << ", " << effectPos[2] << "],\n";

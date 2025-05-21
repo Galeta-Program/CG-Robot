@@ -10,6 +10,7 @@ struct KeyFrame
 {
 	glm::vec3 transOffset;
 	glm::quat rotatOffset;
+	Effect effect;
 };
 
 struct Track

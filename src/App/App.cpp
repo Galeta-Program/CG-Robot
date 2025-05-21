@@ -355,14 +355,20 @@ namespace CG
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		EffectManager& efm = EffectManager::getInstance();
 		program.use();
 		light.bind(program.getId());
 		
 		mainScene->Render(timeNow, timeDelta);
+		
 
 		if (mode == 2)
 		{
 			gui.renderEffectIcon(*(camera.GetViewMatrix()), *(camera.GetProjectionMatrix()), 0);
+		}
+		else
+		{
+			efm.render(timeNow, timeDelta, *(camera.GetViewMatrix()), *(camera.GetProjectionMatrix()), -1);
 		}
 	}
 	void App::GLInit()

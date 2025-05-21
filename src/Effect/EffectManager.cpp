@@ -54,3 +54,26 @@ void EffectManager::passParam(std::string name, EffectParam param)
 	}
 
 }
+
+void EffectManager::setCurrentEffect(std::string name)
+{
+	if (name == "None")
+	{
+		currentEffect = nullptr;
+	}
+
+	currentEffect = &effects[name];
+}
+
+void EffectManager::render(
+	float timeNow, 
+	float deltaTime, 
+	const glm::mat4& viewMatrix, 
+	const glm::mat4& projectionMatrix,
+	unsigned int emitter /*= -1*/)
+{
+	if (currentEffect != nullptr)
+	{
+		currentEffect->render(timeNow, deltaTime, viewMatrix, projectionMatrix, emitter);
+	}
+}

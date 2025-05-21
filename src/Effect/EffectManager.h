@@ -27,7 +27,9 @@ private:
 	std::map<std::string, ParticleSystem> effects;
 	std::map<std::string, std::vector<bool>> effectParamMask;
 
-	EffectManager() {}
+	ParticleSystem* currentEffect;
+
+	EffectManager() : currentEffect(nullptr) {  }
 	~EffectManager() {}
 
 public:
@@ -44,6 +46,8 @@ public:
 		const char* texturePath
 	);
 	void passParam(std::string name, EffectParam param);
+	void setCurrentEffect(std::string name);
+	void render(float timeNow, float deltaTime, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, unsigned int emitter = -1);
 
 	inline std::vector<std::string>& getNameList() { return effectNameList; }
 	inline unsigned int getSize() { return effects.size(); }

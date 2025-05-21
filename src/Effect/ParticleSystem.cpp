@@ -178,7 +178,7 @@ void ParticleSystem::render(float timeNow, float deltaTime, const glm::mat4& vie
 
     graphicShader.use(); 
 
-    GLCall(location = glGetUniformLocation(computeShader.getId(), "u_UseTexture"));
+    GLCall(location = glGetUniformLocation(graphicShader.getId(), "u_UseTexture"));
     if (location != -1)
     {
         if (haveTexture)
