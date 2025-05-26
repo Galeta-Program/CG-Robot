@@ -32,6 +32,7 @@ namespace CG
 
         static void setMode(int isEditMode);
         inline Camera& getCamera() { return camera; }
+        inline MainScene* getMainScene() { return mainScene; }
 
     private:
         void update(double dt);

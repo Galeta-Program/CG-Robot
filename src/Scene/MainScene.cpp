@@ -198,8 +198,12 @@ namespace CG
 
 		GLCall(glFlush());
 	}
-	
 
+	void MainScene::Resize(int display_w, int display_h)
+	{
+		screenRenderer.resize(display_w, display_h);
+	}
+	
 	bool MainScene::loadScene(int display_w, int display_h)
 	{
 		loadModel();

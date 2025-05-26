@@ -28,11 +28,6 @@ void ScreenRenderer::initialize(int newWidth, int newHeight)
     fbo.bind();
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
 
-    // depth and stencil renderbuffer
-    glGenRenderbuffers(1, &rbo);
-    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cerr << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
@@ -79,12 +74,14 @@ void ScreenRenderer::resize(int newWidth, int newHeight)
 {
     width = newWidth;
     height = newHeight;
-    glBindTexture(GL_TEXTURE_2D, texColorBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
 
-    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+    glBindTexture(GL_TEXTURE_2D, texColorBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, newWidth, newHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+
+    glBindTexture(GL_TEXTURE_2D, depthTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, newWidth, newHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 }
+
 
 
 void ScreenRenderer::set()
@@ -108,9 +105,6 @@ void ScreenRenderer::render()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     vao.bind();
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texColorBuffer);
-    glUniform1i(glGetUniformLocation(program.getId(), "u_ScreenTexture"), 0);
     glUniform1f(glGetUniformLocation(program.getId(), "u_PixelSize"), pixelSize);
     glUniform2f(glGetUniformLocation(program.getId(), "u_ScreenSize"), width, height);
     if (useMotionBlur == true)
@@ -120,9 +114,13 @@ void ScreenRenderer::render()
     glUniform1i(glGetUniformLocation(program.getId(), "u_usePixelate"), usePixelate);
     glUniform1i(glGetUniformLocation(program.getId(), "u_useToonshader"), useToonshader);
 
-    /*glActiveTexture(GL_TEXTURE1);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texColorBuffer);
+    glUniform1i(glGetUniformLocation(program.getId(), "u_ScreenTexture"), 0);
+
+    glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, depthTexture);
-    glUniform1i(glGetUniformLocation(program.getId(), "u_DepthTexture"), 1);*/
+    glUniform1i(glGetUniformLocation(program.getId(), "u_DepthTexture"), 1);
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
@@ -135,6 +133,7 @@ void ScreenRenderer::render()
             alpha = pow(0.5, float(i));
             alpha = 1.0f / sqrt(float(i) + 1);
 
+            glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, historyTextures[texIndex]);
             glUniform1i(glGetUniformLocation(program.getId(), "u_ScreenTexture"), 0);
             glUniform1f(glGetUniformLocation(program.getId(), "u_PixelSize"), pixelSize);

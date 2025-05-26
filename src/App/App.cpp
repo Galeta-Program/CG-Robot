@@ -91,7 +91,11 @@ namespace CG
 	}
 
 	static void windowResize(GLFWwindow* window, int width, int height)
-	{}
+	{
+		App* app = static_cast<App*>(glfwGetWindowUserPointer(window));
+		MainScene* mainScene = app->getMainScene();
+		mainScene->Resize(width, height);
+	}
 
 	static void mouseEvent(GLFWwindow* window, int button, int action, int mods)
 	{

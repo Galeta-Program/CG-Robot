@@ -331,7 +331,7 @@ namespace CG {
         
         ImGui::Checkbox(screenEffects[0], &screenEffectStates[0]);
         float pixalSize = screenRenderer->getPixelSize();
-        if (ImGui::DragFloat("      ", &pixalSize, 0.05f, 0.01f, 100.0f, "%f"))
+        if (ImGui::DragFloat("      ", &pixalSize, 0.05f, 0.01f, 100.0f, "%.3f"))
         {
             screenRenderer->setPixelSize(pixalSize);
         }
