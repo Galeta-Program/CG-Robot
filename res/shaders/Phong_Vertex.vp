@@ -18,6 +18,7 @@ out vec3 v_Normal;
 out vec3 v_LightDir;
 out vec3 v_ViewDir;
 out vec2 v_TexCoord;
+out vec4 v_WorldPos;
 
 
 void main(void) 
@@ -36,5 +37,6 @@ void main(void)
 
     v_TexCoord = in_TexCoord;
     gl_Position = u_Projection * viewPos;
+    v_WorldPos = modelPos;
 
 }

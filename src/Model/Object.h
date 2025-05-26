@@ -34,7 +34,7 @@ protected:
 
 public:	
 	virtual void gatherData() = 0;
-	virtual void render(CG::Camera* camera, GLint type = GL_TRIANGLES) = 0;
+	virtual void render(CG::Camera* camera, const ShaderProgram* inProgram = nullptr, GLint type = GL_TRIANGLES) = 0;
 	void modifyInstance(unsigned int count);
 	void setShader(const char* vert, const char* frag);
 

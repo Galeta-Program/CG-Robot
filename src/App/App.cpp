@@ -91,7 +91,11 @@ namespace CG
 	}
 
 	static void windowResize(GLFWwindow* window, int width, int height)
-	{}
+	{
+		App* app = static_cast<App*>(glfwGetWindowUserPointer(window));
+		MainScene* mainScene = app->getMainScene();
+		mainScene->Resize(width, height);
+	}
 
 	static void mouseEvent(GLFWwindow* window, int button, int action, int mods)
 	{
@@ -188,7 +192,8 @@ namespace CG
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 
 		// Create window with graphics context
-		mainWindow = glfwCreateWindow(1280, 720, "Group6", nullptr, nullptr);
+		int display_w = 1280, display_h = 720;
+		mainWindow = glfwCreateWindow(display_w, display_h, "Group6", nullptr, nullptr);
 		if (mainWindow == nullptr)
 			return false;
 		glfwMakeContextCurrent(mainWindow);
@@ -284,11 +289,7 @@ namespace CG
 		*/
 
 		mainScene = new MainScene(camera, light, animator, program);
-		mainScene->Initialize();
-
-		lightning = new Lightning();
-		lightning->setCenter(glm::vec3(0, 10, 0));
-		lightning->setEndPoints({glm::vec3(10, -10, 0), glm::vec3(-10, -10, 0) });
+		mainScene->Initialize(display_w, display_h);
 
 		gui = new GUI(nullptr, nullptr, nullptr),
 
@@ -364,7 +365,7 @@ namespace CG
 		program.use();
 		light.bind(program.getId());
 		
-		mainScene->Render(timeNow, timeDelta);
+		mainScene->Render(timeNow, timeDelta, display_w, display_h);
 		
 		lightning->render(timeDelta, *(camera.GetViewMatrix()), *(camera.GetProjectionMatrix()));
 

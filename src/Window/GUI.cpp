@@ -73,9 +73,10 @@ namespace CG {
         ImGui_ImplOpenGL3_Init(glsl_version);
 
         animator = _animator;
-
+        
         bindScene(_scene);
         robot = scene->getModel();
+        screenRenderer = scene->getScreenRenderer();
         selectedNode = &(robot->getPart(HEAD));
         currentMode = 0;
         previousMode = 0;
@@ -232,6 +233,10 @@ namespace CG {
             {
                 instancePanel();
             }
+            if (ImGui::CollapsingHeader("Screen Effect", ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                screenEffectPanel();
+            }
             if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen))
             {
                 lightPanel();
@@ -340,6 +345,28 @@ namespace CG {
         {
             robot->modifyInstance(instancingCount);
         }
+    }
+
+    void GUI::screenEffectPanel()
+    {
+        ImGui::SeparatorText("Usage");
+        ImGui::Text("Set the effect of screen.\n");
+
+        const char* screenEffects[] = { "Pixelation", "Toonshader", "Motion Blur" };
+        
+        ImGui::Checkbox(screenEffects[0], &screenEffectStates[0]);
+        float pixalSize = screenRenderer->getPixelSize();
+        if (ImGui::DragFloat("      ", &pixalSize, 0.05f, 0.01f, 100.0f, "%.3f"))
+        {
+            screenRenderer->setPixelSize(pixalSize);
+        }
+        ImGui::Checkbox(screenEffects[1], &screenEffectStates[1]);
+        ImGui::Checkbox(screenEffects[2], &screenEffectStates[2]);
+
+        screenRenderer->setPixelate(screenEffectStates[0]);
+        screenRenderer->setToonshader(screenEffectStates[1]);
+        screenRenderer->setMotionBlur(screenEffectStates[2]);
+     
     }
 
     void GUI::speedPanel()

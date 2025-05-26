@@ -20,6 +20,7 @@ namespace CG {
 		MainScene* scene; // Point to the scene that GUI is currently binding with
 		Model* robot;
 		Node* selectedNode;
+		ScreenRenderer* screenRenderer;
 
 		GraphicShader gs;
 
@@ -29,6 +30,8 @@ namespace CG {
 		char outFileName[128];
 		char inFileName[128];
 		char animationName[128];
+
+		bool screenEffectStates[5];
 
 		int partSelected;
 		int animationSelected;
@@ -62,6 +65,7 @@ namespace CG {
 		void chooseFramePannel();
 		void speedPanel();
 		void instancePanel();
+		void screenEffectPanel();
 		void lightPanel();
 		void editPanel();
 		void transformPanel(Node* node);

@@ -74,6 +74,24 @@ GLuint Texture::LoadTexture(std::string filename)
 	return id;
 }
 
+void rotate180(unsigned char* data, int width, int height, int channels)
+{
+	int half_pixels = (width * height) / 2;
+
+	for (int i = 0; i < half_pixels; i++) 
+	{
+		int opposite = width * height - 1 - i;
+
+		for (int c = 0; c < channels; c++) 
+		{
+			std::swap(
+				data[i * channels + c],
+				data[opposite * channels + c]
+			);
+		}
+	}
+}
+
 GLuint Texture::LoadCubeMap(std::vector<std::string> faces)
 {
 	GLCall(glGenTextures(1, &id));
@@ -85,6 +103,8 @@ GLuint Texture::LoadCubeMap(std::vector<std::string> faces)
 		unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &channels, 0);
 		if (data)
 		{
+			rotate180(data, width, height, channels);
+
 			GLenum format = (channels == 4) ? GL_RGBA : GL_RGB;
 			GLCall(glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data));
 			stbi_image_free(data);

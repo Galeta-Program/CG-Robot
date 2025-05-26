@@ -64,7 +64,7 @@ namespace CG
 	MainScene::~MainScene()
 	{}
 
-	bool MainScene::Initialize()
+	bool MainScene::Initialize(int display_w, int display_h)
 	{
 		/* debug use
 		std::vector<float> v = {
@@ -100,10 +100,10 @@ namespace CG
 		// Unbind VAO to avoid accidental modification by loadScene() if it uses VAO 0
 		glBindVertexArray(0); 
 		*/
-		return loadScene(); // Be cautious if loadScene reuses vao, vbo, or texture members
+		return loadScene(display_w, display_h); // Be cautious if loadScene reuses vao, vbo, or texture members
 	}
 
-	void MainScene::Render(double timeNow, double timeDelta)
+	void MainScene::Render(double timeNow, double timeDelta, int display_w, int display_h)
 	{
 		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 		
@@ -133,25 +133,77 @@ namespace CG
         // glDisable(GL_BLEND);
 
 		*/
-		
+
+		// 先渲染深度圖
+		glm::mat4 lightSpaceMatrix = shadowSystem.set(light->getPos());
+		sphare.render(camera, &shadowSystem.getShaderProgram());
+		//box.render(camera, &shadowShader, GL_QUADS);
+		ground.render(camera, &shadowSystem.getShaderProgram(), GL_QUADS);
+		robot.render(shadowSystem.getShaderProgram().getId(), camera);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+		// 正常渲染場景
+		glViewport(0, 0, display_w, display_h);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		matVPUbo.fillInData(0, sizeof(glm::mat4), camera->GetViewMatrix());
 		matVPUbo.fillInData(sizeof(glm::mat4), sizeof(glm::mat4), camera->GetProjectionMatrix());
 
+		// 畫到Screen FBO
+		screenRenderer.set();
 		skyBox.render(camera, GL_QUADS);
 
 		ground.getShaderProgram().use();
 		light->bind(ground.getShaderProgram().getId());
-		ground.render(camera, GL_QUADS);
-		
+		glUniformMatrix4fv(glGetUniformLocation(ground.getShaderProgram().getId(), "u_LightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, shadowSystem.getShadowMap());
+		glUniform1i(glGetUniformLocation(ground.getShaderProgram().getId(), "u_ShadowMap"), 0);
+		ground.render(camera, nullptr, GL_QUADS);
+
+		/*box.getShaderProgram().use();
+		light->bind(box.getShaderProgram().getId());
+		glUniformMatrix4fv(glGetUniformLocation(box.getShaderProgram().getId(), "u_LightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+		glUniform1i(glGetUniformLocation(box.getShaderProgram().getId(), "u_ShadowMap"), 0);*/
+		//box.render(camera, nullptr, GL_QUADS);
+
+		sphare.getShaderProgram().use();
+		light->bind(sphare.getShaderProgram().getId());
+		glUniformMatrix4fv(glGetUniformLocation(sphare.getShaderProgram().getId(), "u_LightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
+		glUniform3fv(glGetUniformLocation(sphare.getShaderProgram().getId(), "u_CameraPos"), 1, glm::value_ptr(camera->getPos()));
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, shadowSystem.getShadowMap());
+		glUniform1i(glGetUniformLocation(sphare.getShaderProgram().getId(), "u_ShadowMap"), 0);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.getTexture().getId());
+		glUniform1i(glGetUniformLocation(sphare.getShaderProgram().getId(), "u_Skybox"), 1);
+		sphare.render(camera);
+
 		program->use();
+		glUniformMatrix4fv(glGetUniformLocation(program->getId(), "u_LightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, shadowSystem.getShadowMap());
+		glUniform1i(glGetUniformLocation(program->getId(), "u_ShadowMap"), 1);
 		robot.render(program->getId(), camera);
 		
 		//firePS->render(timeNow, timeDelta, *camera->GetViewMatrix(), *camera->GetProjectionMatrix());
 		
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		screenRenderer.render();
+
 		GLCall(glFlush());
 	}
+
+	void MainScene::Resize(int display_w, int display_h)
+	{
+		screenRenderer.resize(display_w, display_h);
+	}
 	
-	bool MainScene::loadScene()
+	bool MainScene::loadScene(int display_w, int display_h)
 	{
 		loadModel();
 		loadAnimation();
@@ -160,7 +212,11 @@ namespace CG
 		matVPUbo.initialize(sizeof(glm::mat4) * 2);
 		matVPUbo.associateWithShaderBlock(program->getId(), "u_MatVP", 0);
 		matVPUbo.associateWithShaderBlock(ground.getShaderProgram().getId(), "u_MatVP", 0);
+		matVPUbo.associateWithShaderBlock(sphare.getShaderProgram().getId(), "u_MatVP", 0);
 		matVPUbo.associateWithShaderBlock(skyBox.getObject().getShaderProgram().getId(), "u_MatVP", 0);
+
+		screenRenderer.initialize(display_w, display_h);
+		screenRenderer.setShader("../res/shaders/Pixelate_Vertex.vp", "../res/shaders/Pixelate_Fragment.fp");
 
 		return true;
 	}
@@ -342,18 +398,26 @@ namespace CG
 		/*std::vector<glm::vec3> instancingOffests = ground.getInstancingOffests();
 		instancingOffests.push_back({100, 0, 0});
 		ground.setInstancingOffests(instancingOffests);*/
-		
+
+		shadowSystem.setShader("../res/shaders/Shadow_Vertex.vp", "../res/shaders/Shadow_Fragment.fp");
 
 		skyBox.getObject().setShader("../res/shaders/SkyBox_Vertex.vp", "../res/shaders/SkyBox_Fragment.fp");
+		std::string fileType = ".jpg";
+		std::string number = "3";
 		skyBox.loadFaces({ // need follow the order
-			"../res/skyBox/skyBox1_right.png",
-			"../res/skyBox/skyBox1_left.png",
-			"../res/skyBox/skyBox1_up.png",
-			"../res/skyBox/skyBox1_down.png",
-			"../res/skyBox/skyBox1_front.png",
-			"../res/skyBox/skyBox1_back.png"
+			"../res/skyBox/skyBox" + number + "_right" + fileType,
+			"../res/skyBox/skyBox" + number + "_left"  + fileType,
+			"../res/skyBox/skyBox" + number + "_up"	   + fileType,
+			"../res/skyBox/skyBox" + number + "_down"  + fileType,
+			"../res/skyBox/skyBox" + number + "_front" + fileType,
+			"../res/skyBox/skyBox" + number + "_back"  + fileType
 			});
 		skyBox.updateDate();
+
+		sphare.setShader("../res/shaders/Obj_EvnMap_Vertex.vp", "../res/shaders/Obj_EvnMap_Fragment.fp");
+		sphare.generateSphere(5, 36, 36, { 0.0, 0.0, 0.0 });
+		sphare.gatherData();
+		sphare.setTranslate({ 0, 20, 0 });
 
 		animator->target(&robot);
 	}

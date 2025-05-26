@@ -9,6 +9,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "Camera.h"
 #include "../Graphic/ShaderProgram/ComputeShader.h"
@@ -21,6 +22,8 @@
 #include "../Model/ManualObject.h"
 #include "../Model/SkyBox.h"
 #include "../Effect/ParticleSystem.h"
+#include "../Effect/ShadowSystem.h"
+#include "../Scene/ScreenRenderer.h"
 
 #include "../Graphic/VAO.h"
 #include "../Graphic/VBO.h"
@@ -36,15 +39,17 @@ namespace CG
 		MainScene(Camera& _camera, Light& _light, Animator& _animator, GraphicShader& _program);
 		~MainScene();
 
-		bool Initialize();
-		void Render(double timeNow, double timeDelta);
+		bool Initialize(int display_w, int display_h);
+		void Render(double timeNow, double timeDelta, int display_w, int display_h);
+		void Resize(int display_w, int display_h);
 
 		inline Model* getModel() { return &robot; }
 		inline Animator* getAnimator() { return animator; }
 		inline Light* getLight() { return light; }
+		inline ScreenRenderer* getScreenRenderer() { return &screenRenderer; }
 
 	private:
-		bool loadScene();
+		bool loadScene(int display_w, int display_h);
 		void loadModel();
 		void loadAnimation();
 
@@ -55,6 +60,10 @@ namespace CG
 		GraphicShader* program;
 		ManualObject ground;
 		SkyBox skyBox;
+
+		ManualObject sphare;
+		ShadowSystem shadowSystem;
+		ScreenRenderer screenRenderer;
 
 		/*
 		* debug use
