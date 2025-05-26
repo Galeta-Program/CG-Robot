@@ -40,7 +40,10 @@ namespace CG {
         effectName(""),
         effectPos(0, 0, 0),
         effectDir(0, 0, 1),
-        gs()
+        gs(),
+        vao(),
+        vbo(),
+        ebo()
     {
         if (window == nullptr)
         {
@@ -94,6 +97,28 @@ namespace CG {
             { GL_FRAGMENT_SHADER, "../res/shaders/guiIcon.fp" },
             { GL_NONE, NULL } };
         gs.load(shaders);
+
+        std::vector<glm::vec3> block = {
+        glm::vec3(-1, 1, -1),
+        glm::vec3(1, 1, -1),
+        glm::vec3(-1, 1, 1),
+        glm::vec3(1, 1, 1),
+        glm::vec3(-1, -1, -1),
+        glm::vec3(1, -1, -1),
+        glm::vec3(-1, -1, 1),
+        glm::vec3(1, -1, 1),
+        };
+
+        std::vector<unsigned int> blockElement = {
+            1, 2, 3, 1, 0, 2, 3, 6, 7, 3, 2, 6, 1, 3, 7, 1, 7, 5, 4, 0, 1, 5, 4, 1, 0, 6, 2, 0, 4, 6, 6, 4, 5, 6, 5, 7
+        };
+
+        vao.bind();
+        vbo.initialize(block);
+        GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0));
+        glEnableVertexAttribArray(0);
+        ebo.initialize(blockElement);
+        vao.unbind();
     }
 
     void GUI::bindScene(MainScene* _scene)
@@ -662,7 +687,6 @@ everytime you press the button.\n");
             else
             {
                 haveEffect = false;
-
             }
         }
 
@@ -681,20 +705,78 @@ everytime you press the button.\n");
 
         EffectManager& efm = EffectManager::getInstance();
 
-        glm::vec3 trans = efm.getEffect(effectName).getEmitterPos(0);
+        bool isParticle = efm.getEffect(effectName).isParticle;
+        if (isParticle)
+        {
+            particleSystemParamPanel(*efm.getEffect(effectName).ps);
+        }
+        else
+        {
+            lightningParamPanel(*efm.getEffect(effectName).ln);
+        }
+    }
+
+    void GUI::particleSystemParamPanel(ParticleSystem& ps)
+    {
+        glm::vec3 trans = ps.getEmitterPos(0);
 
         ImGui::SeparatorText("Translation");
         if (ImGui::DragFloat("x (Translate) ", &trans[0], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
         {
-            efm.getEffect(effectName).setEmitterPos(0, trans);
+            ps.setEmitterPos(0, trans);
         }
         if (ImGui::DragFloat("y (Translate) ", &trans[1], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
         {
-            efm.getEffect(effectName).setEmitterPos(0, trans);
+            ps.setEmitterPos(0, trans);
         }
         if (ImGui::DragFloat("z (Translate) ", &trans[2], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
         {
-            efm.getEffect(effectName).setEmitterPos(0, trans);
+            ps.setEmitterPos(0, trans);
+        }
+    }
+
+    void GUI::lightningParamPanel(Lightning& ln)
+    {
+        if (ImGui::Button("Add Endpoints"))
+        {
+            ln.addEndPoints(glm::vec3(0, 0, 10));
+        }
+
+
+        ImGui::SeparatorText("Translation of Center");
+        glm::vec3 center = ln.getCenter();
+        if (ImGui::DragFloat("Center x (Translate)", &center[0], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
+        {
+            ln.setCenter(center);
+        }
+        if (ImGui::DragFloat("Center y (Translate)", &center[1], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
+        {
+            ln.setCenter(center);
+        }
+        if (ImGui::DragFloat("Center z (Translate)", &center[2], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
+        {
+            ln.setCenter(center);
+        }
+
+        std::vector<glm::vec3> endpoints = ln.getEndPoints();
+
+        for (int i = 0; i < endpoints.size(); i++)
+        {
+            ImGui::SeparatorText(("Translation of Endpoints" + std::to_string(i)).data());
+
+            std::string name = "Endpoint " + std::to_string(i);
+            if (ImGui::DragFloat((name + " x (Translate)").data(), &endpoints[i][0], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
+            {
+                ln.updateEndPoints(i, endpoints[i]);
+            }
+            if (ImGui::DragFloat((name + " y (Translate)").data(), &endpoints[i][1], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
+            {
+                ln.updateEndPoints(i, endpoints[i]);
+            }
+            if (ImGui::DragFloat((name + " z (Translate)").data(), &endpoints[i][2], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
+            {
+                ln.updateEndPoints(i, endpoints[i]);
+            }
         }
     }
 
@@ -702,6 +784,26 @@ everytime you press the button.\n");
     {
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    }
+
+    void GUI::renderIcon(glm::vec3 pos)
+    {
+        gs.use();
+
+        vao.bind();
+        vbo.bind();
+        ebo.bind();
+
+        glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), pos);
+
+        GLCall(GLuint ModelID = glGetUniformLocation(gs.getId(), "u_Model"));
+        if (ModelID != -1)
+        {
+            GLCall(glUniformMatrix4fv(ModelID, 1, GL_FALSE, glm::value_ptr(modelMatrix)));
+        }
+
+        glEnable(GL_DEPTH_TEST);
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
     }
 
     void GUI::exportFrame()
@@ -815,14 +917,41 @@ everytime you press the button.\n");
             }
 
             EffectManager& efm = EffectManager::getInstance();
-            effectPos = efm.getEffect(effectName).getEmitterPos(0);
-            effectDir = efm.getEffect(effectName).getEmitterDir(0);
+            if (efm.getEffect(effectName).isParticle)
+            {
+                effectPos = efm.getEffect(effectName).ps->getEmitterPos(0);
+                effectDir = efm.getEffect(effectName).ps->getEmitterDir(0);
 
-            outFile << "        \"param\" : {\n";
-            outFile << "            \"pos\" : [" << effectPos[0] << ", " << effectPos[1] << ", " << effectPos[2] << "],\n";
-            outFile << "            \"dir\" : [" << effectDir[0] << ", " << effectDir[1] << ", " << effectDir[2] << "]\n";
-            outFile << "        }\n";
-            outFile << "    }\n";
+                outFile << "        \"param\" : {\n";
+                outFile << "            \"pos\" : [" << effectPos[0] << ", " << effectPos[1] << ", " << effectPos[2] << "],\n";
+                outFile << "            \"dir\" : [" << effectDir[0] << ", " << effectDir[1] << ", " << effectDir[2] << "]\n";
+                outFile << "        }\n";
+                outFile << "    }\n";
+            }
+            else
+            {
+                effectCenter = efm.getEffect(effectName).ln->getCenter();
+                effectEndpoints = efm.getEffect(effectName).ln->getEndPoints();
+
+                outFile << "        \"param\" : {\n";
+                outFile << "            \"center\" : [" << effectCenter[0] << ", " << effectCenter[1] << ", " << effectCenter[2] << "],\n";
+                outFile << "            \"endpoints\" : [\n";
+                for (int i = 0; i < effectEndpoints.size(); i++)
+                {
+                    outFile << "                                [" << effectEndpoints[i][0] << ", " << effectEndpoints[i][1] << ", " << effectEndpoints[i][2] << "]";
+                    if (i != effectEndpoints.size() - 1)
+                    {
+                        outFile << ",\n";
+                    }
+                    else
+                    {
+                        outFile << "\n";
+                    }
+                }
+                outFile << "            ]\n";
+                outFile << "        }\n";
+                outFile << "    }\n";
+            }
 
         }
         outFile << "}\n";
@@ -871,16 +1000,25 @@ everytime you press the button.\n");
             }
 
             EffectManager& efm = EffectManager::getInstance();
-            glm::vec3 emitterPos = efm.getEffect(effectName).getEmitterPos(emitter); 
-            glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), emitterPos);
-
-            GLCall(GLuint ModelID = glGetUniformLocation(gs.getId(), "u_Model"));
-            if (ModelID != -1)
+            if (efm.getEffect(effectName).isParticle)
             {
-                GLCall(glUniformMatrix4fv(ModelID, 1, GL_FALSE, glm::value_ptr(modelMatrix)));
+                renderIcon(efm.getEffect(effectName).ps->getEmitterPos(emitter));
+                for (int i = 0; i < efm.getEffect(effectName).ps->getEmitterCount(); i++)
+                {
+                    renderIcon(efm.getEffect(effectName).ps->getEmitterPos(i));
+                }
             }
-
-            efm.getEffect(effectName).renderBoxIcon(viewMatrix, projectionMatrix, emitter);
+            else
+            {
+                glm::vec3 emitterPos = efm.getEffect(effectName).ln->getCenter();
+                renderIcon(emitterPos);
+                std::vector<glm::vec3> endPoints = efm.getEffect(effectName).ln->getEndPoints();
+                for (int i = 0; i < endPoints.size(); i++)
+                {
+                    renderIcon(endPoints[i]);
+                }
+            }
+            
             gs.unUse();
         }
     }

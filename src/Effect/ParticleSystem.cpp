@@ -219,14 +219,6 @@ void ParticleSystem::render(float timeNow, float deltaTime, const glm::mat4& vie
     glDisable(GL_BLEND);
 }
 
-void ParticleSystem::renderBoxIcon(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, unsigned int emitterIdx)
-{
-    if (emitterIdx >= emitters.size())
-    {
-        return;
-    }
-    emitters[emitterIdx].render();
-}
 
 void ParticleSystem::setupEmitter(std::vector<EmitterSettings> settings)
 {

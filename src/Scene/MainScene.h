@@ -36,7 +36,7 @@ namespace CG
 	class MainScene
 	{
 	public:
-		MainScene(Camera& _camera, Light& _light, Animator& _animator, GraphicShader& _program, ParticleSystem& ps);
+		MainScene(Camera& _camera, Light& _light, Animator& _animator, GraphicShader& _program);
 		~MainScene();
 
 		bool Initialize(int display_w, int display_h);
@@ -58,7 +58,6 @@ namespace CG
 		Light* light;
 		Animator* animator;
 		GraphicShader* program;
-		ParticleSystem* firePS;
 		ManualObject ground;
 		SkyBox skyBox;
 

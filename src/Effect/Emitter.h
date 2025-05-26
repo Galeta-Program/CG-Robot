@@ -24,10 +24,6 @@ struct Particle
 class Emitter
 {
 private:
-	VAO vao;
-	VBO<glm::vec3> vbo;
-	EBO ebo;
-
 	glm::vec3 location;
 	glm::vec3 vDirection;
 	glm::vec3 aDirection;
@@ -64,8 +60,6 @@ public:
 	void setSize(float s);
 	void setVelocityDirection(glm::vec3 dir);
 	void setAccelerationDirection(glm::vec3 dir);
-
-	void render();
 
 	inline glm::vec3 getPos() const { return location; }
 	inline glm::vec3 getVDir() const { return vDirection; }

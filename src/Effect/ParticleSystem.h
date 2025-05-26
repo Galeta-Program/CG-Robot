@@ -27,7 +27,7 @@ private:
 
 	GraphicShader graphicShader;
 	ComputeShader computeShader;
-	
+
 	std::vector<Emitter> emitters;
 	std::vector<unsigned int> particlesPerEmmitter; // how many particles an emmitter have, [0] = 0
 	unsigned int particleAmount;
@@ -49,17 +49,12 @@ public:
 
 	void init(std::vector<int> particlesInEmitter, const char* vs, const char* fs, const char* cs);
 	void emit(); // All emitter emits
-	void render(float timeNow, 
-		float deltaTime, 
-		const glm::mat4& viewMatrix, 
-		const glm::mat4& projectionMatrix, 
+	void render(float timeNow,
+		float deltaTime,
+		const glm::mat4& viewMatrix,
+		const glm::mat4& projectionMatrix,
 		unsigned int emitter = -1
 	); // used in animation
-
-	void renderBoxIcon(const glm::mat4& viewMatrix,
-		const glm::mat4& projectionMatrix,
-		unsigned int emitterIdx = -1
-	); // used in Editor, for point effect (like firework)
 
 	void setupEmitter(std::vector<EmitterSettings> settings);
 	void setEmitterPos(unsigned int index, glm::vec3 pos);
@@ -70,4 +65,6 @@ public:
 
 	glm::vec3 getEmitterPos(unsigned int index);
 	glm::vec3 getEmitterDir(unsigned int index);
+
+	inline unsigned int getEmitterCount() { return emitters.size(); }
 };

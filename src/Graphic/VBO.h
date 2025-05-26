@@ -25,6 +25,7 @@ public:
 
 	void bind() const;
 	void unbind() const;
+	void setData(const std::vector<T>& v, GLuint usageMode);
 };
 
 template<class T>
@@ -87,4 +88,12 @@ template<class T>
 void VBO<T>::unbind() const
 {
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+}
+
+template<class T>
+inline void VBO<T>::setData(const std::vector<T>& v, GLuint usageMode)
+{
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, this->id));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, v.size() * sizeof(T), v.data(), usageMode));
+	this->size = v.size();
 }

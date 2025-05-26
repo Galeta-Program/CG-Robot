@@ -168,10 +168,7 @@ namespace CG
 	int App::mode = 0;
 
 	App::App():
-		gui(nullptr, nullptr, nullptr),
-		light(),
-		fireSystem(),
-		lightningSystem()
+		light()
 	{
 		mainWindow = nullptr;
 		mainScene = nullptr;
@@ -251,9 +248,9 @@ namespace CG
 		);
 		std::vector<bool> mask = { true, true };
 		// Fire effect
-		efManager.registerEffect(
+		efManager.registerParticleEffect(
 			"Fire",
-			100000,
+			{ 100000 },
 			"../res/shaders/ParticleSystem.vp",
 			"../res/shaders/ParticleSystem.fp",
 			"../res/shaders/fire.cp",
@@ -261,6 +258,8 @@ namespace CG
 			mask,
 			"../res/pointSprites/fire.png"
 		);
+
+		efManager.registerLightningEffect("Lightning");
 
 		/*
 		std::vector<int> particlesPerEmitter;
@@ -290,9 +289,11 @@ namespace CG
 		*/
 
 		mainScene = new MainScene(camera, light, animator, program, fireSystem);
-		mainScene->Initialize(display_w, display_h);
+		mainScene->Initialize();
 
 		gui.init(mainWindow, mainScene, &animator);
+
+		gui->init(mainWindow, mainScene, &animator);
 
 		return true;
 	}
@@ -310,7 +311,7 @@ namespace CG
 
 			render();
 
-			gui.render();
+			gui->render();
 
 			ImGuiIO& io = ImGui::GetIO();
 			(void)io;
@@ -328,7 +329,7 @@ namespace CG
 
 	void App::terminate()
 	{
-		gui.terminate();
+		gui->terminate();
 
 		if (mainScene != nullptr) {
 			delete mainScene;
@@ -366,10 +367,11 @@ namespace CG
 		
 		mainScene->Render(timeNow, timeDelta, display_w, display_h);
 		
+		lightning->render(timeDelta, *(camera.GetViewMatrix()), *(camera.GetProjectionMatrix()));
 
 		if (mode == 2)
 		{
-			gui.renderEffectIcon(*(camera.GetViewMatrix()), *(camera.GetProjectionMatrix()), 0);
+			gui->renderEffectIcon(*(camera.GetViewMatrix()), *(camera.GetProjectionMatrix()), 0);
 		}
 		else
 		{
