@@ -22,4 +22,5 @@ public:
 
 	void bind() const;
 	void unbind() const;
+	void copy(const FBO& other, int width, int height);
 };

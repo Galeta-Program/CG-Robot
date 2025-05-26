@@ -41,6 +41,14 @@ void FBO::bind() const
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, id));
 }
 
+void FBO::copy(const FBO& other, int width, int height)
+{
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, other.id);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, id);
+	glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 void FBO::unbind() const
 {
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));

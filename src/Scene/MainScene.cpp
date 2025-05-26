@@ -65,7 +65,7 @@ namespace CG
 	MainScene::~MainScene()
 	{}
 
-	bool MainScene::Initialize()
+	bool MainScene::Initialize(int display_w, int display_h)
 	{
 		/* debug use
 		std::vector<float> v = {
@@ -101,7 +101,7 @@ namespace CG
 		// Unbind VAO to avoid accidental modification by loadScene() if it uses VAO 0
 		glBindVertexArray(0); 
 		*/
-		return loadScene(); // Be cautious if loadScene reuses vao, vbo, or texture members
+		return loadScene(display_w, display_h); // Be cautious if loadScene reuses vao, vbo, or texture members
 	}
 
 	void MainScene::Render(double timeNow, double timeDelta, int display_w, int display_h)
@@ -151,6 +151,8 @@ namespace CG
 		matVPUbo.fillInData(0, sizeof(glm::mat4), camera->GetViewMatrix());
 		matVPUbo.fillInData(sizeof(glm::mat4), sizeof(glm::mat4), camera->GetProjectionMatrix());
 
+		// µe¨ìScreen FBO
+		screenRenderer.set();
 		skyBox.render(camera, GL_QUADS);
 
 		ground.getShaderProgram().use();
@@ -190,11 +192,15 @@ namespace CG
 		
 		firePS->render(timeNow, timeDelta, *camera->GetViewMatrix(), *camera->GetProjectionMatrix());
 		
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		screenRenderer.render();
+
 		GLCall(glFlush());
 	}
 	
 
-	bool MainScene::loadScene()
+	bool MainScene::loadScene(int display_w, int display_h)
 	{
 		loadModel();
 		loadAnimation();
@@ -206,7 +212,8 @@ namespace CG
 		matVPUbo.associateWithShaderBlock(sphare.getShaderProgram().getId(), "u_MatVP", 0);
 		matVPUbo.associateWithShaderBlock(skyBox.getObject().getShaderProgram().getId(), "u_MatVP", 0);
 
-		
+		screenRenderer.initialize(display_w, display_h);
+		screenRenderer.setShader("../res/shaders/Pixelate_Vertex.vp", "../res/shaders/Pixelate_Fragment.fp");
 
 		return true;
 	}
@@ -406,8 +413,6 @@ namespace CG
 
 		sphare.setShader("../res/shaders/Obj_EvnMap_Vertex.vp", "../res/shaders/Obj_EvnMap_Fragment.fp");
 		sphare.generateSphere(5, 36, 36, { 0.0, 0.0, 0.0 });
-		std::vector<glm::vec3> colors3(sphare.getPoints().size(), glm::vec3(0.8, 0.5, 0.5));
-		sphare.setColors(colors3);
 		sphare.gatherData();
 		sphare.setTranslate({ 0, 20, 0 });
 

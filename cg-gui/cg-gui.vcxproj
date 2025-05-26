@@ -176,6 +176,7 @@
     <ClCompile Include="..\src\Scene\Light.cpp" />
     <ClCompile Include="..\src\Scene\MainScene.cpp" />
     <ClCompile Include="..\src\Scene\SceneGraph\Node.cpp" />
+    <ClCompile Include="..\src\Scene\ScreenRenderer.cpp" />
     <ClCompile Include="..\src\Utilty\Error.cpp" />
     <ClCompile Include="..\src\Window\GUI.cpp" />
     <ClCompile Include="main.cpp" />
@@ -217,6 +218,7 @@
     <ClInclude Include="..\src\Scene\Light.h" />
     <ClInclude Include="..\src\Scene\MainScene.h" />
     <ClInclude Include="..\src\Scene\SceneGraph\Node.h" />
+    <ClInclude Include="..\src\Scene\ScreenRenderer.h" />
     <ClInclude Include="..\src\stb_image.h" />
     <ClInclude Include="..\src\Utilty\Error.h" />
     <ClInclude Include="..\src\Window\GUI.h" />
@@ -235,6 +237,8 @@
     <None Include="..\res\shaders\ParticleSystem.vp" />
     <None Include="..\res\shaders\Phong_Fragment.fp" />
     <None Include="..\res\shaders\Phong_Vertex.vp" />
+    <None Include="..\res\shaders\Pixelate_Fragment.fp" />
+    <None Include="..\res\shaders\Pixelate_Vertex.vp" />
     <None Include="..\res\shaders\SkyBox_Fragment.fp" />
     <None Include="..\res\shaders\SkyBox_Vertex.vp" />
   </ItemGroup>

@@ -52,10 +52,10 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 
 void main()
 {
-    vec3 I = normalize(worldPos.xyz - u_CameraPos); // 從眼睛指向這個點
-    vec3 R = reflect(I, normalize(v_Normal));   // 計算反射向量
+    vec3 I = normalize(worldPos.xyz - u_CameraPos);
+    vec3 R = reflect(I, normalize(v_Normal));   // 反射
 
-    vec3 reflectionColor = texture(u_Skybox, R).rgb; // 反射向量去 cubemap 取樣
+    vec3 reflectionColor = texture(u_Skybox, R).rgb; // 去cubemap取樣
 
     vec4 lightSpacePos = u_LightSpaceMatrix * worldPos;
 

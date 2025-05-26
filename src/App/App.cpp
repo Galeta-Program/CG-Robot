@@ -191,7 +191,8 @@ namespace CG
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 
 		// Create window with graphics context
-		mainWindow = glfwCreateWindow(1280, 720, "Group6", nullptr, nullptr);
+		int display_w = 1280, display_h = 720;
+		mainWindow = glfwCreateWindow(display_w, display_h, "Group6", nullptr, nullptr);
 		if (mainWindow == nullptr)
 			return false;
 		glfwMakeContextCurrent(mainWindow);
@@ -285,7 +286,7 @@ namespace CG
 		*/
 
 		mainScene = new MainScene(camera, light, animator, program, fireSystem);
-		mainScene->Initialize();
+		mainScene->Initialize(display_w, display_h);
 
 		gui.init(mainWindow, mainScene, &animator);
 

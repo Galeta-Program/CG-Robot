@@ -23,6 +23,7 @@
 #include "../Model/SkyBox.h"
 #include "../Effect/ParticleSystem.h"
 #include "../Effect/ShadowSystem.h"
+#include "../Scene/ScreenRenderer.h"
 
 #include "../Graphic/VAO.h"
 #include "../Graphic/VBO.h"
@@ -38,15 +39,16 @@ namespace CG
 		MainScene(Camera& _camera, Light& _light, Animator& _animator, GraphicShader& _program, ParticleSystem& ps);
 		~MainScene();
 
-		bool Initialize();
+		bool Initialize(int display_w, int display_h);
 		void Render(double timeNow, double timeDelta, int display_w, int display_h);
 
 		inline Model* getModel() { return &robot; }
 		inline Animator* getAnimator() { return animator; }
 		inline Light* getLight() { return light; }
+		inline ScreenRenderer* getScreenRenderer() { return &screenRenderer; }
 
 	private:
-		bool loadScene();
+		bool loadScene(int display_w, int display_h);
 		void loadModel();
 		void loadAnimation();
 
@@ -61,6 +63,7 @@ namespace CG
 
 		ManualObject sphare;
 		ShadowSystem shadowSystem;
+		ScreenRenderer screenRenderer;
 
 		/*
 		* debug use

@@ -110,6 +110,9 @@
     <ClCompile Include="..\src\Effect\ShadowSystem.cpp">
       <Filter>Effect</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Scene\ScreenRenderer.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="App">
@@ -274,6 +277,9 @@
     <ClInclude Include="..\src\Effect\ShadowSystem.h">
       <Filter>Effect</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\Scene\ScreenRenderer.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\res\shaders\Phong_Vertex.vp">
@@ -319,6 +325,12 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="..\res\shaders\Obj_EvnMap_Vertex.vp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\Pixelate_Fragment.fp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\Pixelate_Vertex.vp">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>
