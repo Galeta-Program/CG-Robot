@@ -28,6 +28,12 @@ public:
 	void initialize(std::vector<glm::vec3>& objPoints, std::vector<glm::vec3>& objColors);
 	void computeNormal(GLint type = GL_TRIANGLES);
 	void gatherData() override;
-	void render(CG::Camera* camera, GLint type = GL_TRIANGLES) override;
+	void generateSphere(float radius, int sectorCount, int stackCount, glm::vec3 color);
+	void render(CG::Camera* camera, const ShaderProgram* inProgram = nullptr, GLint type = GL_TRIANGLES) override;
+	void setPoints(std::vector<glm::vec3>& objPoints);
+	void setColors(std::vector<glm::vec3>& objColors);
+	void setNormals(std::vector<glm::vec3>& objNormals);
+	inline std::vector<glm::vec3>& getPoints() { return points; }
+	inline std::vector<glm::vec3>& getColors() { return colors; }
 };
 

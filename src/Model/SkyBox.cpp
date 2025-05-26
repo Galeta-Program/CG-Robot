@@ -71,7 +71,7 @@ void SkyBox::render(CG::Camera* camera, GLint type)
 	texture.bind(0, GL_TEXTURE_CUBE_MAP);
 	GLuint TextureID = glGetUniformLocation(skyBoxObj.getShaderProgram().getId(), "skybox");
 	GLCall(glUniform1i(TextureID, 0));
-	skyBoxObj.render(camera, type);
+	skyBoxObj.render(camera, nullptr, type);
 
 	glDepthFunc(GL_LESS);             
 	glDepthMask(GL_TRUE);

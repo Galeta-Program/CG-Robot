@@ -30,5 +30,7 @@ public:
 	bool loadFaces(std::vector<std::string> faces);
 	void updateDate();
 	void render(CG::Camera* camera, GLint type = GL_TRIANGLES);
+
+	inline Texture& getTexture() { return texture; }
 };
 

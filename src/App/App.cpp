@@ -359,7 +359,7 @@ namespace CG
 		program.use();
 		light.bind(program.getId());
 		
-		mainScene->Render(timeNow, timeDelta);
+		mainScene->Render(timeNow, timeDelta, display_w, display_h);
 		
 
 		if (mode == 2)

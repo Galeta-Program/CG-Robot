@@ -155,6 +155,7 @@
     <ClCompile Include="..\src\Effect\EffectManager.cpp" />
     <ClCompile Include="..\src\Effect\Emitter.cpp" />
     <ClCompile Include="..\src\Effect\ParticleSystem.cpp" />
+    <ClCompile Include="..\src\Effect\ShadowSystem.cpp" />
     <ClCompile Include="..\src\Graphic\EBO.cpp" />
     <ClCompile Include="..\src\Graphic\FBO.cpp" />
     <ClCompile Include="..\src\Graphic\Material\Material.cpp" />
@@ -192,6 +193,7 @@
     <ClInclude Include="..\src\Effect\EffectManager.h" />
     <ClInclude Include="..\src\Effect\Emitter.h" />
     <ClInclude Include="..\src\Effect\ParticleSystem.h" />
+    <ClInclude Include="..\src\Effect\ShadowSystem.h" />
     <ClInclude Include="..\src\Graphic\EBO.h" />
     <ClInclude Include="..\src\Graphic\FBO.h" />
     <ClInclude Include="..\src\Graphic\Material\Material.h" />
@@ -225,6 +227,8 @@
     <None Include="..\res\shaders\guiIcon.fp" />
     <None Include="..\res\shaders\guiIcon.vp" />
     <None Include="..\res\shaders\lightning.cp" />
+    <None Include="..\res\shaders\Obj_EvnMap_Fragment.fp" />
+    <None Include="..\res\shaders\Obj_EvnMap_Vertex.vp" />
     <None Include="..\res\shaders\Obj_Fragment.fp" />
     <None Include="..\res\shaders\Obj_Vertex.vp" />
     <None Include="..\res\shaders\ParticleSystem.fp" />

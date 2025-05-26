@@ -8,6 +8,8 @@ layout (location = 3) in mat4 in_InstOffest;
 uniform mat4 u_Model;
 uniform vec3 u_LightPosition;
 
+uniform mat4 u_LightSpaceMatrix;
+
 uniform u_MatVP {
     mat4 u_View;
     mat4 u_Projection;
@@ -17,7 +19,7 @@ out vec3 VertexColor;
 out vec3 v_LightDir;
 out vec3 v_ViewDir;
 out vec3 v_Normal;
-out vec4 v_WorldPos;
+out vec4 worldPos;
 
 void main()
 {
@@ -36,5 +38,5 @@ void main()
 
     gl_Position = u_Projection * pos4;
     VertexColor = Color;
-    v_WorldPos = M * vec4(Position, 1.0);
+    worldPos = M * vec4(Position, 1.0);
 }

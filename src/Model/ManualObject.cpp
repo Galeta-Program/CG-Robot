@@ -25,7 +25,7 @@ void ManualObject::initialize(std::vector<glm::vec3>& objPoints, std::vector<glm
 
 void ManualObject::gatherData()
 {
-	vao.bind();;
+	vao.bind();
 
 	pVbo.bind();
 	glEnableVertexAttribArray(0);
@@ -51,9 +51,15 @@ void ManualObject::gatherData()
 	vao.unbind();
 }
 
-void ManualObject::render(CG::Camera* camera, GLint type)
+void ManualObject::render(CG::Camera* camera, const ShaderProgram* inProgram, GLint type)
 {
-	program.use();
+	if (inProgram == nullptr)
+	{
+		inProgram = &program;
+	}
+
+	inProgram->use();
+
 	instancingVbo.bind();
 
 	glm::mat4* matrices = (glm::mat4*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
@@ -66,10 +72,28 @@ void ManualObject::render(CG::Camera* camera, GLint type)
 	vao.bind();
 	updateModelMatrix();
 
-	GLCall(GLuint ModelID = glGetUniformLocation(program.getId(), "ModelMatrix"));
+	GLCall(GLuint ModelID = glGetUniformLocation(inProgram->getId(), "u_Model"));
 	GLCall(glUniformMatrix4fv(ModelID, 1, GL_FALSE, &modelMatrix[0][0]));
 	GLCall(glDrawArraysInstanced(type, 0, points.size(), instancingCount));
 	vao.unbind();
+}
+
+void ManualObject::setPoints(std::vector<glm::vec3>& objPoints)
+{
+	points = objPoints;
+	pVbo.initialize(points);
+}
+
+void ManualObject::setColors(std::vector<glm::vec3>& objColors)
+{
+	colors = objColors;
+	cVbo.initialize(colors);
+}
+
+void ManualObject::setNormals(std::vector<glm::vec3>& objNormals)
+{
+	normals = objNormals;
+	nVbo.initialize(normals);
 }
 
 
@@ -104,4 +128,75 @@ void ManualObject::computeNormal(GLint type)
 	}
 
 	nVbo.initialize(normals);
+}
+
+// sectorCount竒絬计秖XZキちだ蛾㏄计
+// stackCount 絥絬计秖パ伐玭伐蔼糷计
+void ManualObject::generateSphere(float radius, int sectorCount, int stackCount, glm::vec3 color)
+{
+	points.clear();
+	normals.clear();
+	colors.clear();
+
+	std::vector<glm::vec3> tmpPoints;
+	std::vector<glm::vec3> tmpColors;
+	std::vector<glm::vec3> tmpNormals;
+
+	for (int i = 0; i <= stackCount; ++i)
+	{
+		float stackAngle = glm::pi<float>() / 2 - i * glm::pi<float>() / stackCount;
+		float xy = radius * cos(stackAngle);
+		float z = radius * sin(stackAngle);
+
+		for (int j = 0; j <= sectorCount; ++j)
+		{
+			float sectorAngle = j * 2 * glm::pi<float>() / sectorCount;
+
+			float x = xy * cos(sectorAngle); // x = r * cos(phi) * cos(theta)
+			float y = xy * sin(sectorAngle); // y = r * cos(phi) * sin(theta)
+
+			glm::vec3 pos(x, y, z);
+			tmpPoints.push_back(pos);
+			tmpNormals.push_back(glm::normalize(pos));
+			tmpColors.push_back(color);
+		}
+	}
+
+	// 锣传à
+	for (int i = 0; i < stackCount; ++i)
+	{
+		for (int j = 0; j < sectorCount; ++j)
+		{
+			int cur = i * (sectorCount + 1) + j;
+			int next = cur + sectorCount + 1;
+
+			points.push_back(tmpPoints[cur]);
+			points.push_back(tmpPoints[next]);
+			points.push_back(tmpPoints[cur + 1]);
+
+			normals.push_back(tmpNormals[cur]);
+			normals.push_back(tmpNormals[next]);
+			normals.push_back(tmpNormals[cur + 1]);
+
+			colors.push_back(tmpColors[cur]);
+			colors.push_back(tmpColors[next]);
+			colors.push_back(tmpColors[cur + 1]);
+
+			points.push_back(tmpPoints[cur + 1]);
+			points.push_back(tmpPoints[next]);
+			points.push_back(tmpPoints[next + 1]);
+
+			normals.push_back(tmpNormals[cur + 1]);
+			normals.push_back(tmpNormals[next]);
+			normals.push_back(tmpNormals[next + 1]);
+
+			colors.push_back(tmpColors[cur + 1]);
+			colors.push_back(tmpColors[next]);
+			colors.push_back(tmpColors[next + 1]);
+		}
+	}
+
+	pVbo.initialize(points, GL_DYNAMIC_DRAW);
+	nVbo.initialize(normals);
+	cVbo.initialize(colors, GL_DYNAMIC_DRAW);
 }

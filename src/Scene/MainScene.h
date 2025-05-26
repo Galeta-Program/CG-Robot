@@ -9,6 +9,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "Camera.h"
 #include "../Graphic/ShaderProgram/ComputeShader.h"
@@ -21,6 +22,7 @@
 #include "../Model/ManualObject.h"
 #include "../Model/SkyBox.h"
 #include "../Effect/ParticleSystem.h"
+#include "../Effect/ShadowSystem.h"
 
 #include "../Graphic/VAO.h"
 #include "../Graphic/VBO.h"
@@ -37,7 +39,7 @@ namespace CG
 		~MainScene();
 
 		bool Initialize();
-		void Render(double timeNow, double timeDelta);
+		void Render(double timeNow, double timeDelta, int display_w, int display_h);
 
 		inline Model* getModel() { return &robot; }
 		inline Animator* getAnimator() { return animator; }
@@ -56,6 +58,9 @@ namespace CG
 		ParticleSystem* firePS;
 		ManualObject ground;
 		SkyBox skyBox;
+
+		ManualObject sphare;
+		ShadowSystem shadowSystem;
 
 		/*
 		* debug use

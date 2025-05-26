@@ -1,0 +1,14 @@
+#version 460
+layout(location = 0) in vec3 in_Position;
+layout(location = 1) in vec2 in_TexCoord;
+layout(location = 2) in vec3 in_Normal;
+layout(location = 3) in mat4 in_InstOffest;
+
+uniform mat4 u_LightSpaceMatrix;
+uniform mat4 u_Model;
+uniform vec3 u_LightPosition;
+uniform mat3 u_NormalMatrix;
+
+void main() {
+    gl_Position = u_LightSpaceMatrix * in_InstOffest * u_Model * vec4(in_Position, 1.0);
+}
