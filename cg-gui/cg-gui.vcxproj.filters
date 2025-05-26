@@ -107,6 +107,9 @@
     <ClCompile Include="..\src\Effect\EffectManager.cpp">
       <Filter>Effect</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Effect\Lightning.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="App">
@@ -268,6 +271,9 @@
     <ClInclude Include="..\src\Effect\EffectManager.h">
       <Filter>Effect</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\Effect\Lightning.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\res\shaders\Phong_Vertex.vp">
@@ -297,9 +303,6 @@
     <None Include="..\res\shaders\ParticleSystem.vp">
       <Filter>Shader</Filter>
     </None>
-    <None Include="..\res\shaders\lightning.cp">
-      <Filter>Shader</Filter>
-    </None>
     <None Include="..\res\shaders\firework.cp">
       <Filter>Shader</Filter>
     </None>
@@ -307,6 +310,12 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="..\res\shaders\guiIcon.vp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\Lightning.fp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\Lightning.vp">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

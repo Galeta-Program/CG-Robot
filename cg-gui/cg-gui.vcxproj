@@ -154,6 +154,7 @@
     <ClCompile Include="..\src\App\App.cpp" />
     <ClCompile Include="..\src\Effect\EffectManager.cpp" />
     <ClCompile Include="..\src\Effect\Emitter.cpp" />
+    <ClCompile Include="..\src\Effect\Lightning.cpp" />
     <ClCompile Include="..\src\Effect\ParticleSystem.cpp" />
     <ClCompile Include="..\src\Graphic\EBO.cpp" />
     <ClCompile Include="..\src\Graphic\FBO.cpp" />
@@ -191,6 +192,7 @@
     <ClInclude Include="..\src\App\App.h" />
     <ClInclude Include="..\src\Effect\EffectManager.h" />
     <ClInclude Include="..\src\Effect\Emitter.h" />
+    <ClInclude Include="..\src\Effect\Lightning.h" />
     <ClInclude Include="..\src\Effect\ParticleSystem.h" />
     <ClInclude Include="..\src\Graphic\EBO.h" />
     <ClInclude Include="..\src\Graphic\FBO.h" />
@@ -224,7 +226,8 @@
     <None Include="..\res\shaders\firework.cp" />
     <None Include="..\res\shaders\guiIcon.fp" />
     <None Include="..\res\shaders\guiIcon.vp" />
-    <None Include="..\res\shaders\lightning.cp" />
+    <None Include="..\res\shaders\Lightning.fp" />
+    <None Include="..\res\shaders\Lightning.vp" />
     <None Include="..\res\shaders\Obj_Fragment.fp" />
     <None Include="..\res\shaders\Obj_Vertex.vp" />
     <None Include="..\res\shaders\ParticleSystem.fp" />

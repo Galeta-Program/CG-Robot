@@ -53,13 +53,12 @@
 
 namespace CG
 {
-	MainScene::MainScene(Camera& _camera, Light& _light, Animator& _animator, GraphicShader& _program, ParticleSystem& ps)
+	MainScene::MainScene(Camera& _camera, Light& _light, Animator& _animator, GraphicShader& _program)
 	{
 		camera = &_camera;
 		light = &_light;
 		animator = &_animator;
 		program = &_program;
-		firePS = &ps;
 	}
 
 	MainScene::~MainScene()
@@ -147,7 +146,7 @@ namespace CG
 		program->use();
 		robot.render(program->getId(), camera);
 		
-		firePS->render(timeNow, timeDelta, *camera->GetViewMatrix(), *camera->GetProjectionMatrix());
+		//firePS->render(timeNow, timeDelta, *camera->GetViewMatrix(), *camera->GetProjectionMatrix());
 		
 		GLCall(glFlush());
 	}
