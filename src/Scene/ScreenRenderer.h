@@ -32,7 +32,7 @@ private:
 	bool useToonshader = true;
 	bool useMotionBlur = true;
 
-	float pixelSize;
+	float pixelSize = 5;
 
 	static const int HISTORY_COUNT = 20;
 	GLuint historyTextures[HISTORY_COUNT];
