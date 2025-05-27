@@ -47,6 +47,7 @@ namespace CG
 		inline Animator* getAnimator() { return animator; }
 		inline Light* getLight() { return light; }
 		inline ScreenRenderer* getScreenRenderer() { return &screenRenderer; }
+		inline SkyBox* getSkyBox() { return &skyBox; }
 
 	private:
 		bool loadScene(int display_w, int display_h);
@@ -62,6 +63,7 @@ namespace CG
 		ManualObject ground;
 		SkyBox skyBox;
 
+		ManualObject box;
 		ManualObject sphare;
 		ShadowSystem shadowSystem;
 		ScreenRenderer screenRenderer;

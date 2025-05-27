@@ -18,6 +18,7 @@ namespace CG {
 		Model* robot;
 		Node* selectedNode;
 		ScreenRenderer* screenRenderer;
+		SkyBox* skyBox;
 
 		GraphicShader gs;
 
@@ -33,7 +34,9 @@ namespace CG {
 		int partSelected;
 		int animationSelected;
 		int frameSelected; // which frame is selected
+		int skyBoxSelected;
 
+		std::vector<std::string> skyBoxNamesInStr;
 		std::vector<std::string> frameNamesInStr;
 
 		bool editFrame;
@@ -57,6 +60,7 @@ namespace CG {
 		void speedPanel();
 		void instancePanel();
 		void screenEffectPanel();
+		void skyBoxPanel();
 		void lightPanel();
 		void editPanel();
 		void transformPanel(Node* node);

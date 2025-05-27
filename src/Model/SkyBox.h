@@ -14,12 +14,15 @@ class SkyBox
 {
 private:
 	ManualObject skyBoxObj;
-	Texture texture;
-	std::vector<std::vector<std::string>> skyBoxFaces;
+	std::vector<Texture*> textures;
+	int currentTextureIndex;
 
 public:
 	SkyBox() {}
-	~SkyBox() {}
+	~SkyBox() 
+	{
+		for (auto tex : textures) delete tex;
+	}
 	SkyBox(SkyBox&& other) noexcept;
 	SkyBox(const SkyBox& other) = delete;
 
@@ -29,8 +32,11 @@ public:
 	ManualObject& getObject() { return skyBoxObj; }
 	bool loadFaces(std::vector<std::string> faces);
 	void updateDate();
+	void switchTexture(unsigned int index);
 	void render(CG::Camera* camera, GLint type = GL_TRIANGLES);
 
-	inline Texture& getTexture() { return texture; }
+	inline Texture* getTexture() { return textures[currentTextureIndex]; }
+	inline int getTextureNum() { return textures.size(); }
+	inline int getCurrentTextureIndex() { return currentTextureIndex; }
 };
 

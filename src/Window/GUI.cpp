@@ -74,6 +74,10 @@ namespace CG {
         bindScene(_scene);
         robot = scene->getModel();
         screenRenderer = scene->getScreenRenderer();
+        skyBox = scene->getSkyBox();
+        skyBoxSelected = skyBox->getCurrentTextureIndex();
+        for (int i = 0; i < skyBox->getTextureNum(); i++)
+            skyBoxNamesInStr.push_back("SkyBox" + std::to_string(i + 1));
         selectedNode = &(robot->getPart(HEAD));
         currentMode = 0;
         previousMode = 0;
@@ -212,6 +216,10 @@ namespace CG {
             {
                 screenEffectPanel();
             }
+            if (ImGui::CollapsingHeader("SkyBox", ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                skyBoxPanel();
+            }
             if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen))
             {
                 lightPanel();
@@ -343,6 +351,38 @@ namespace CG {
         screenRenderer->setMotionBlur(screenEffectStates[2]);
      
     }
+
+    void GUI::skyBoxPanel()
+    {
+        ImGui::SeparatorText("Usage");
+        ImGui::Text("Select a skyBox to play.");
+        ImGui::SeparatorText("SkyBoxs");
+
+        ImGui::PushItemWidth(-1);  // Make ListBox fill available width
+
+        std::vector<const char*> skyBoxNameCStrs;
+        for (int i = 0; i < skyBox->getTextureNum(); i++)
+        {
+            skyBoxNameCStrs.push_back(skyBoxNamesInStr[i].c_str());
+        }
+
+        if (ImGui::ListBox("##SkyBoxList",
+            &skyBoxSelected,
+            skyBoxNameCStrs.data(),
+            (int)skyBoxNameCStrs.size(),
+            (int)skyBoxNameCStrs.size()))
+        {
+            std::cout << skyBoxSelected << std::endl;
+            if (skyBoxSelected != skyBox->getCurrentTextureIndex() &&
+                skyBoxSelected < skyBox->getTextureNum())
+            {
+                skyBox->switchTexture(skyBoxSelected);
+            }
+        }
+
+        ImGui::PopItemWidth();
+    }
+
 
     void GUI::speedPanel()
     {
