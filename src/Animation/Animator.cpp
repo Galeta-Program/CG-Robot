@@ -371,7 +371,6 @@ void Animator::animate(double dt)
 							);
 							currentEffect->addEndPoints(effectEndPoint);
 							efm.setCurrentEffect(effectName);
-
 						}
 					}
 					if (isFinished)

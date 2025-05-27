@@ -57,6 +57,8 @@ public:
 	void generateLightningPathRecursive(glm::vec3 p1, glm::vec3 p2, unsigned int depth, float displacementScale);
 	void generateAndActivateLightning(glm::vec3 startPoint, glm::vec3 endPoint);
 
+	void addWidth(unsigned int width = 1);
+
 	inline glm::vec3 getCenter() { return center; }
 	inline std::vector<glm::vec3> getEndPoints() { return endPoints; }
 };

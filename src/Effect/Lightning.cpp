@@ -199,7 +199,8 @@ void Lightning::render(float deltaTime, const glm::mat4& viewMatrix, const glm::
 	for (int i = 0; i < endPoints.size(); i++)
 	{
 		generateAndActivateLightning(center, endPoints[i]);
-		glDrawArrays(GL_LINE_STRIP, 0, lightningPoints.size() / 2); // 頂點數量 = 數據長度 / 每個頂點的分量數
+		addWidth(10);
+		glDrawArrays(GL_LINE_STRIP, 0, lightningPoints.size()); // 頂點數量 = 數據長度 / 每個頂點的分量數
 	}
 }
 
@@ -238,5 +239,13 @@ void Lightning::generateAndActivateLightning(glm::vec3 startPoint, glm::vec3 end
 	vbo.setData(lightningPoints, GL_DYNAMIC_DRAW);
 
     lightningLifetime = maxLifetime;
+}
+
+void Lightning::addWidth(unsigned int width)
+{
+	for (int i = 0; i < lightningPoints.size(); i++)
+	{
+
+	}
 }
 

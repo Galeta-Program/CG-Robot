@@ -444,6 +444,8 @@ namespace CG
 		animator->addClip("Stand", keyFrameBuffer);
 		animator->setCurrentClip("Stand");
 		animator->addClip("Hao Fire", "../res/animation/HaoFire.anim");
+		animator->addClip("Lightning", "../res/animation/Lightning.anim");
+
 
 		// Add animation here
 		/*
