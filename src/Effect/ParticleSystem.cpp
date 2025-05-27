@@ -220,6 +220,12 @@ void ParticleSystem::render(float timeNow, float deltaTime, const glm::mat4& vie
 }
 
 
+void ParticleSystem::addEmitter()
+{
+    emitters.emplace_back();
+
+}
+
 void ParticleSystem::setupEmitter(std::vector<EmitterSettings> settings)
 {
     for (int i = 0; i < settings.size(); i++)

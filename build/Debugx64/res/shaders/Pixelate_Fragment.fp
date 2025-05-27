@@ -46,7 +46,7 @@ void main()
 
         if (isDrawLine)
         {
-            FragColor = vec4(0.0, 0.0, 0.0, 1.0);  // 邊緣線黑色
+            FragColor = vec4(0.0, 0.0, 0.0, 1.0);  // 邊緣線
         }
         else
         {

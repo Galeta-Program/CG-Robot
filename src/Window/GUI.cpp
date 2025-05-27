@@ -72,8 +72,8 @@ namespace CG {
         ImGui_ImplGlfw_InitForOpenGL(window, false); // Disable this because we have manually handle the glfwSetMouseButtonCallback
         ImGui_ImplOpenGL3_Init(glsl_version);
 
-        animator = _animator;
-        
+        this->animator = _animator;
+
         bindScene(_scene);
         robot = scene->getModel();
         screenRenderer = scene->getScreenRenderer();

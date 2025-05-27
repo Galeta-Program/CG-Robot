@@ -51,8 +51,6 @@ namespace CG
 
         MainScene* mainScene;
 
-        Lightning* lightning;
-
         double timeNow = 0;
         double timeLast = 0;
         double timeDelta = 0;

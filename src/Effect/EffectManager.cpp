@@ -21,7 +21,6 @@ void EffectManager::registerParticleEffect(
 	const char* fs,
 	const char* cs,
 	std::vector<EmitterSettings> settings,
-	std::vector<bool> _effectParamMask,
 	const char* texturePath
 	)
 {
@@ -36,8 +35,6 @@ void EffectManager::registerParticleEffect(
 	effects[name].ps->init(particleAmount, vs, fs, cs);
 	effects[name].ps->setupEmitter(settings);
 	effects[name].ps->emit();
-
-	effectParamMask[name] = _effectParamMask;
 
 	if (texturePath != "")
 	{
@@ -74,6 +71,7 @@ void EffectManager::setCurrentEffect(std::string name)
 	if (name == "None")
 	{
 		currentEffect = nullptr;
+		return;
 	}
 
 	currentEffect = &effects[name];

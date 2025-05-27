@@ -380,6 +380,10 @@ void Animator::animate(double dt)
 					}
 				}
 			}
+			else
+			{
+				efm.setCurrentEffect("None");
+			}
 		}
 
 		model->getPart(i).setTranslate(translate);

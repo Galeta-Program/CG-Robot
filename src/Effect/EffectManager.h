@@ -56,8 +56,7 @@ public:
 		const char* fs,
 		const char* cs,
 		std::vector<EmitterSettings> settings,
-		std::vector<bool> _effectParamMask,
-		const char* texturePath
+		const char* texturePath = ""
 	);
 	void registerLightningEffect(std::string name);
 	void passParam(std::string name, EffectParam param);

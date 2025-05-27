@@ -56,6 +56,7 @@ public:
 		unsigned int emitter = -1
 	); // used in animation
 
+	void addEmitter();
 	void setupEmitter(std::vector<EmitterSettings> settings);
 	void setEmitterPos(unsigned int index, glm::vec3 pos);
 	void setEmitterDir(unsigned int index, glm::vec3 dir);

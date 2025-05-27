@@ -106,35 +106,7 @@ namespace CG
 	void MainScene::Render(double timeNow, double timeDelta, int display_w, int display_h)
 	{
 		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-		
-		/* debug use
-		// Disable depth test for 2D quad to ensure it's drawn over anything else
-		glDisable(GL_DEPTH_TEST);
-        // Disable blending for raw texture view, or enable if testing alpha
-        // glEnable(GL_BLEND);
-        // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Typical alpha blending
 
-		testQuadShader.use();
-		
-		GLint texSamplerLoc = glGetUniformLocation(testQuadShader.getId(), "testTextureSampler");
-		if (texSamplerLoc != -1) {
-			glUniform1i(texSamplerLoc, 0); // Tell sampler to use texture unit 0
-		} else {
-			std::cerr << "Uniform 'testTextureSampler' not found in TestTexture shader!" << std::endl;
-		}
-
-		texture.bind(0); // Bind the loaded texture to texture unit 0
-		
-		vao.bind(); // Bind the quad's VAO
-		GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
-
-        // Re-enable depth test if other parts of your scene need it
-        glEnable(GL_DEPTH_TEST);
-        // glDisable(GL_BLEND);
-
-		*/
-
-		// 先渲染深度圖
 		glm::mat4 lightSpaceMatrix = shadowSystem.set(light->getPos());
 		sphare.render(camera, &shadowSystem.getShaderProgram());
 		//box.render(camera, &shadowShader, GL_QUADS);
@@ -143,14 +115,12 @@ namespace CG
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
-		// 正常渲染場景
 		glViewport(0, 0, display_w, display_h);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		matVPUbo.fillInData(0, sizeof(glm::mat4), camera->GetViewMatrix());
 		matVPUbo.fillInData(sizeof(glm::mat4), sizeof(glm::mat4), camera->GetProjectionMatrix());
 
-		// 畫到Screen FBO
 		screenRenderer.set();
 		skyBox.render(camera, GL_QUADS);
 
@@ -161,14 +131,6 @@ namespace CG
 		glBindTexture(GL_TEXTURE_2D, shadowSystem.getShadowMap());
 		glUniform1i(glGetUniformLocation(ground.getShaderProgram().getId(), "u_ShadowMap"), 0);
 		ground.render(camera, nullptr, GL_QUADS);
-
-		/*box.getShaderProgram().use();
-		light->bind(box.getShaderProgram().getId());
-		glUniformMatrix4fv(glGetUniformLocation(box.getShaderProgram().getId(), "u_LightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, depthMap);
-		glUniform1i(glGetUniformLocation(box.getShaderProgram().getId(), "u_ShadowMap"), 0);*/
-		//box.render(camera, nullptr, GL_QUADS);
 
 		sphare.getShaderProgram().use();
 		light->bind(sphare.getShaderProgram().getId());
@@ -188,9 +150,7 @@ namespace CG
 		glBindTexture(GL_TEXTURE_2D, shadowSystem.getShadowMap());
 		glUniform1i(glGetUniformLocation(program->getId(), "u_ShadowMap"), 1);
 		robot.render(program->getId(), camera);
-		
-		//firePS->render(timeNow, timeDelta, *camera->GetViewMatrix(), *camera->GetProjectionMatrix());
-		
+				
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		screenRenderer.render();
@@ -483,6 +443,7 @@ namespace CG
 
 		animator->addClip("Stand", keyFrameBuffer);
 		animator->setCurrentClip("Stand");
+		animator->addClip("Hao Fire", "../res/animation/HaoFire.anim");
 
 		// Add animation here
 		/*
