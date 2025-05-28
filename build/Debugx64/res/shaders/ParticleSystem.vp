@@ -20,13 +20,20 @@ layout (binding = 0, std430) buffer ParticleBuffer
 uniform u_MatVP {
 	mat4 u_View;
 	mat4 u_Projection;
-};
+};  
+uniform uint u_FromIndex;              
+uniform uint u_Size;  
 
 out vec4 v_Color;
 
 void main(void) 
 { 
-    Particle particle = ssbo_Particles[gl_VertexID];
+	if(gl_VertexID >= u_Size)
+	{
+		return;
+	}
+	uint index = u_FromIndex + gl_VertexID;
+    Particle particle = ssbo_Particles[u_FromIndex + gl_VertexID];
 
     gl_Position = u_Projection * u_View * vec4(particle.pos, 1.0);
     gl_PointSize = particle.size; 
