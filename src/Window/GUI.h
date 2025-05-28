@@ -30,6 +30,8 @@ namespace CG {
 		char animationName[128];
 
 		bool screenEffectStates[5];
+		static const int OBJECT_NUM = 10;
+		bool objectsVisibilityStates[OBJECT_NUM];
 
 		int partSelected;
 		int animationSelected;
@@ -60,6 +62,7 @@ namespace CG {
 		void speedPanel();
 		void instancePanel();
 		void screenEffectPanel();
+		void objectsVisibilityPanel();
 		void skyBoxPanel();
 		void lightPanel();
 		void editPanel();

@@ -53,6 +53,9 @@ void ManualObject::gatherData()
 
 void ManualObject::render(CG::Camera* camera, const ShaderProgram* inProgram, GLint type)
 {
+	if (!isDisplay)
+		return;
+
 	if (inProgram == nullptr)
 	{
 		inProgram = &program;

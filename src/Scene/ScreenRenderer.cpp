@@ -129,9 +129,10 @@ void ScreenRenderer::render()
         for (int i = 0; i < HISTORY_COUNT; ++i)
         {
             int texIndex = (currentHistoryIndex + i) % HISTORY_COUNT;
-            float alpha = 1.0f - float(i) / HISTORY_COUNT;
-            alpha = pow(0.5, float(i));
-            alpha = 1.0f / sqrt(float(i) + 1);
+            float alpha = 1.0f / sqrt(float(i) + 1);
+            //alpha = 0.8f - float(i) / HISTORY_COUNT;
+            //alpha = pow(0.7, float(HISTORY_COUNT - i));
+            
 
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, historyTextures[texIndex]);

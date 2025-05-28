@@ -42,12 +42,12 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     float closestDepth = texture(u_ShadowMap, projCoords.xy).r;
     float currentDepth = projCoords.z;
 
-    // Bias防止shadow acne
+    // 防止shadow acne
     float bias = max(0.002 * (1.0 - dot(normalize(v_Normal), normalize(v_LightDir))), 0.0005);
 
     float intensity = clamp(1.0 - u_Shininess / 100.0, 0.0, 1.0);
     float baseShadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
-    float shadow = baseShadow * intensity;
+    float shadow = baseShadow * intensity; // 隨亮度做變化
 
     return shadow;
 }

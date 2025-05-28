@@ -161,7 +161,7 @@ namespace CG
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, shadowSystem.getShadowMap());
 		glUniform1i(glGetUniformLocation(ground.getShaderProgram().getId(), "u_ShadowMap"), 0);
-		//ground.render(camera, nullptr, GL_QUADS);
+		ground.render(camera, nullptr, GL_QUADS);
 
 		box.getShaderProgram().use();
 		light->bind(box.getShaderProgram().getId());
@@ -169,7 +169,7 @@ namespace CG
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, shadowSystem.getShadowMap());
 		glUniform1i(glGetUniformLocation(box.getShaderProgram().getId(), "u_ShadowMap"), 0);
-		//box.render(camera, nullptr, GL_QUADS);
+		box.render(camera, nullptr, GL_QUADS);
 
 		sphare.getShaderProgram().use();
 		light->bind(sphare.getShaderProgram().getId());
@@ -188,7 +188,7 @@ namespace CG
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, shadowSystem.getShadowMap());
 		glUniform1i(glGetUniformLocation(program->getId(), "u_ShadowMap"), 1);
-		//robot.render(program->getId(), camera);
+		robot.render(program->getId(), camera);
 		
 		firePS->render(timeNow, timeDelta, *camera->GetViewMatrix(), *camera->GetProjectionMatrix());
 		
@@ -539,5 +539,13 @@ namespace CG
 				AnimationEvent{8, [=]() { robot.modifyInstance(3); }}
 			});
 			*/
+	}
+
+	void  MainScene::SetObjectsVisibility(std::vector<bool> isDisplays)
+	{
+		robot.setVisibility(isDisplays[0]);
+		ground.setVisibility(isDisplays[1]);
+		box.setVisibility(isDisplays[2]);
+		sphare.setVisibility(isDisplays[3]);
 	}
 }

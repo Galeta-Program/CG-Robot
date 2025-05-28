@@ -58,6 +58,9 @@ void LoadedObject::gatherData()
 
 void LoadedObject::render(CG::Camera* camera, const ShaderProgram* inProgram, GLint type)
 {
+	if (!isDisplay)
+		return;
+
 	if (inProgram == nullptr)
 	{
 		inProgram = &program;

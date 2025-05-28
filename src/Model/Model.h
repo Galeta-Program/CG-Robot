@@ -24,6 +24,8 @@ private:
 	unsigned int instancingCount = 1;
 	std::vector<glm::mat4> instancingOffests;
 
+	bool isDisplay = true;
+
 public:
 	Model() : partSum(0) {}
 	~Model() {}
@@ -37,6 +39,7 @@ public:
 	void gatherPartsData();
 	void render(GLuint program, CG::Camera* camera);
 	void modifyInstance(unsigned int count);
+	void setVisibility(bool _isDisplay);
 
 	inline Node& getPart(unsigned int index) { return parts[index]; }
 	inline unsigned int getPartsAmount() { return parts.size(); }

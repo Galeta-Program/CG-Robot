@@ -127,8 +127,16 @@ void Model::gatherPartsData()
 	}
 }
 
+void Model::setVisibility(bool _isDisplay)
+{
+	isDisplay = _isDisplay;
+}
+
 void Model::render( GLuint program, CG::Camera* camera )
 {
+	if (!isDisplay)
+		return;
+
 	instancingVbo.bind();
 
 	int n, p = 0, limit = 0, count = 0, u = 0;

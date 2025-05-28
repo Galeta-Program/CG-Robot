@@ -42,6 +42,7 @@ namespace CG
 		bool Initialize(int display_w, int display_h);
 		void Render(double timeNow, double timeDelta, int display_w, int display_h);
 		void Resize(int display_w, int display_h);
+		void SetObjectsVisibility(std::vector<bool> isDisplays);
 
 		inline Model* getModel() { return &robot; }
 		inline Animator* getAnimator() { return animator; }

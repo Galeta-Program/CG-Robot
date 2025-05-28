@@ -28,6 +28,7 @@ protected:
 	glm::vec3 translateOffset;
 	glm::mat4 modelMatrix; // Transformation matrix of itself
 	
+	bool isDisplay = true;
 
 	Object() {}
 	~Object() {}
@@ -43,6 +44,7 @@ public:
 	void setRotate(glm::quat quaternion);
 	void updateEuler();
 	void updateModelMatrix();
+	void setVisibility(bool _isDisplay);
 	void setInstancingOffests(std::vector<glm::vec3> _instancingOffests);
 
 	inline const ShaderProgram& getShaderProgram() { return program; }

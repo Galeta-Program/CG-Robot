@@ -38,7 +38,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 
     float intensity = clamp(1.0 - u_Shininess / 100.0, 0.0, 1.0);
     float baseShadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
-    float shadow = baseShadow * intensity;
+    float shadow = baseShadow * intensity; // 隨亮度做變化
 
     return shadow;
 }

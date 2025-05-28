@@ -78,6 +78,8 @@ namespace CG {
         skyBoxSelected = skyBox->getCurrentTextureIndex();
         for (int i = 0; i < skyBox->getTextureNum(); i++)
             skyBoxNamesInStr.push_back("SkyBox" + std::to_string(i + 1));
+        for (int i = 0; i < OBJECT_NUM; i++)
+            objectsVisibilityStates[i] = true;
         selectedNode = &(robot->getPart(HEAD));
         currentMode = 0;
         previousMode = 0;
@@ -204,6 +206,10 @@ namespace CG {
 
             ImGui::Begin("Configurations", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
+            if (ImGui::CollapsingHeader("Objects Visibility", ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                objectsVisibilityPanel();
+            }
             if (ImGui::CollapsingHeader("Speed", ImGuiTreeNodeFlags_DefaultOpen))
             {
                 speedPanel();
@@ -350,6 +356,24 @@ namespace CG {
         screenRenderer->setToonshader(screenEffectStates[1]);
         screenRenderer->setMotionBlur(screenEffectStates[2]);
      
+    }
+
+    void GUI::objectsVisibilityPanel()
+    {
+        ImGui::SeparatorText("Usage");
+        ImGui::Text("Set the visibility of the object.\n");
+
+        const char* objects[] = { "Robot", "Ground", "Box", "EvnSphere"};
+
+        ImGui::Checkbox(objects[0], &objectsVisibilityStates[0]);
+        ImGui::Checkbox(objects[1], &objectsVisibilityStates[1]);
+        ImGui::Checkbox(objects[2], &objectsVisibilityStates[2]);
+        ImGui::Checkbox(objects[3], &objectsVisibilityStates[3]);
+
+        std::vector<bool> isDisplays;
+        for (int i = 0; i < OBJECT_NUM; i++)
+            isDisplays.push_back(objectsVisibilityStates[i]);
+        scene->SetObjectsVisibility(isDisplays);
     }
 
     void GUI::skyBoxPanel()
