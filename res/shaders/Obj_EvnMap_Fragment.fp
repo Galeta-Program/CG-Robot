@@ -23,12 +23,10 @@ uniform u_Light
 
 float ShadowCalculation(vec4 fragPosLightSpace)
 {
-    // 轉換成 NDC space
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-    // 轉換成 [0,1] 空間對應 shadow map UV
+
     projCoords = projCoords * 0.5 + 0.5;
 
-    // 超出shadow map範圍就不算影子
     if(projCoords.x < 0.0 || projCoords.x > 1.0 ||
        projCoords.y < 0.0 || projCoords.y > 1.0 ||
        projCoords.z > 1.0)

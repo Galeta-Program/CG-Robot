@@ -113,6 +113,9 @@
     <ClCompile Include="..\src\Scene\ScreenRenderer.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Model\Water.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="App">
@@ -280,6 +283,9 @@
     <ClInclude Include="..\src\Scene\ScreenRenderer.h">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\Model\Water.h">
+      <Filter>Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\res\shaders\Phong_Vertex.vp">
@@ -337,6 +343,18 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="..\res\shaders\Shadow_Vertex.vp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\Water_Fragment.fp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\Water_Reflect_Fragment.fp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\Water_Reflect_Vertex.vp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\Water_Vertex.vp">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

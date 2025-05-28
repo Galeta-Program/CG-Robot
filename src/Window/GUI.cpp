@@ -363,12 +363,13 @@ namespace CG {
         ImGui::SeparatorText("Usage");
         ImGui::Text("Set the visibility of the object.\n");
 
-        const char* objects[] = { "Robot", "Ground", "Box", "EvnSphere"};
+        const char* objects[] = { "Robot", "Ground", "Box", "EvnSphere", "Water"};
 
         ImGui::Checkbox(objects[0], &objectsVisibilityStates[0]);
         ImGui::Checkbox(objects[1], &objectsVisibilityStates[1]);
         ImGui::Checkbox(objects[2], &objectsVisibilityStates[2]);
         ImGui::Checkbox(objects[3], &objectsVisibilityStates[3]);
+        ImGui::Checkbox(objects[4], &objectsVisibilityStates[4]);
 
         std::vector<bool> isDisplays;
         for (int i = 0; i < OBJECT_NUM; i++)

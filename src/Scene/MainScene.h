@@ -24,6 +24,7 @@
 #include "../Effect/ParticleSystem.h"
 #include "../Effect/ShadowSystem.h"
 #include "../Scene/ScreenRenderer.h"
+#include "../Model/Water.h"
 
 #include "../Graphic/VAO.h"
 #include "../Graphic/VBO.h"
@@ -68,6 +69,7 @@ namespace CG
 		ManualObject sphare;
 		ShadowSystem shadowSystem;
 		ScreenRenderer screenRenderer;
+		Water water;
 
 		/*
 		* debug use

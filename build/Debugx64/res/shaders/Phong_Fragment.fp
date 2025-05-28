@@ -18,6 +18,9 @@ uniform sampler2D u_Texture;
 uniform sampler2D u_ShadowMap;
 uniform mat4 u_LightSpaceMatrix;
 
+uniform vec4 u_ClippingPlane;
+uniform bool u_useClipping;
+
 uniform u_Light
 {
     float u_Shininess;
@@ -54,6 +57,11 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 
 void main(void)
 { 
+    if (u_useClipping == true && dot(v_WorldPos.xyz, u_ClippingPlane.xyz) + u_ClippingPlane.w < 0.0) 
+    {
+        discard;
+    }
+
     vec4 lightSpacePos = u_LightSpaceMatrix * v_WorldPos;
     
     vec3 normal = normalize(v_Normal);

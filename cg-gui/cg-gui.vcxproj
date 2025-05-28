@@ -172,6 +172,7 @@
     <ClCompile Include="..\src\Model\Object.cpp" />
     <ClCompile Include="..\src\Model\Part.cpp" />
     <ClCompile Include="..\src\Model\SkyBox.cpp" />
+    <ClCompile Include="..\src\Model\Water.cpp" />
     <ClCompile Include="..\src\Scene\Camera.cpp" />
     <ClCompile Include="..\src\Scene\Light.cpp" />
     <ClCompile Include="..\src\Scene\MainScene.cpp" />
@@ -214,6 +215,7 @@
     <ClInclude Include="..\src\Model\Object.h" />
     <ClInclude Include="..\src\Model\Part.h" />
     <ClInclude Include="..\src\Model\SkyBox.h" />
+    <ClInclude Include="..\src\Model\Water.h" />
     <ClInclude Include="..\src\Scene\Camera.h" />
     <ClInclude Include="..\src\Scene\Light.h" />
     <ClInclude Include="..\src\Scene\MainScene.h" />
@@ -243,6 +245,10 @@
     <None Include="..\res\shaders\Shadow_Vertex.vp" />
     <None Include="..\res\shaders\SkyBox_Fragment.fp" />
     <None Include="..\res\shaders\SkyBox_Vertex.vp" />
+    <None Include="..\res\shaders\Water_Fragment.fp" />
+    <None Include="..\res\shaders\Water_Reflect_Fragment.fp" />
+    <None Include="..\res\shaders\Water_Reflect_Vertex.vp" />
+    <None Include="..\res\shaders\Water_Vertex.vp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

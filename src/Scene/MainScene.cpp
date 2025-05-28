@@ -144,6 +144,138 @@ namespace CG
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
+		// 水的反射渲染
+		water.reflectSet();
+		glm::vec3 cameraPos = camera->getPos();
+		glm::vec3 cameraTarget = camera->getTarget();
+		glm::vec3 up = glm::vec3(0, 1, 0);
+
+		float waterHeight = water.getObject().getPoints()[0].y;
+
+		glm::vec3 camDir = glm::normalize(cameraTarget - cameraPos);
+
+		glm::vec3 mirroredPos = cameraPos;
+		mirroredPos.y = waterHeight - (cameraPos.y - waterHeight);
+
+		glm::vec3 mirroredDir = glm::reflect(camDir, glm::vec3(0, 1, 0));
+		glm::vec3 mirroredTarget = mirroredPos + mirroredDir;
+
+		Camera mirroredCamera;
+		mirroredCamera.LookAt(mirroredPos, mirroredTarget, up);
+
+		matVPUbo.fillInData(0, sizeof(glm::mat4), mirroredCamera.GetViewMatrix());
+		matVPUbo.fillInData(sizeof(glm::mat4), sizeof(glm::mat4), mirroredCamera.GetProjectionMatrix());
+
+		glm::vec4 clippingPlane = glm::vec4(0, 1, 0, water.getObject().getPoints()[0].y);
+		glEnable(GL_CLIP_DISTANCE0);
+
+		skyBox.render(camera, GL_QUADS);
+
+		ground.getShaderProgram().use();
+		light->bind(ground.getShaderProgram().getId());
+		glUniformMatrix4fv(glGetUniformLocation(ground.getShaderProgram().getId(), "u_LightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, shadowSystem.getShadowMap());
+		glUniform1i(glGetUniformLocation(ground.getShaderProgram().getId(), "u_ShadowMap"), 0);
+		glUniform4fv(glGetUniformLocation(ground.getShaderProgram().getId(), "u_ClippingPlane"), 1, glm::value_ptr(clippingPlane));
+		glUniform1i(glGetUniformLocation(ground.getShaderProgram().getId(), "u_useClipping"), true);
+		ground.render(&mirroredCamera, nullptr, GL_QUADS);
+
+		box.getShaderProgram().use();
+		light->bind(box.getShaderProgram().getId());
+		glUniformMatrix4fv(glGetUniformLocation(box.getShaderProgram().getId(), "u_LightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, shadowSystem.getShadowMap());
+		glUniform1i(glGetUniformLocation(box.getShaderProgram().getId(), "u_ShadowMap"), 0);
+		glUniform4fv(glGetUniformLocation(box.getShaderProgram().getId(), "u_ClippingPlane"), 1, glm::value_ptr(clippingPlane));
+		glUniform1i(glGetUniformLocation(box.getShaderProgram().getId(), "u_useClipping"), true);
+		box.render(&mirroredCamera, nullptr, GL_QUADS);
+
+		sphare.getShaderProgram().use();
+		light->bind(sphare.getShaderProgram().getId());
+		glUniformMatrix4fv(glGetUniformLocation(sphare.getShaderProgram().getId(), "u_LightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
+		glUniform3fv(glGetUniformLocation(sphare.getShaderProgram().getId(), "u_CameraPos"), 1, glm::value_ptr(camera->getPos()));
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, shadowSystem.getShadowMap());
+		glUniform1i(glGetUniformLocation(sphare.getShaderProgram().getId(), "u_ShadowMap"), 0);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.getTexture()->getId());
+		glUniform1i(glGetUniformLocation(sphare.getShaderProgram().getId(), "u_Skybox"), 1);
+		glUniform4fv(glGetUniformLocation(sphare.getShaderProgram().getId(), "u_ClippingPlane"), 1, glm::value_ptr(clippingPlane));
+		glUniform1i(glGetUniformLocation(sphare.getShaderProgram().getId(), "u_useClipping"), true);
+		sphare.render(&mirroredCamera);
+
+		program->use();
+		glUniformMatrix4fv(glGetUniformLocation(program->getId(), "u_LightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, shadowSystem.getShadowMap());
+		glUniform1i(glGetUniformLocation(program->getId(), "u_ShadowMap"), 1);
+		glUniform4fv(glGetUniformLocation(program->getId(), "u_ClippingPlane"), 1, glm::value_ptr(clippingPlane));
+		glUniform1i(glGetUniformLocation(program->getId(), "u_useClipping"), true);
+		robot.render(program->getId(), &mirroredCamera);
+
+		firePS->render(timeNow, timeDelta, *mirroredCamera.GetViewMatrix(), *mirroredCamera.GetProjectionMatrix());
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+
+
+		water.refractSet();
+
+		clippingPlane = glm::vec4(0, -1, 0, water.getObject().getPoints()[0].y);
+
+		matVPUbo.fillInData(0, sizeof(glm::mat4), camera->GetViewMatrix());
+		matVPUbo.fillInData(sizeof(glm::mat4), sizeof(glm::mat4), camera->GetProjectionMatrix());
+
+		skyBox.render(camera, GL_QUADS);
+
+		ground.getShaderProgram().use();
+		light->bind(ground.getShaderProgram().getId());
+		glUniformMatrix4fv(glGetUniformLocation(ground.getShaderProgram().getId(), "u_LightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, shadowSystem.getShadowMap());
+		glUniform1i(glGetUniformLocation(ground.getShaderProgram().getId(), "u_ShadowMap"), 0);
+		glUniform4fv(glGetUniformLocation(ground.getShaderProgram().getId(), "u_ClippingPlane"), 1, glm::value_ptr(clippingPlane));
+		glUniform1i(glGetUniformLocation(ground.getShaderProgram().getId(), "u_useClipping"), true);
+		ground.render(camera, nullptr, GL_QUADS);
+
+		box.getShaderProgram().use();
+		light->bind(box.getShaderProgram().getId());
+		glUniformMatrix4fv(glGetUniformLocation(box.getShaderProgram().getId(), "u_LightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, shadowSystem.getShadowMap());
+		glUniform1i(glGetUniformLocation(box.getShaderProgram().getId(), "u_ShadowMap"), 0);
+		glUniform4fv(glGetUniformLocation(box.getShaderProgram().getId(), "u_ClippingPlane"), 1, glm::value_ptr(clippingPlane));
+		glUniform1i(glGetUniformLocation(box.getShaderProgram().getId(), "u_useClipping"), true);
+		box.render(camera, nullptr, GL_QUADS);
+
+		sphare.getShaderProgram().use();
+		light->bind(sphare.getShaderProgram().getId());
+		glUniformMatrix4fv(glGetUniformLocation(sphare.getShaderProgram().getId(), "u_LightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
+		glUniform3fv(glGetUniformLocation(sphare.getShaderProgram().getId(), "u_CameraPos"), 1, glm::value_ptr(camera->getPos()));
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, shadowSystem.getShadowMap());
+		glUniform1i(glGetUniformLocation(sphare.getShaderProgram().getId(), "u_ShadowMap"), 0);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.getTexture()->getId());
+		glUniform1i(glGetUniformLocation(sphare.getShaderProgram().getId(), "u_Skybox"), 1);
+		glUniform4fv(glGetUniformLocation(sphare.getShaderProgram().getId(), "u_ClippingPlane"), 1, glm::value_ptr(clippingPlane));
+		glUniform1i(glGetUniformLocation(sphare.getShaderProgram().getId(), "u_useClipping"), true);
+		sphare.render(camera);
+
+		program->use();
+		glUniformMatrix4fv(glGetUniformLocation(program->getId(), "u_LightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, shadowSystem.getShadowMap());
+		glUniform1i(glGetUniformLocation(program->getId(), "u_ShadowMap"), 1);
+		glUniform4fv(glGetUniformLocation(program->getId(), "u_ClippingPlane"), 1, glm::value_ptr(clippingPlane));
+		glUniform1i(glGetUniformLocation(program->getId(), "u_useClipping"), true);
+		robot.render(program->getId(), camera);
+
+		firePS->render(timeNow, timeDelta, *camera->GetViewMatrix(), *camera->GetProjectionMatrix());
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
 		// 正常渲染場景
 		glViewport(0, 0, display_w, display_h);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -161,6 +293,7 @@ namespace CG
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, shadowSystem.getShadowMap());
 		glUniform1i(glGetUniformLocation(ground.getShaderProgram().getId(), "u_ShadowMap"), 0);
+		glUniform1i(glGetUniformLocation(ground.getShaderProgram().getId(), "u_useClipping"), false);
 		ground.render(camera, nullptr, GL_QUADS);
 
 		box.getShaderProgram().use();
@@ -169,6 +302,7 @@ namespace CG
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, shadowSystem.getShadowMap());
 		glUniform1i(glGetUniformLocation(box.getShaderProgram().getId(), "u_ShadowMap"), 0);
+		glUniform1i(glGetUniformLocation(box.getShaderProgram().getId(), "u_useClipping"), false);
 		box.render(camera, nullptr, GL_QUADS);
 
 		sphare.getShaderProgram().use();
@@ -181,13 +315,21 @@ namespace CG
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.getTexture()->getId());
 		glUniform1i(glGetUniformLocation(sphare.getShaderProgram().getId(), "u_Skybox"), 1);
+		glUniform1i(glGetUniformLocation(sphare.getShaderProgram().getId(), "u_useClipping"), false);
 		sphare.render(camera);
+
+		water.getObject().getShaderProgram().use();
+		light->bind(water.getObject().getShaderProgram().getId());
+		//glUniformMatrix4fv(glGetUniformLocation(water.getObject().getShaderProgram().getId(), "u_LightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
+		glUniform3fv(glGetUniformLocation(water.getObject().getShaderProgram().getId(), "u_CameraPos"), 1, glm::value_ptr(camera->getPos()));
+		water.render(camera);
 
 		program->use();
 		glUniformMatrix4fv(glGetUniformLocation(program->getId(), "u_LightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, shadowSystem.getShadowMap());
 		glUniform1i(glGetUniformLocation(program->getId(), "u_ShadowMap"), 1);
+		glUniform1i(glGetUniformLocation(program->getId(), "u_useClipping"), false);
 		robot.render(program->getId(), camera);
 		
 		firePS->render(timeNow, timeDelta, *camera->GetViewMatrix(), *camera->GetProjectionMatrix());
@@ -209,16 +351,21 @@ namespace CG
 		loadModel();
 		loadAnimation();
 
+		water.getObject().setShader("../res/shaders/Water_Vertex.vp", "../res/shaders/Water_Fragment.fp");
+		glm::vec3 waterColor(0.0f, 0.4f, 0.8f);
+		water.initialize(waterColor, "../res/gaussian.png");
+
+		screenRenderer.initialize(display_w, display_h);
+		screenRenderer.setShader("../res/shaders/Pixelate_Vertex.vp", "../res/shaders/Pixelate_Fragment.fp");
+
 		//UBO
 		matVPUbo.initialize(sizeof(glm::mat4) * 2);
 		matVPUbo.associateWithShaderBlock(program->getId(), "u_MatVP", 0);
 		matVPUbo.associateWithShaderBlock(ground.getShaderProgram().getId(), "u_MatVP", 0);
 		matVPUbo.associateWithShaderBlock(sphare.getShaderProgram().getId(), "u_MatVP", 0);
 		matVPUbo.associateWithShaderBlock(box.getShaderProgram().getId(), "u_MatVP", 0);
+		matVPUbo.associateWithShaderBlock(water.getObject().getShaderProgram().getId(), "u_MatVP", 0);
 		matVPUbo.associateWithShaderBlock(skyBox.getObject().getShaderProgram().getId(), "u_MatVP", 0);
-
-		screenRenderer.initialize(display_w, display_h);
-		screenRenderer.setShader("../res/shaders/Pixelate_Vertex.vp", "../res/shaders/Pixelate_Fragment.fp");
 
 		return true;
 	}
@@ -547,5 +694,6 @@ namespace CG
 		ground.setVisibility(isDisplays[1]);
 		box.setVisibility(isDisplays[2]);
 		sphare.setVisibility(isDisplays[3]);
+		water.getObject().setVisibility(isDisplays[4]);
 	}
 }
