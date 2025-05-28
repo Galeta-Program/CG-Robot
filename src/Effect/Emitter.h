@@ -32,6 +32,7 @@ private:
 	float size; // ideal particle size
 	float lifetime;
 
+	bool disabled;
 	std::mt19937 randomEngine;
 
 public:
@@ -61,10 +62,14 @@ public:
 	void setVelocityDirection(glm::vec3 dir);
 	void setAccelerationDirection(glm::vec3 dir);
 
+	void enable();
+	void disable();
+
 	inline glm::vec3 getPos() const { return location; }
 	inline glm::vec3 getVDir() const { return vDirection; }
 	inline glm::vec3 getADir() const { return aDirection; }
 	inline float getVelocity() const { return velocity; }
 	inline float getAcceleration() const { return acceleration; }
 	inline float getSize() const { return size; }
+	inline bool isDisabled() const { return disabled; }
 };

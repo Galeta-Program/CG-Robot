@@ -200,6 +200,7 @@ void Lightning::render(float deltaTime, const glm::mat4& viewMatrix, const glm::
 	{
 		generateAndActivateLightning(center, endPoints[i]);
 		addWidth(10);
+		glEnable(GL_DEPTH_TEST);
 		glDrawArrays(GL_LINE_STRIP, 0, lightningPoints.size()); // 頂點數量 = 數據長度 / 每個頂點的分量數
 	}
 }

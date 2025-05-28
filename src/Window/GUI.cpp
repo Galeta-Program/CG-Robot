@@ -14,22 +14,9 @@
 #include <imgui_impl_opengl3.h>
 #include <imgui_impl_glfw.h>
 #include <fstream>
+#include <sstream>
 
-#define TOP_BODY 0
-#define LEFT_UPPER_ARM 1
-#define LEFT_LOWER_ARM 2
-#define LEFT_HAND 3
 #define HEAD 4
-#define RIGHT_UPPER_ARM 5
-#define RIGHT_LOWER_ARM 6
-#define RIGHT_HAND 7
-#define BOTTOM_BODY 8
-#define LEFT_THIGH 9
-#define LEFT_CALF 10
-#define LEFT_FOOT 11
-#define RIGHT_THIGH 12
-#define RIGHT_CALF 13
-#define RIGHT_FOOT 14
 
 namespace CG {
 
@@ -706,17 +693,21 @@ everytime you press the button.\n");
         EffectManager& efm = EffectManager::getInstance();
 
         bool isParticle = efm.getEffect(effectName).isParticle;
-        if (isParticle)
+        if (effectName == "Fire")
         {
-            particleSystemParamPanel(*efm.getEffect(effectName).ps);
+            fireParamPanel(*efm.getEffect(effectName).ps);
         }
-        else
+        else if(effectName == "Lightning")
         {
             lightningParamPanel(*efm.getEffect(effectName).ln);
         }
+        else if (effectName == "Firework")
+        {
+            fireworkParamPannel(*efm.getEffect(effectName).ps);
+        }
     }
 
-    void GUI::particleSystemParamPanel(ParticleSystem& ps)
+    void GUI::fireParamPanel(ParticleSystem& ps)
     {
         glm::vec3 trans = ps.getEmitterPos(0);
 
@@ -762,7 +753,7 @@ everytime you press the button.\n");
 
         for (int i = 0; i < endpoints.size(); i++)
         {
-            ImGui::SeparatorText(("Translation of Endpoints" + std::to_string(i)).data());
+            ImGui::SeparatorText(("Translation of Endpoints " + std::to_string(i)).data());
 
             std::string name = "Endpoint " + std::to_string(i);
             if (ImGui::DragFloat((name + " x (Translate)").data(), &endpoints[i][0], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
@@ -777,6 +768,62 @@ everytime you press the button.\n");
             {
                 ln.updateEndPoints(i, endpoints[i]);
             }
+        }
+    }
+
+    void GUI::fireworkParamPannel(ParticleSystem& ps)
+    {
+        if (ImGui::Button("Add Emitters"))
+        {
+            unsigned int count = ps.getEmitterCount();
+            ps.addEmitter(1000);
+            ps.setEmitterVelocity(count - 1, 5.0f);
+            ps.setEmitterAcceleration(count - 1, 5.0f);
+            ps.setEmitterParticleSize(count - 1, 4.0f);
+        }
+
+        unsigned int emittersCount = ps.getEmitterCount();
+        std::vector<glm::vec3> emittersPos;
+        bool* emittersEnableState;
+        
+        emittersEnableState = new bool[emittersCount];
+
+        for (int i = 0; i < emittersCount; i++) 
+        {
+            emittersPos.emplace_back(ps.getEmitterPos(i));
+            emittersEnableState[i] = ps.getEmitterEnableState(i);
+        }
+
+        for (int i = 0; i < emittersCount; i++)
+        {
+            ImGui::SeparatorText(("Translation of Emitters " + std::to_string(i)).data());
+
+            std::string name = "Emitter " + std::to_string(i);
+            if (ImGui::DragFloat((name + " x (Translate)").data(), &emittersPos[i][0], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
+            {
+                ps.setEmitterPos(i, emittersPos[i]);
+            }
+            if (ImGui::DragFloat((name + " y (Translate)").data(), &emittersPos[i][1], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
+            {
+                ps.setEmitterPos(i, emittersPos[i]);
+            }
+            if (ImGui::DragFloat((name + " z (Translate)").data(), &emittersPos[i][2], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
+            {
+                ps.setEmitterPos(i, emittersPos[i]);
+            }
+
+            if (ImGui::Checkbox(("Enable " + name).data(), &emittersEnableState[i]))
+            {
+                if (emittersEnableState[i])
+                {
+                    ps.enableEmitter(i);
+                }
+                else
+                {
+                    ps.disableEmitter(i);
+                }
+            }
+                    
         }
     }
 
@@ -919,12 +966,15 @@ everytime you press the button.\n");
             EffectManager& efm = EffectManager::getInstance();
             if (efm.getEffect(effectName).isParticle)
             {
-                effectPos = efm.getEffect(effectName).ps->getEmitterPos(0);
-                effectDir = efm.getEffect(effectName).ps->getEmitterDir(0);
-
                 outFile << "        \"param\" : {\n";
-                outFile << "            \"pos\" : [" << effectPos[0] << ", " << effectPos[1] << ", " << effectPos[2] << "],\n";
-                outFile << "            \"dir\" : [" << effectDir[0] << ", " << effectDir[1] << ", " << effectDir[2] << "]\n";
+                for (unsigned int i = 0; i < efm.getEffect(effectName).ps->getEmitterCount(); i++)
+                {
+                    effectPos = efm.getEffect(effectName).ps->getEmitterPos(i);
+                    effectDir = efm.getEffect(effectName).ps->getEmitterDir(i);
+                    outFile << "            \"pos\" : [" << effectPos[0] << ", " << effectPos[1] << ", " << effectPos[2] << "],\n";
+                    outFile << "            \"dir\" : [" << effectDir[0] << ", " << effectDir[1] << ", " << effectDir[2] << "],\n";
+                    outFile << "            \"enable\" : " << efm.getEffect(effectName).ps->getEmitterEnableState(i) << ",\n";
+                }
                 outFile << "        }\n";
                 outFile << "    }\n";
             }
@@ -962,22 +1012,100 @@ everytime you press the button.\n");
         std::ofstream outFile((std::string("../res/animation/") + std::string(outFileName)).c_str()); // overwrite
         const std::vector<Track>& tracks = animator->getCurrentClipTrack();
 
-        // write the local coord of each node
-        for (int frame = 0; frame < tracks[0].keyFrames.size(); frame++){
-       
-            for (int i = 0; i < 15; i++) // 15 nodes
+        outFile << "{\n" << "    \"speed\" : " << animator->getCurrentClipSpeed() << "\n}\n";
+
+        for (int frame = 0; frame < tracks[0].keyFrames.size(); frame++)
+        {
+            outFile << "{\n" << "    \"motion\" : [\n";
+            for (int i = 0; i < 45; i++)
             {
                 Node* node = &(robot->getPart(i));
                 glm::vec3 trans = tracks[i].keyFrames[frame].transOffset;
                 glm::vec3 rotate = glm::degrees(glm::eulerAngles(tracks[i].keyFrames[frame].rotatOffset));
-                outFile << trans[0] << " " << trans[1] << " " << trans[2] << std::endl <<
-                    rotate[0] << " " << rotate[1] << " " << rotate[2] << std::endl;
+                outFile << "        [" << trans[0] << ", " << trans[1] << ", " << trans[2] << "],\n" <<
+                    "        [" << rotate[0] << ", " << rotate[1] << ", " << rotate[2] << "],\n";
+            }
+            outFile << "    " << "],\n";
+            outFile << "    \"effect\" : {\n";
+
+            if (tracks[0].keyFrames[frame].effect.name == "None")
+            {
+                outFile << "        \"name\" : \"None\"\n";
+                outFile << "    }\n";
+            }
+            else
+            {
+                outFile << "        \"name\" : \"" << tracks[0].keyFrames[frame].effect.name << "\",\n";
+                if (tracks[0].keyFrames[frame].effect.isStart)
+                {
+                    outFile << "        \"isStart\" : \"true\",\n";
+                }
+                else
+                {
+                    outFile << "        \"isStart\" : \"false\",\n";
+                }
+
+                if (tracks[0].keyFrames[frame].effect.isFinished)
+                {
+                    outFile << "        \"isFinished\" : \"true\",\n";
+                }
+                else
+                {
+                    outFile << "        \"isFinished\" : \"false\",\n";
+                }
+
+                if (tracks[0].keyFrames[frame].effect.isParticleEffect)
+                {
+                    std::vector<glm::vec3> pos = tracks[0].keyFrames[frame].effect.param.pos;
+                    std::vector<glm::vec3> dir = tracks[0].keyFrames[frame].effect.param.dir;
+                    std::vector<bool> enable = tracks[0].keyFrames[frame].effect.param.enable;
+
+                    outFile << "        \"param\" : {\n";
+
+                    for (unsigned int i = 0; i < tracks[0].keyFrames[frame].effect.param.pos.size(); i++)
+                    {
+                        outFile << "            \"pos\" : [" << pos[i][0] << ", " << pos[i][1] << ", " << pos[i][2] << "],\n";
+                        outFile << "            \"dir\" : [" << dir[i][0] << ", " << dir[i][1] << ", " << dir[i][2] << "],\n";
+                        if (enable.size() != 0)
+                        {
+                            outFile << "            \"enable\" : " << enable[i] << ",\n";
+                        }
+                        else
+                        {
+                            outFile << "            \"enable\" : true,\n";
+                        }
+                    }
+                    outFile << "        }\n";
+                    outFile << "    }\n";
+                }
+                else
+                {
+                    glm::vec3 center = tracks[0].keyFrames[frame].effect.param.center;
+                    std::vector<glm::vec3> enpPoints = tracks[0].keyFrames[frame].effect.param.endpoints;
+
+                    outFile << "        \"param\" : {\n";
+                    outFile << "            \"center\" : [" << center[0] << ", " << center[1] << ", " << center[2] << "],\n";
+                    outFile << "            \"endpoints\" : [\n";
+                    for (int i = 0; i < enpPoints.size(); i++)
+                    {
+                        outFile << "                                [" << enpPoints[i][0] << ", " << enpPoints[i][1] << ", " << enpPoints[i][2] << "]";
+                        if (i != enpPoints.size() - 1)
+                        {
+                            outFile << ",\n";
+                        }
+                        else
+                        {
+                            outFile << "\n";
+                        }
+                    }
+                    outFile << "            ]\n";
+                    outFile << "        }\n";
+                    outFile << "    }\n";
+                }
             }
         }
 
-        // Output the speed
-        outFile << "speed " << animator->getCurrentClipSpeed() << std::endl;
-
+        outFile << "}\n";
     }
 
     void GUI::renderEffectIcon(

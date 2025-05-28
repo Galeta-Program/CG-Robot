@@ -72,8 +72,9 @@ namespace CG {
 
 		void effectPannel();
 		void effectParamPanel();
-		void particleSystemParamPanel(ParticleSystem& ps);
+		void fireParamPanel(ParticleSystem& ps);
 		void lightningParamPanel(Lightning& ln);
+		void fireworkParamPannel(ParticleSystem& ps);
 
 		void exportPanel();
 		void importPanel();

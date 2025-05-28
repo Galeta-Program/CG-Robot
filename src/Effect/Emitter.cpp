@@ -8,7 +8,8 @@ Emitter::Emitter()
 	velocity(0.0f), 
 	acceleration(0.0f), 
 	size(1.0f), 
-	lifetime(0)
+	lifetime(0),
+	disabled(false)
 {
 	unsigned seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
 	randomEngine.seed(seed);
@@ -22,7 +23,8 @@ Emitter::Emitter(Emitter&& other) noexcept:
 	acceleration(other.acceleration),
 	size(other.size),
 	lifetime(other.lifetime),
-	randomEngine(std::move(other.randomEngine))
+	randomEngine(std::move(other.randomEngine)),
+	disabled(other.disabled)
 {
 }
 
@@ -38,6 +40,7 @@ Emitter& Emitter::operator=(Emitter&& other) noexcept
 		size = other.size;
 		lifetime = other.lifetime;
 		randomEngine = std::move(other.randomEngine);
+		disabled = other.disabled;
 	}
 	return *this;
 }
@@ -135,4 +138,14 @@ void Emitter::setAccelerationDirection(glm::vec3 dir)
 	}
 
 	aDirection = glm::normalize(dir);
+}
+
+void Emitter::enable()
+{
+	disabled = false;
+}
+
+void Emitter::disable()
+{
+	disabled = true;
 }

@@ -69,7 +69,18 @@ void Animator::addClip(std::string clipName, const char* fileName, std::vector<A
 
 		std::vector<glm::vec3> positions;
 		std::vector<glm::vec3> rotations;
-		
+
+		if (line.find("\"speed\"") != std::string::npos)
+		{
+			setSpeedFlag = true;
+			unsigned int start = line.find(":") + 2;
+			std::string vecStr = line.substr(start, line.npos);
+			clips[clipName].setSpeed(stof(vecStr)); 
+			std::getline(in, line);
+			std::getline(in, line);
+			std::getline(in, line);
+		}
+
 		int endOfMotionSection = -1;
 		while (std::getline(in, line)) {
 			if (line.find("],") != std::string::npos) 
@@ -131,14 +142,17 @@ void Animator::addClip(std::string clipName, const char* fileName, std::vector<A
 		readinEffect.name = "None";
 		readinEffect.isStart = false;
 		readinEffect.isFinished = false;
-		readinEffect.param.dir = glm::vec3(0, 0, 1);
-		readinEffect.param.pos = glm::vec3(0, 0, 0);
 		readinEffect.param.center = glm::vec3(0, 0, 0);
 		readinEffect.param.endpoints = {};
 		readinEffect.isParticleEffect = true;
 
 		int endOfEffectSection = -1;
 		while (std::getline(in, line)) {
+			if (line == "{")
+			{
+				break;
+			}
+
 			if (line.find("\"effect\"") != std::string::npos) {
 				// Found the effect section
 				while (std::getline(in, line)) {
@@ -168,7 +182,7 @@ void Animator::addClip(std::string clipName, const char* fileName, std::vector<A
 							float x, y, z;
 							char comma;
 							iss >> x >> comma >> y >> comma >> z;
-							readinEffect.param.pos = glm::vec3(x, y, z);
+							readinEffect.param.pos.emplace_back(glm::vec3(x, y, z));
 						}
 					}
 					else if (line.find("\"dir\"") != std::string::npos) 
@@ -183,8 +197,12 @@ void Animator::addClip(std::string clipName, const char* fileName, std::vector<A
 							float x, y, z;
 							char comma;
 							iss >> x >> comma >> y >> comma >> z;
-							readinEffect.param.dir = glm::vec3(x, y, z);
+							readinEffect.param.dir.emplace_back(glm::vec3(x, y, z));
 						}
+					}
+					else if (line.find("\"enable\"") != std::string::npos)
+					{
+						readinEffect.param.enable.emplace_back(line.find("1") != std::string::npos);
 					}
 					else if (line.find("\"center\"") != std::string::npos) 
 					{
@@ -228,6 +246,14 @@ void Animator::addClip(std::string clipName, const char* fileName, std::vector<A
 						break;
 					}
 				}
+				for (size_t i = 0; i < positions.size(); i += 1) {
+					glm::vec3 trans = positions[i];
+					glm::vec3 rotDegrees = rotations[i];
+
+					glm::quat rotate = glm::normalize(glm::quat(glm::radians(rotDegrees)));
+
+					tracks[i].keyFrames.emplace_back(KeyFrame{ trans, rotate, readinEffect });
+				}
 			}
 			
 			if (line.find("}") != std::string::npos) {
@@ -240,14 +266,7 @@ void Animator::addClip(std::string clipName, const char* fileName, std::vector<A
 		}
 
 		// Convert positions (every other one is a rotation)
-		for (size_t i = 0; i < positions.size(); i += 1) {			
-			glm::vec3 trans = positions[i];
-			glm::vec3 rotDegrees = rotations[i];
-			
-			glm::quat rotate = glm::normalize(glm::quat(glm::radians(rotDegrees)));
-			
-			tracks[i].keyFrames.emplace_back(KeyFrame{ trans, rotate, readinEffect });
-		}
+		
 
 		/*
 		// Add effect data to animation events if needed
@@ -271,8 +290,6 @@ void Animator::addClip(std::string clipName, const char* fileName, std::vector<A
 
 	if (!setSpeedFlag) {
 		clips[clipName].setSpeed(1.0f);
-	} else {
-		clips[clipName].setSpeed(speed);
 	}
 }
 
@@ -328,19 +345,118 @@ void Animator::animate(double dt)
 				{
 					bool isStart = lastKeyFrame.effect.isStart;
 					bool isFinished = lastKeyFrame.effect.isFinished;
-					glm::vec3 effectPos = glm::mix(lastKeyFrame.effect.param.pos, nextKeyFrame.effect.param.pos, interpolation);
-					glm::vec3 effectDir = lastKeyFrame.effect.param.dir;
-
 					ParticleSystem* currentEffect = efm.getEffect(effectName).ps;
+
+					
+
+					for (unsigned int j = 0; j < lastKeyFrame.effect.param.pos.size() /*emitter amount*/; j++)
+					{
+						if (j >= currentEffect->getEmitterCount()) {
+							continue;
+						}
+
+						glm::vec3 effectPos;
+						if (nextKeyFrame.effect.param.pos.size() == 0)
+						{
+							effectPos = lastKeyFrame.effect.param.pos[j];
+						}
+						else
+						{
+							effectPos = glm::mix(
+								lastKeyFrame.effect.param.pos[j],
+								nextKeyFrame.effect.param.pos[j],
+								interpolation);
+						}
+						glm::vec3 effectDir = lastKeyFrame.effect.param.dir[j];
+
+						currentEffect->setEmitterPos(j, effectPos);
+						currentEffect->setEmitterDir(j, effectDir);
+
+						if (lastKeyFrame.effect.param.enable.size() != 0)
+						{
+							bool enable = lastKeyFrame.effect.param.enable[j];
+							if (enable)
+							{
+								currentEffect->enableEmitter(j);
+							}
+							else
+							{
+								currentEffect->disableEmitter(j);
+							}
+						}
+						else
+						{
+							// default enable all
+							currentEffect->enableEmitter(j);
+						}
+					}
+
 					if (isStart)
 					{
-						currentEffect->setEmitterPos(0, effectPos);
-						currentEffect->setEmitterDir(0, effectDir);
+						currentEffect->reset();
+
+						for (unsigned int j = 0; j < lastKeyFrame.effect.param.pos.size() /*emitter amount*/; j++)
+						{
+							glm::vec3 effectPos;
+							if (nextKeyFrame.effect.param.pos.size() == 0)
+							{
+								effectPos = lastKeyFrame.effect.param.pos[j];
+							}
+							else
+							{
+								effectPos = glm::mix(
+									lastKeyFrame.effect.param.pos[j],
+									nextKeyFrame.effect.param.pos[j],
+									interpolation);
+							}
+							glm::vec3 effectDir = lastKeyFrame.effect.param.dir[j];
+
+							if (effectName == "Firework")
+							{
+								currentEffect->addEmitter(2000, effectPos);
+								currentEffect->setEmitterDir(j, effectDir);
+
+								currentEffect->setEmitterVelocity(j, 20.0f);
+								currentEffect->setEmitterAcceleration(j, 100.0f);
+								currentEffect->setEmitterParticleSize(j, 2.0f);
+							}
+							else if (effectName == "Fire")
+							{
+								currentEffect->addEmitter(100000, effectPos);
+								currentEffect->setEmitterDir(j, effectDir);
+
+								currentEffect->setEmitterVelocity(j, 200.0f);
+								currentEffect->setEmitterAcceleration(j, 5.0f);
+								currentEffect->setEmitterParticleSize(j, 8.0f);
+							}
+							currentEffect->setEmitterPos(j, effectPos);
+							currentEffect->setEmitterDir(j, effectDir);
+							
+							if (lastKeyFrame.effect.param.enable.size() != 0)
+							{
+								bool enable = lastKeyFrame.effect.param.enable[j];
+								if (enable)
+								{
+									currentEffect->enableEmitter(j);
+								}
+								else
+								{
+									currentEffect->disableEmitter(j);
+								}
+							}
+							else
+							{
+								// default enable all
+								currentEffect->enableEmitter(j);
+							}
+						}
+
 						currentEffect->emit();
 						efm.setCurrentEffect(effectName);
 					}
 					if (isFinished)
 					{
+						currentEffect->reset();
 						efm.setCurrentEffect("None");
 					}
 				}

@@ -266,16 +266,16 @@ namespace CG
 				glm::vec3(0.0f, 0.0f, 0.0f),
 				200.0f,
 				5.0f,
-				8.0f
+				2.0f
 				})
 		);
 		// Firework effect
 		efManager.registerParticleEffect(
 			"Firework",
-			{ 100 },
+			{ 2000 },
 			"../res/shaders/ParticleSystem.vp",
 			"../res/shaders/ParticleSystem.fp",
-			"../res/shaders/../res/shaders/firework.cp",
+			"../res/shaders/firework.cp",
 			emitterSettings
 		);
 
@@ -364,7 +364,7 @@ namespace CG
 		}
 		else
 		{
-			efm.render(timeNow, timeDelta, *(camera.GetViewMatrix()), *(camera.GetProjectionMatrix()), -1);
+			efm.render(timeNow, timeDelta, *(camera.GetViewMatrix()), *(camera.GetProjectionMatrix()));
 		}
 	}
 	void App::GLInit()

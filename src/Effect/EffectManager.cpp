@@ -81,14 +81,15 @@ void EffectManager::render(
 	float timeNow, 
 	float deltaTime, 
 	const glm::mat4& viewMatrix, 
-	const glm::mat4& projectionMatrix,
-	unsigned int emitter /*= -1*/)
+	const glm::mat4& projectionMatrix)
 {
 	if (currentEffect != nullptr)
 	{
 		if (currentEffect->isParticle)
 		{
-			currentEffect->ps->render(timeNow, deltaTime, viewMatrix, projectionMatrix, emitter);
+			
+			currentEffect->ps->render(timeNow, deltaTime, viewMatrix, projectionMatrix);
+				
 		}
 		else
 		{
