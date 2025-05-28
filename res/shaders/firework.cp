@@ -114,7 +114,7 @@ void main()
             particle.lifetime = 0;
         }
 
-        particle.color.rgb = vec3(1.0, 1.0, 1.0);
+        particle.color.rgb = vec3(hash31(float(index) * 5.67 + u_Time * 0.01));
 
         float fadeInAlpha = 1.0f;
         if (invLifeRatio < 0.15f) 

@@ -92,15 +92,20 @@ void ComputeShader::use() const
 	GLCall(glUseProgram(program));
 }
 
-void ComputeShader::compute(unsigned int particleAmount /* = -1 */)
-{
-	if (particleAmount == -1)
+void ComputeShader::compute(unsigned int fromIndex /*= 0*/, unsigned int numParticlesToCompute /*= (unsigned int)-1*/)
+{	
+	if (numParticlesToCompute == (unsigned int)-1)
 	{
 		GLCall(glDispatchCompute(numGroupsX, numGroupsY, numGroupsZ));
 	}
 	else
 	{
-		GLCall(glDispatchCompute(std::floor(particleAmount / 256.0) + 1, 1, 1));
+		unsigned int totalThreadsNeeded = fromIndex + numParticlesToCompute;
+		unsigned int dispatchX = (unsigned int)std::ceil((float)totalThreadsNeeded / 256.0f);
+		if (totalThreadsNeeded > 0 && dispatchX == 0)
+		{
+			dispatchX = 1;
+		}
+		GLCall(glDispatchCompute(dispatchX, 1, 1));
 	}
-
 }

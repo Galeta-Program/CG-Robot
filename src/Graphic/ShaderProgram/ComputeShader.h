@@ -20,5 +20,5 @@ public:
 	GLuint load(const char* shaderFile) override;
 
 	void use() const override;
-	void compute(unsigned int particleAmount = -1);
+	void compute(unsigned int fromIndex = 0, unsigned int numParticlesToCompute = (unsigned int)-1);
 };

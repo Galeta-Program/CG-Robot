@@ -16,6 +16,7 @@
 #include "../Graphic/ShaderProgram/ComputeShader.h"
 #include "../Effect/ParticleSystem.h"
 #include "../Animation/Animator.h"
+#include "../Effect/Lightning.h"
 
 
 namespace CG
@@ -42,15 +43,11 @@ namespace CG
 
         GLFWwindow* mainWindow;
 
-        GUI gui;
+        GUI* gui;
         Camera camera;
         Light light;
         Animator animator;
         GraphicShader program;
-
-        ParticleSystem fireSystem;
-        ParticleSystem lightningSystem;
-        ParticleSystem firework;
 
         MainScene* mainScene;
 

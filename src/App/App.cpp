@@ -168,10 +168,7 @@ namespace CG
 	int App::mode = 0;
 
 	App::App():
-		gui(nullptr, nullptr, nullptr),
-		light(),
-		fireSystem(),
-		lightningSystem()
+		light()
 	{
 		mainWindow = nullptr;
 		mainScene = nullptr;
@@ -249,50 +246,45 @@ namespace CG
 				8.0f 
 			})
 		);
-		std::vector<bool> mask = { true, true };
 		// Fire effect
-		efManager.registerEffect(
+		efManager.registerParticleEffect(
 			"Fire",
-			100000,
+			{ 100000 },
 			"../res/shaders/ParticleSystem.vp",
 			"../res/shaders/ParticleSystem.fp",
 			"../res/shaders/fire.cp",
 			emitterSettings,
-			mask,
 			"../res/pointSprites/fire.png"
 		);
 
-		/*
-		std::vector<int> particlesPerEmitter;
-		particlesPerEmitter.emplace_back(100);
-		fireSystem.init(particlesPerEmitter, "../res/shaders/ParticleSystem.vp", "../res/shaders/ParticleSystem.fp", "../res/shaders/firework.cp");
-		fireSystem.setupEmitter(0, glm::vec3(0, 0.0f, 5), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 200.0f, 5.0f, 8.0f);
-		fireSystem.emit();
-		fireSystem.setTexture("../res/pointSprites/fire.png");
-		*/
+		emitterSettings.clear();
+		emitterSettings.emplace_back(
+			EmitterSettings({
+				0,
+				glm::vec3(0, 0.0f, 5),
+				glm::vec3(0.0f, 0.0f, 1.0f),
+				glm::vec3(0.0f, 0.0f, 0.0f),
+				200.0f,
+				5.0f,
+				2.0f
+				})
+		);
+		// Firework effect
+		efManager.registerParticleEffect(
+			"Firework",
+			{ 2000 },
+			"../res/shaders/ParticleSystem.vp",
+			"../res/shaders/ParticleSystem.fp",
+			"../res/shaders/firework.cp",
+			emitterSettings
+		);
 
-		/*
-		particlesPerEmitter.emplace_back(100000);
-		fireSystem.init(particlesPerEmitter, "../res/shaders/ParticleSystem.vp", "../res/shaders/ParticleSystem.fp", "../res/shaders/fire.cp");
-		fireSystem.setupEmitter(0, glm::vec3(0, 0.0f, 5), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 200.0f, 5.0f, 8.0f);
-		fireSystem.emit();
-		fireSystem.setTexture("../res/pointSprites/fire.png");
-		*/
+		efManager.registerLightningEffect("Lightning");
 
-		/*
-		std::vector<int> particlesPerEmitter;
-		particlesPerEmitter.emplace_back(100000);
-		
-		lightningSystem.init(particlesPerEmitter, "../res/shaders/ParticleSystem.vp", "../res/shaders/ParticleSystem.fp", "../res/shaders/fire.cp");
-		lightningSystem.setupEmitter(0, glm::vec3(0, 0.0f, 5), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f), 200.0f, 5.0f, 8.0f);
-		lightningSystem.emit();
-		lightningSystem.setTexture("../res/pointSprites/fire.png");
-		*/
-
-		mainScene = new MainScene(camera, light, animator, program, fireSystem);
+		mainScene = new MainScene(camera, light, animator, program);
 		mainScene->Initialize(display_w, display_h);
 
-		gui.init(mainWindow, mainScene, &animator);
+		gui = new GUI(mainWindow, mainScene, &animator);
 
 		return true;
 	}
@@ -310,7 +302,7 @@ namespace CG
 
 			render();
 
-			gui.render();
+			gui->render();
 
 			ImGuiIO& io = ImGui::GetIO();
 			(void)io;
@@ -328,7 +320,7 @@ namespace CG
 
 	void App::terminate()
 	{
-		gui.terminate();
+		gui->terminate();
 
 		if (mainScene != nullptr) {
 			delete mainScene;
@@ -366,14 +358,13 @@ namespace CG
 		
 		mainScene->Render(timeNow, timeDelta, display_w, display_h);
 		
-
 		if (mode == 2)
 		{
-			gui.renderEffectIcon(*(camera.GetViewMatrix()), *(camera.GetProjectionMatrix()), 0);
+			gui->renderEffectIcon(*(camera.GetViewMatrix()), *(camera.GetProjectionMatrix()), 0);
 		}
 		else
 		{
-			efm.render(timeNow, timeDelta, *(camera.GetViewMatrix()), *(camera.GetProjectionMatrix()), -1);
+			efm.render(timeNow, timeDelta, *(camera.GetViewMatrix()), *(camera.GetProjectionMatrix()));
 		}
 	}
 	void App::GLInit()

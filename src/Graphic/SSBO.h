@@ -31,6 +31,9 @@ public:
 	void bind() const override;
 	void bind(unsigned int bindingPoint) const;
 	void unbind() const override;
+	void setData(const std::vector<T>& v, GLuint usageMode);
+	void setSize(const unsigned int count, GLuint usageMode);
+
 };
 
 template<class T>
@@ -108,4 +111,20 @@ template<class T>
 void SSBO<T>::unbind() const
 {
 	GLCall(glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0));
+}
+
+template<class T>
+inline void SSBO<T>::setData(const std::vector<T>& v, GLuint usageMode)
+{
+	GLCall(glBindBuffer(GL_SHADER_STORAGE_BUFFER, this->id));
+	GLCall(glBufferData(GL_SHADER_STORAGE_BUFFER, v.size() * sizeof(T), v.data(), usageMode));
+	this->size = v.size();
+}
+
+template<class T>
+inline void SSBO<T>::setSize(const unsigned int count, GLuint usageMode)
+{
+	GLCall(glBindBuffer(GL_SHADER_STORAGE_BUFFER, this->id));
+	GLCall(glBufferData(GL_SHADER_STORAGE_BUFFER, count * sizeof(T), NULL, usageMode));
+	this->size = count * sizeof(T);
 }

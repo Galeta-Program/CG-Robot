@@ -113,8 +113,8 @@
     <ClCompile Include="..\src\Scene\ScreenRenderer.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Model\Water.cpp">
-      <Filter>Model</Filter>
+    <ClCompile Include="..\src\Effect\Lightning.cpp">
+      <Filter>Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -283,8 +283,8 @@
     <ClInclude Include="..\src\Scene\ScreenRenderer.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Model\Water.h">
-      <Filter>Model</Filter>
+    <ClInclude Include="..\src\Effect\Lightning.h">
+      <Filter>Effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -315,9 +315,6 @@
     <None Include="..\res\shaders\ParticleSystem.vp">
       <Filter>Shader</Filter>
     </None>
-    <None Include="..\res\shaders\lightning.cp">
-      <Filter>Shader</Filter>
-    </None>
     <None Include="..\res\shaders\firework.cp">
       <Filter>Shader</Filter>
     </None>
@@ -339,22 +336,10 @@
     <None Include="..\res\shaders\Pixelate_Vertex.vp">
       <Filter>Shader</Filter>
     </None>
-    <None Include="..\res\shaders\Shadow_Fragment.fp">
+    <None Include="..\res\shaders\Lightning.fp">
       <Filter>Shader</Filter>
     </None>
-    <None Include="..\res\shaders\Shadow_Vertex.vp">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="..\res\shaders\Water_Fragment.fp">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="..\res\shaders\Water_Reflect_Fragment.fp">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="..\res\shaders\Water_Reflect_Vertex.vp">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="..\res\shaders\Water_Vertex.vp">
+    <None Include="..\res\shaders\Lightning.vp">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

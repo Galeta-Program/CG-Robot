@@ -9,40 +9,13 @@ Emitter::Emitter()
 	acceleration(0.0f), 
 	size(1.0f), 
 	lifetime(0),
-	vao(),
-	vbo(),
-	ebo()
+	disabled(false)
 {
 	unsigned seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
 	randomEngine.seed(seed);
-
-	std::vector<glm::vec3> block = {
-		glm::vec3(-1, 1, -1),
-		glm::vec3(1, 1, -1),
-		glm::vec3(-1, 1, 1),
-		glm::vec3(1, 1, 1),
-		glm::vec3(-1, -1, -1),
-		glm::vec3(1, -1, -1),
-		glm::vec3(-1, -1, 1),
-		glm::vec3(1, -1, 1),
-	};
-
-	std::vector<unsigned int> blockElement = {
-		1, 2, 3, 1, 0, 2, 3, 6, 7, 3, 2, 6, 1, 3, 7, 1, 7, 5, 1, 0, 4, 1, 4, 5, 0, 6, 2, 0, 4, 6, 6, 4, 5, 6, 5, 7
-	};
-
-	vao.bind();
-	vbo.initialize(block);
-	GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0));
-	glEnableVertexAttribArray(0);
-	ebo.initialize(blockElement);
-	vao.unbind();
 }
 
-Emitter::Emitter(Emitter&& other) noexcept
-	: vao(std::move(other.vao)),
-	vbo(std::move(other.vbo)),
-	ebo(std::move(other.ebo)),
+Emitter::Emitter(Emitter&& other) noexcept:
 	location(other.location),
 	vDirection(other.vDirection),
 	aDirection(other.aDirection),
@@ -50,7 +23,8 @@ Emitter::Emitter(Emitter&& other) noexcept
 	acceleration(other.acceleration),
 	size(other.size),
 	lifetime(other.lifetime),
-	randomEngine(std::move(other.randomEngine))
+	randomEngine(std::move(other.randomEngine)),
+	disabled(other.disabled)
 {
 }
 
@@ -58,9 +32,6 @@ Emitter& Emitter::operator=(Emitter&& other) noexcept
 {
 	if (this != &other)
 	{
-		vao = std::move(other.vao);
-		vbo = std::move(other.vbo);
-		ebo = std::move(other.ebo);
 		location = other.location;
 		vDirection = other.vDirection;
 		aDirection = other.aDirection;
@@ -69,6 +40,7 @@ Emitter& Emitter::operator=(Emitter&& other) noexcept
 		size = other.size;
 		lifetime = other.lifetime;
 		randomEngine = std::move(other.randomEngine);
+		disabled = other.disabled;
 	}
 	return *this;
 }
@@ -168,12 +140,12 @@ void Emitter::setAccelerationDirection(glm::vec3 dir)
 	aDirection = glm::normalize(dir);
 }
 
-void Emitter::render()
+void Emitter::enable()
 {
-	vao.bind();
-	vbo.bind();
-	ebo.bind();
-	glEnable(GL_DEPTH_TEST);
-	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-	vao.unbind();
+	disabled = false;
+}
+
+void Emitter::disable()
+{
+	disabled = true;
 }

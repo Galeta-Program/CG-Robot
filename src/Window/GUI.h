@@ -12,7 +12,10 @@ namespace CG {
 	class GUI
 	{
 	private:
-		
+		VAO vao;
+		VBO<glm::vec3> vbo;
+		EBO ebo;
+
 		Animator* animator;
 		MainScene* scene; // Point to the scene that GUI is currently binding with
 		Model* robot;
@@ -47,8 +50,14 @@ namespace CG {
 		bool haveEffect;
 		bool previousHaveEffect;
 		std::string effectName;
+
+		// particle system
 		glm::vec3 effectPos;
 		glm::vec3 effectDir;
+
+		// lightning
+		glm::vec3 effectCenter;
+		std::vector<glm::vec3> effectEndpoints;
 
 		int effectSelected;
 
@@ -70,9 +79,15 @@ namespace CG {
 
 		void effectPannel();
 		void effectParamPanel();
+		void fireParamPanel(ParticleSystem& ps);
+		void lightningParamPanel(Lightning& ln);
+		void fireworkParamPannel(ParticleSystem& ps);
+
 		void exportPanel();
 		void importPanel();
 		void _render();
+
+		void renderIcon(glm::vec3 pos);
 
 	public:
 		GUI(GLFWwindow* window, MainScene* _scene, Animator* _animator);

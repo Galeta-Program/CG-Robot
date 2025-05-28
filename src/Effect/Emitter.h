@@ -24,10 +24,6 @@ struct Particle
 class Emitter
 {
 private:
-	VAO vao;
-	VBO<glm::vec3> vbo;
-	EBO ebo;
-
 	glm::vec3 location;
 	glm::vec3 vDirection;
 	glm::vec3 aDirection;
@@ -36,6 +32,7 @@ private:
 	float size; // ideal particle size
 	float lifetime;
 
+	bool disabled;
 	std::mt19937 randomEngine;
 
 public:
@@ -65,7 +62,8 @@ public:
 	void setVelocityDirection(glm::vec3 dir);
 	void setAccelerationDirection(glm::vec3 dir);
 
-	void render();
+	void enable();
+	void disable();
 
 	inline glm::vec3 getPos() const { return location; }
 	inline glm::vec3 getVDir() const { return vDirection; }
@@ -73,4 +71,5 @@ public:
 	inline float getVelocity() const { return velocity; }
 	inline float getAcceleration() const { return acceleration; }
 	inline float getSize() const { return size; }
+	inline bool isDisabled() const { return disabled; }
 };
