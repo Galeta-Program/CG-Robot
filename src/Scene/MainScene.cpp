@@ -185,7 +185,6 @@ namespace CG
 		glUniform1i(glGetUniformLocation(program->getId(), "u_useClipping"), true);
 		robot.render(program->getId(), &mirroredCamera);
 
-		firePS->render(timeNow, timeDelta, *mirroredCamera.GetViewMatrix(), *mirroredCamera.GetProjectionMatrix());
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
@@ -243,7 +242,6 @@ namespace CG
 		glUniform1i(glGetUniformLocation(program->getId(), "u_useClipping"), true);
 		robot.render(program->getId(), camera);
 
-		firePS->render(timeNow, timeDelta, *camera->GetViewMatrix(), *camera->GetProjectionMatrix());
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 

@@ -56,7 +56,7 @@ void main()
     vec3 reflectionColor = texture(u_ReflectionTexture, reflectUV).rgb;
     vec3 refractionColor = texture(u_RefractionTexture, refractUV).rgb;
 
-    float fresnel = pow(1.0 - max(dot(normal, -I), 0.0), 6.0) * 0.4 + 0.4;
+    float fresnel = pow(1.0 - max(dot(normal, -I), 0.0), 3.0) * 0.7 + 0.3;
     vec3 surfaceColor = mix(refractionColor, reflectionColor, fresnel);
 
     vec3 waveDarken = VertexColor - wave * vec3(0.0, 0.2, 0.4);
