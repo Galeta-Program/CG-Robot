@@ -409,7 +409,6 @@ namespace CG {
             (int)skyBoxNameCStrs.size(),
             (int)skyBoxNameCStrs.size()))
         {
-            std::cout << skyBoxSelected << std::endl;
             if (skyBoxSelected != skyBox->getCurrentTextureIndex() &&
                 skyBoxSelected < skyBox->getTextureNum())
             {
