@@ -4,7 +4,7 @@
 #include "../Graphic/VAO.h"
 #include "../Graphic/Material/Texture.h"
 #include "../Scene/Camera.h"
-#include "../Graphic/ShaderProgram/shaderProgram.h"
+#include "../Graphic/ShaderProgram/GraphicShader.h"
 
 #include <string>
 #include <Vector>
@@ -13,7 +13,7 @@
 class Object
 {
 protected:
-	ShaderProgram program;
+	GraphicShader program;
 
 	VAO vao;
 	EBO ebo;
@@ -28,13 +28,14 @@ protected:
 	glm::vec3 translateOffset;
 	glm::mat4 modelMatrix; // Transformation matrix of itself
 	
+	bool isDisplay = true;
 
 	Object() {}
 	~Object() {}
 
 public:	
 	virtual void gatherData() = 0;
-	virtual void render(CG::Camera* camera, GLint type = GL_TRIANGLES) = 0;
+	virtual void render(CG::Camera* camera, const ShaderProgram* inProgram = nullptr, GLint type = GL_TRIANGLES) = 0;
 	void modifyInstance(unsigned int count);
 	void setShader(const char* vert, const char* frag);
 
@@ -43,6 +44,7 @@ public:
 	void setRotate(glm::quat quaternion);
 	void updateEuler();
 	void updateModelMatrix();
+	void setVisibility(bool _isDisplay);
 	void setInstancingOffests(std::vector<glm::vec3> _instancingOffests);
 
 	inline const ShaderProgram& getShaderProgram() { return program; }

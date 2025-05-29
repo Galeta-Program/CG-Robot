@@ -42,6 +42,11 @@ void Object::setShader(const char* vert, const char* frag)
 	program.load(shaders);
 }
 
+void Object::setVisibility(bool _isDisplay)
+{
+	isDisplay = _isDisplay;
+}
+
 void Object::updateModelMatrix()
 {
 	modelMatrix = glm::translate(glm::mat4(1.0f), translateOffset) * glm::mat4_cast(rotateOffset);

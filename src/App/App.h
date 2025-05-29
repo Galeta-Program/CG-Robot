@@ -12,8 +12,11 @@
 #include "../Window/GUI.h"
 #include "../Scene/Camera.h"
 #include "../Scene/Light.h"
-#include "../Graphic/ShaderProgram/shaderProgram.h"
+#include "../Graphic/ShaderProgram/GraphicShader.h"
+#include "../Graphic/ShaderProgram/ComputeShader.h"
+#include "../Effect/ParticleSystem.h"
 #include "../Animation/Animator.h"
+#include "../Effect/Lightning.h"
 
 
 namespace CG
@@ -30,6 +33,7 @@ namespace CG
 
         static void setMode(int isEditMode);
         inline Camera& getCamera() { return camera; }
+        inline MainScene* getMainScene() { return mainScene; }
 
     private:
         void update(double dt);
@@ -39,11 +43,12 @@ namespace CG
 
         GLFWwindow* mainWindow;
 
-        GUI gui;
+        GUI* gui;
         Camera camera;
         Light light;
         Animator animator;
-        ShaderProgram program;
+        GraphicShader program;
+
         MainScene* mainScene;
 
         double timeNow = 0;

@@ -89,6 +89,33 @@
     <ClCompile Include="..\src\Model\SkyBox.cpp">
       <Filter>Model</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Graphic\FBO.cpp">
+      <Filter>Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Effect\Emitter.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Graphic\ShaderProgram\ComputeShader.cpp">
+      <Filter>Graphic\ShaderProgram</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Graphic\ShaderProgram\GraphicShader.cpp">
+      <Filter>Graphic\ShaderProgram</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Effect\ParticleSystem.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Effect\EffectManager.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Effect\ShadowSystem.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Scene\ScreenRenderer.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Effect\Lightning.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="App">
@@ -129,6 +156,12 @@
     </Filter>
     <Filter Include="Graphic\Material">
       <UniqueIdentifier>{0cd95dbd-ef08-4102-973b-5336672eb4c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect">
+      <UniqueIdentifier>{802d4a75-50fc-4545-a8f0-3ac4603b2ef1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OBJs">
+      <UniqueIdentifier>{26d54a9e-47df-4f2c-9471-c5f1ed8840aa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -220,6 +253,39 @@
     <ClInclude Include="..\src\Model\SkyBox.h">
       <Filter>Model</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\Graphic\FBO.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Effect\Emitter.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Graphic\SSBO.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Graphic\ShaderProgram\ComputeShader.h">
+      <Filter>Graphic\ShaderProgram</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Graphic\ShaderProgram\GraphicShader.h">
+      <Filter>Graphic\ShaderProgram</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Effect\ParticleSystem.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Graphic\StorageBuffer.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Effect\EffectManager.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Effect\ShadowSystem.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Scene\ScreenRenderer.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Effect\Lightning.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\res\shaders\Phong_Vertex.vp">
@@ -238,6 +304,42 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="..\res\shaders\SkyBox_Vertex.vp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\Fire.cp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\ParticleSystem.fp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\ParticleSystem.vp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\firework.cp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\guiIcon.fp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\guiIcon.vp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\Obj_EvnMap_Fragment.fp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\Obj_EvnMap_Vertex.vp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\Pixelate_Fragment.fp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\Pixelate_Vertex.vp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\Lightning.fp">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\res\shaders\Lightning.vp">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

@@ -1,0 +1,41 @@
+﻿#version 460
+
+struct Particle
+{
+	float size;
+	float initialSize;      
+	float lifetime;
+	float initialLifetime;  
+	vec4 velocity;          
+	vec4 acceleration;      
+	vec3 pos;
+	vec4 color;             
+};
+
+layout (binding = 0, std430) buffer ParticleBuffer
+{
+    Particle ssbo_Particles[];
+};
+
+uniform u_MatVP {
+	mat4 u_View;
+	mat4 u_Projection;
+};  
+uniform uint u_FromIndex;              
+uniform uint u_Size;  
+
+out vec4 v_Color;
+
+void main(void) 
+{ 
+	if(gl_VertexID >= u_Size)
+	{
+		return;
+	}
+	uint index = u_FromIndex + gl_VertexID;
+    Particle particle = ssbo_Particles[u_FromIndex + gl_VertexID];
+
+    gl_Position = u_Projection * u_View * vec4(particle.pos, 1.0);
+    gl_PointSize = particle.size; 
+    v_Color = particle.color; 
+}

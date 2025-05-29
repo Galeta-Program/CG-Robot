@@ -1,19 +1,15 @@
 #pragma once
-
+#include "StorageBuffer.h"
 #include "../Utilty/Error.h"
 #include <vector>
 #include <GL/glew.h>
 #include <iostream>
 
 template<class T>
-class VBO
+class VBO: public StorageBuffer<T>
 {
-private:
-	GLuint id;
-	unsigned int size;
-
 public:
-	VBO() : id(0), size(0) {}
+	VBO() : StorageBuffer<T>() {}
 	VBO(const std::vector<T>& v);
 
 	VBO(VBO&& other) noexcept;
@@ -29,59 +25,30 @@ public:
 
 	void bind() const;
 	void unbind() const;
-	void invalid() const;
-
-	static void copyAndWrite(GLuint readBuffer, GLuint writeBuffer, GLintptr readOffset, GLintptr writeOffset, unsigned int size);
-
-	inline unsigned int getSize() const { return size; }
-	inline unsigned int getId() const { return id; }
+	void setData(const std::vector<T>& v, GLuint usageMode);
 };
 
-template< typename T >
-void VBO<T>::copyAndWrite(GLuint readBuffer, GLuint writeBuffer, GLintptr readOffset, GLintptr writeOffset, unsigned int size)
-{
-	GLCall(glBindBuffer(GL_COPY_WRITE_BUFFER, writeBuffer));
-	GLCall(glBindBuffer(GL_COPY_READ_BUFFER, readBuffer));
-	GLCall(glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, readOffset, writeOffset, size));
-	
-	GLCall(glBindBuffer(GL_COPY_WRITE_BUFFER, 0));
-	GLCall(glBindBuffer(GL_COPY_READ_BUFFER, 0));
-}
-
 template<class T>
-VBO<T>::VBO(const std::vector<T>& v)
+VBO<T>::VBO(const std::vector<T>& v): StorageBuffer<T>()
 {
 	initialize(v);
 }
 
 template<class T>
-VBO<T>::VBO(VBO<T>&& other) noexcept : id(other.id), size(other.size)
-{
-	other.id = 0;
-}
+VBO<T>::VBO(VBO<T>&& other) noexcept : StorageBuffer<T>(std::move(other))
+{}
 
 
 template<class T>
 VBO<T>::~VBO()
-{
-	if (id != 0)
-	{
-		GLCall(glDeleteBuffers(1, &id));
-	}
-}
+{}
 
 template<class T>
 VBO<T>& VBO<T>::operator=(VBO<T>&& other) noexcept
 {
 	if (this != &other)
 	{
-		if (id != 0)
-		{
-			GLCall(glDeleteBuffers(1, &id));
-		}
-
-		id = other.id;
-		other.id = 0;
+		StorageBuffer<T>::operator=(std::move(other));
 	}
 
 	return *this;
@@ -90,10 +57,10 @@ VBO<T>& VBO<T>::operator=(VBO<T>&& other) noexcept
 template<class T>
 void VBO<T>::initialize(unsigned int _size, GLuint usageMode)
 {
-	GLCall(glGenBuffers(1, &id));
-	GLCall(glBindBuffer(GL_ARRAY_BUFFER, id));
+	GLCall(glGenBuffers(1, &this->id));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, this->id));
 	GLCall(glBufferData(GL_ARRAY_BUFFER, _size, NULL, usageMode));
-	size = _size;
+	this->size = _size;
 }
 
 template<class T>
@@ -105,16 +72,16 @@ void VBO<T>::initialize(const std::vector<T>& v, GLuint usageMode)
 		return;
 	}
 
-	GLCall(glGenBuffers(1, &id));
-	GLCall(glBindBuffer(GL_ARRAY_BUFFER, id));
-	GLCall(glBufferData(GL_ARRAY_BUFFER, v.size() * sizeof(T), &v[0], usageMode));
-	size = v.size();
+	GLCall(glGenBuffers(1, &this->id));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, this->id));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, v.size() * sizeof(T), v.data(), usageMode));
+	this->size = v.size();
 }
 
 template<class T>
 void VBO<T>::bind() const
 {
-	GLCall(glBindBuffer(GL_ARRAY_BUFFER, id));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, this->id));
 }
 
 template<class T>
@@ -124,7 +91,9 @@ void VBO<T>::unbind() const
 }
 
 template<class T>
-void VBO<T>::invalid() const
+inline void VBO<T>::setData(const std::vector<T>& v, GLuint usageMode)
 {
-	GLCall(glInvalidateBufferData(id));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, this->id));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, v.size() * sizeof(T), v.data(), usageMode));
+	this->size = v.size();
 }

@@ -5,7 +5,10 @@ bool SkyBox::loadFaces(std::vector<std::string> faces)
 {
 	if (faces.size() == 6)
 	{
-		texture.LoadCubeMap(faces);
+		Texture* texture = new Texture();
+		texture->LoadCubeMap(faces);
+		textures.push_back(texture);
+		currentTextureIndex = textures.size() - 1;
 		return true;
 	}
 	return false;
@@ -62,16 +65,24 @@ void SkyBox::updateDate()
 	skyBoxObj.gatherData();
 }
 
+void SkyBox::switchTexture(unsigned int index)
+{
+	if (index < textures.size())
+	{
+		currentTextureIndex = index;
+	}
+}	
+
 void SkyBox::render(CG::Camera* camera, GLint type)
 {
 	skyBoxObj.getShaderProgram().use();
 	glDepthMask(GL_FALSE);
 	glDepthFunc(GL_LEQUAL);     
 
-	texture.bind(0, GL_TEXTURE_CUBE_MAP);
+	textures[currentTextureIndex]->bind(0, GL_TEXTURE_CUBE_MAP);
 	GLuint TextureID = glGetUniformLocation(skyBoxObj.getShaderProgram().getId(), "skybox");
 	GLCall(glUniform1i(TextureID, 0));
-	skyBoxObj.render(camera, type);
+	skyBoxObj.render(camera, nullptr, type);
 
 	glDepthFunc(GL_LESS);             
 	glDepthMask(GL_TRUE);

@@ -7,18 +7,13 @@
 
 ShaderProgram::~ShaderProgram()
 {
+	std::cout << "Program " << program << " has been deleted.\n";
 	GLCall(glDeleteProgram(program));
-}
-
-void ShaderProgram::use() const
-{
-	GLCall(glUseProgram(program));
 }
 
 void ShaderProgram::unUse() const
 {
 	GLCall(glUseProgram(0));
-
 }
 
 const GLchar* ShaderProgram::ReadShader(const char* filename)
@@ -34,65 +29,32 @@ const GLchar* ShaderProgram::ReadShader(const char* filename)
 	int length = ftell(in);
 	rewind(in);
 
-	GLchar* shaderSource = new GLchar[length + 1];
-
-	fread(shaderSource, 1, length, in);
+	GLchar* originalBuffer = new GLchar[length + 1];
+	fread(originalBuffer, 1, length, in);
 	fclose(in);
 
-	shaderSource[length] = '\0';
+	GLchar* shaderSource = originalBuffer;
+	int newLength = length;
 
-	return shaderSource;
-}
-
-GLuint ShaderProgram::load(ShaderInfo* shaders)
-{
-	if (shaders == NULL) 
-	{ 
-		return 0;
-	}
-
-	GLCall(program = glCreateProgram());
-
-	ShaderInfo* shaderInfo = shaders;
-	while (shaderInfo->type != GL_NONE) 
-	{		
-		const GLchar* source = ReadShader(shaderInfo->filename);
-
-		if (source == NULL)
-		{
-			return 0;
-		}
-
-		GLCall(GLuint shader = glCreateShader(shaderInfo->type));
-		GLCall(glShaderSource(shader, 1, &source, NULL));
-		GLCall(glCompileShader(shader));
-
-		int compileResult;
-		GLCall(glGetShaderiv(shader, GL_COMPILE_STATUS, &compileResult));
-		if (compileResult == GL_FALSE)
-		{
-			std::cout << "Shader: \"" << shaders->filename << "\" compile failed." << std::endl;
-		}
-
-		GLCall(glAttachShader(program, shader));
-
-		delete[] source;
-		++shaderInfo;
-	}
-
-	GLCall(glLinkProgram(program));
-
-	GLint linkResult;
-	GLCall(glGetProgramiv(program, GL_LINK_STATUS, &linkResult));
-	if (!linkResult)
+	if (length >= 3 && 
+	    static_cast<unsigned char>(shaderSource[0]) == 0xEF &&
+	    static_cast<unsigned char>(shaderSource[1]) == 0xBB &&
+	    static_cast<unsigned char>(shaderSource[2]) == 0xBF) 
 	{
-		if (linkResult == GL_FALSE)
-		{
-			std::cout << "Shader: \"" << shaders->filename << "\" link failed." << std::endl;
-		}
-
-		return 0;
+		shaderSource += 3;
+		newLength -= 3;
+		std::cout << "Note: Stripped UTF-8 BOM from shader: " << filename << std::endl;
 	}
 
-	return program;
+	if (newLength != length) {
+	    GLchar* cleanSource = new GLchar[newLength + 1];
+	    memcpy(cleanSource, shaderSource, newLength);
+	    cleanSource[newLength] = '\0';
+	    delete[] originalBuffer;
+	    return cleanSource;
+	}
+    else {
+        originalBuffer[newLength] = '\0';
+        return originalBuffer;
+    }
 }

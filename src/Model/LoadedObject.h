@@ -5,6 +5,7 @@
 #include "../Graphic/Material/Texture.h"
 #include "../Scene/Camera.h"
 #include "../Model/Object.h"
+#include "../Model/Part.h"
 
 #include <string>
 #include <Vector>
@@ -30,7 +31,7 @@ public:
 
 	void initialize(const char* mtlPath, const char* objPath, const char* prefix);
 	void gatherData() override;
-	void render(CG::Camera* camera, GLint type = GL_TRIANGLES) override;
+	void render(CG::Camera* camera, const ShaderProgram* inProgram = nullptr, GLint type = GL_TRIANGLES) override;
 	bool loadOBJ(const char* path);
 
 	inline unsigned int getVertexSize() const { return vertexSize; } // unique vertices (struct Vertex)

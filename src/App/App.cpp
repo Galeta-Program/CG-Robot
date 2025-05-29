@@ -7,7 +7,7 @@
 #include <imgui_impl_glfw.h>
 
 #include "App.h"
-
+#include "../Effect/EffectManager.h"
 
 namespace CG
 {
@@ -91,7 +91,11 @@ namespace CG
 	}
 
 	static void windowResize(GLFWwindow* window, int width, int height)
-	{}
+	{
+		App* app = static_cast<App*>(glfwGetWindowUserPointer(window));
+		MainScene* mainScene = app->getMainScene();
+		mainScene->Resize(width, height);
+	}
 
 	static void mouseEvent(GLFWwindow* window, int button, int action, int mods)
 	{
@@ -164,7 +168,6 @@ namespace CG
 	int App::mode = 0;
 
 	App::App():
-		gui(nullptr, nullptr, nullptr),
 		light()
 	{
 		mainWindow = nullptr;
@@ -189,7 +192,8 @@ namespace CG
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 
 		// Create window with graphics context
-		mainWindow = glfwCreateWindow(1280, 720, "Group6", nullptr, nullptr);
+		int display_w = 1280, display_h = 720;
+		mainWindow = glfwCreateWindow(display_w, display_h, "Group6", nullptr, nullptr);
 		if (mainWindow == nullptr)
 			return false;
 		glfwMakeContextCurrent(mainWindow);
@@ -218,19 +222,69 @@ namespace CG
 		camera.LookAt(glm::vec3(0, -20, 40), glm::vec3(0, -20, 0), glm::vec3(0, 1, 0));
 		light.initialize();
 
-		ShaderInfo shaders[] = {
+		// Initialize programs
+		ShaderInfo normalShaders[] = {
 			{ GL_VERTEX_SHADER, "../res/shaders/Phong_Vertex.vp" },
 			{ GL_FRAGMENT_SHADER, "../res/shaders/Phong_Fragment.fp" },
 			{ GL_NONE, NULL } };
-		program.load(shaders);
+		program.load(normalShaders);
+
 		program.use();
 
 		mode = 0;
 
-		mainScene = new MainScene(camera, light, animator, program);
-		mainScene->Initialize();
+		EffectManager& efManager = EffectManager::getInstance();
+		std::vector<EmitterSettings> emitterSettings;
+		emitterSettings.emplace_back(
+			EmitterSettings({
+				0, 
+				glm::vec3(0, 0.0f, 5), 
+				glm::vec3(0.0f, 0.0f, 1.0f), 
+				glm::vec3(0.0f, 0.0f, 0.0f), 
+				200.0f, 
+				5.0f, 
+				8.0f 
+			})
+		);
+		// Fire effect
+		efManager.registerParticleEffect(
+			"Fire",
+			{ 100000 },
+			"../res/shaders/ParticleSystem.vp",
+			"../res/shaders/ParticleSystem.fp",
+			"../res/shaders/fire.cp",
+			emitterSettings,
+			"../res/pointSprites/fire.png"
+		);
 
-		gui.init(mainWindow, mainScene, &animator);
+		emitterSettings.clear();
+		emitterSettings.emplace_back(
+			EmitterSettings({
+				0,
+				glm::vec3(0, 0.0f, 5),
+				glm::vec3(0.0f, 0.0f, 1.0f),
+				glm::vec3(0.0f, 0.0f, 0.0f),
+				200.0f,
+				5.0f,
+				2.0f
+				})
+		);
+		// Firework effect
+		efManager.registerParticleEffect(
+			"Firework",
+			{ 2000 },
+			"../res/shaders/ParticleSystem.vp",
+			"../res/shaders/ParticleSystem.fp",
+			"../res/shaders/firework.cp",
+			emitterSettings
+		);
+
+		efManager.registerLightningEffect("Lightning");
+
+		mainScene = new MainScene(camera, light, animator, program);
+		mainScene->Initialize(display_w, display_h);
+
+		gui = new GUI(mainWindow, mainScene, &animator);
 
 		return true;
 	}
@@ -247,7 +301,8 @@ namespace CG
 			update(timeDelta);
 
 			render();
-			gui.render();
+
+			gui->render();
 
 			ImGuiIO& io = ImGui::GetIO();
 			(void)io;
@@ -265,7 +320,7 @@ namespace CG
 
 	void App::terminate()
 	{
-		gui.terminate();
+		gui->terminate();
 
 		if (mainScene != nullptr) {
 			delete mainScene;
@@ -295,10 +350,22 @@ namespace CG
 		glfwGetFramebufferSize(mainWindow, &display_w, &display_h);
 		glViewport(0, 0, display_w, display_h);
 
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		EffectManager& efm = EffectManager::getInstance();
 		program.use();
 		light.bind(program.getId());
-
-		mainScene->Render();
+		
+		mainScene->Render(timeNow, timeDelta, display_w, display_h);
+		
+		if (mode == 2)
+		{
+			gui->renderEffectIcon(*(camera.GetViewMatrix()), *(camera.GetProjectionMatrix()), 0);
+		}
+		else
+		{
+			efm.render(timeNow, timeDelta, *(camera.GetViewMatrix()), *(camera.GetProjectionMatrix()));
+		}
 	}
 	void App::GLInit()
 	{

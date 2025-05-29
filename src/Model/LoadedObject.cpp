@@ -56,9 +56,17 @@ void LoadedObject::gatherData()
 	}
 }
 
-void LoadedObject::render(CG::Camera* camera, GLint type)
+void LoadedObject::render(CG::Camera* camera, const ShaderProgram* inProgram, GLint type)
 {
-	program.use();
+	if (!isDisplay)
+		return;
+
+	if (inProgram == nullptr)
+	{
+		inProgram = &program;
+	}
+
+	inProgram->use();
 	instancingVbo.bind();
 
 	glm::mat4* matrices = (glm::mat4*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
@@ -70,15 +78,15 @@ void LoadedObject::render(CG::Camera* camera, GLint type)
 
 	vao.bind();
 
-	GLCall(GLuint ModelID = glGetUniformLocation(program.getId(), "u_Model"));
+	GLCall(GLuint ModelID = glGetUniformLocation(inProgram->getId(), "u_Model"));
 	GLCall(glUniformMatrix4fv(ModelID, 1, GL_FALSE, &modelMatrix[0][0]));
 
-	GLCall(GLuint NormalMatID = glGetUniformLocation(program.getId(), "u_NormalMatrix"));
+	GLCall(GLuint NormalMatID = glGetUniformLocation(inProgram->getId(), "u_NormalMatrix"));
 	glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(*(camera->GetViewMatrix()) * modelMatrix)));
 	GLCall(glUniformMatrix3fv(NormalMatID, 1, GL_FALSE, &normalMatrix[0][0]));
 
 	MaterialManager& mtlManager = MaterialManager::getInstance();
-	mtlManager.use(program.getId(), mtlName);
+	mtlManager.use(inProgram->getId(), mtlName);
 
 	GLCall(glDrawElementsInstanced(type, elementSize, GL_UNSIGNED_INT, 0, instancingCount));
 	program.unUse();

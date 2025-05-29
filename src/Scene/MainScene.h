@@ -9,9 +9,11 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "Camera.h"
-#include "../Graphic/ShaderProgram/shaderProgram.h"
+#include "../Graphic/ShaderProgram/ComputeShader.h"
+#include "../Graphic/ShaderProgram/GraphicShader.h"
 #include "../Model/Model.h"
 #include "../Graphic/UBO.h"
 #include "../Animation/Animator.h"
@@ -19,6 +21,14 @@
 #include "../Model/LoadedObject.h"
 #include "../Model/ManualObject.h"
 #include "../Model/SkyBox.h"
+#include "../Effect/ParticleSystem.h"
+#include "../Effect/ShadowSystem.h"
+#include "../Scene/ScreenRenderer.h"
+#include "../Model/Water.h"
+
+#include "../Graphic/VAO.h"
+#include "../Graphic/VBO.h"
+#include "../Graphic/Material/Texture.h"
 
 constexpr auto PARTSNUM = 15;
 
@@ -27,18 +37,22 @@ namespace CG
 	class MainScene
 	{
 	public:
-		MainScene(Camera& _camera, Light& _light, Animator& _animator, ShaderProgram& _program);
+		MainScene(Camera& _camera, Light& _light, Animator& _animator, GraphicShader& _program);
 		~MainScene();
 
-		bool Initialize();
-		void Render();
+		bool Initialize(int display_w, int display_h);
+		void Render(double timeNow, double timeDelta, int display_w, int display_h);
+		void Resize(int display_w, int display_h);
+		void SetObjectsVisibility(std::vector<bool> isDisplays);
 
 		inline Model* getModel() { return &robot; }
 		inline Animator* getAnimator() { return animator; }
 		inline Light* getLight() { return light; }
+		inline ScreenRenderer* getScreenRenderer() { return &screenRenderer; }
+		inline SkyBox* getSkyBox() { return &skyBox; }
 
 	private:
-		bool loadScene();
+		bool loadScene(int display_w, int display_h);
 		void loadModel();
 		void loadAnimation();
 
@@ -46,11 +60,25 @@ namespace CG
 		Camera* camera;
 		Light* light;
 		Animator* animator;
-		ShaderProgram* program;
+		GraphicShader* program;
 		ManualObject ground;
 		SkyBox skyBox;
 
-		UBO matVPUbo;		
+		ManualObject box;
+		ManualObject sphare;
+		ShadowSystem shadowSystem;
+		ScreenRenderer screenRenderer;
+		Water water;
+
+		/*
+		* debug use
+		VAO vao;
+		VBO<float> vbo;
+		Texture texture;
+		GraphicShader testQuadShader;
+		*/
+
+		UBO matVPUbo;	
 		//GLenum mode = GL_FILL;
 	};
 }

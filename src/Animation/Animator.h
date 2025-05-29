@@ -42,6 +42,5 @@ public:
 	inline float getCurrentClipSpeed() const { return currentClip->getSpeed(); };
 	inline const std::vector<Track>& getCurrentClipTrack() const { return currentClip->getTracks(); };
 	inline unsigned int getFrameAmount() const { return currentClip->getAmountOfFrame(); }
-
 };
 

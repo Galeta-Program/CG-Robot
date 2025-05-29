@@ -88,7 +88,7 @@ void Model::gatherPartsData()
 		unsigned int currentVertexSize = currentPart.getVertexSize();
 		unsigned int currentElementSize = currentPart.getElementSize();
 
-		VBO<void>::copyAndWrite( currentPart.vboId(), vbo.getId(), 0, vertexSizeOffset, currentVertexSize * sizeof(Vertex) );
+		StorageBuffer<int>::copyAndWrite( currentPart.vboId(), vbo.getId(), 0, vertexSizeOffset, currentVertexSize * sizeof(Vertex) );
 		vertexSizeOffset += currentVertexSize * sizeof(Vertex);
 
 		if (i == 0) 
@@ -127,8 +127,16 @@ void Model::gatherPartsData()
 	}
 }
 
+void Model::setVisibility(bool _isDisplay)
+{
+	isDisplay = _isDisplay;
+}
+
 void Model::render( GLuint program, CG::Camera* camera )
 {
+	if (!isDisplay)
+		return;
+
 	instancingVbo.bind();
 
 	int n, p = 0, limit = 0, count = 0, u = 0;
